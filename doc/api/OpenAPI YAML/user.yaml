@@ -1,0 +1,438 @@
+openapi: 3.0.0
+info:
+  title: SMBMS - User API
+  version: 1.0.0
+  description: RESTful API for managing users in SMBMS.
+  contact:
+    email: Jun.Amane@zzy040330.moe
+  license:
+    name: MIT
+    url: https://github.com/Jun-Amane/smbms
+  termsOfService:
+    url: https://github.com/Jun-Amane/smbms
+
+
+paths:
+  /api/user:
+    get:
+      summary: Query users
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: queryName
+          in: query
+          description: User Name
+          required: false
+          explode: true
+          schema:
+            type: string
+        - name: queryRole
+          in: query
+          description: User Role ID
+          required: false
+          explode: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          description: Page Size
+          required: false
+          explode: true
+          schema:
+            type: integer
+        - name: pageIndex
+          in: query
+          description: Page Index
+          required: false
+          explode: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - pageSize
+                  - totalPages
+                  - curPage
+                  - totalItems
+                  - users
+                properties:
+                  pageSize:
+                    type: integer
+                    example: 15
+                  totalPages:
+                    type: integer
+                    example: 3
+                  curPage:
+                    type: integer
+                    example: 2
+                  totalItems:
+                    type: integer
+                    example: 42
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Add a new user
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: User Entity
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User added successfully
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/user/{id}:
+    get:
+      summary: Get user by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          explode: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Modify user details
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          explode: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '204':
+          description: User modified successfully
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete a user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          explode: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User deleted successfully
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/user/{id}/password:
+    patch:
+      summary: Update user password
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          explode: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - newPassword
+              properties:
+                newPassword:
+                  type: string
+      responses:
+        '200':
+          description: Password updated successfully
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/user/rolelist:
+    get:
+      summary: Get list of roles
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of roles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/user/codeexists:
+    get:
+      summary: Check if user code exists
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: code
+          in: query
+          description: User Code
+          required: true
+          explode: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Code availability
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - result
+                properties:
+                  result:
+                    type: string
+                example:
+                  result: exist
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - code
+        - name
+        - password
+        - gender
+        - birthday
+        - phone
+        - address
+        - roleId
+        - createdBy
+        - creationDate
+        - modifiedBy
+        - modificationDate
+
+      properties:
+        id:
+          type: integer
+          description: User identifier
+          example: 1
+        code:
+          type: string
+          description: User code
+          example: admin
+        name:
+          type: string
+          description: User name
+          example: 系统管理员
+        password:
+          type: string
+          description: User password
+          example: (password encrypted)
+        gender:
+          type: integer
+          description: Gender (1 for male, 2 for female, 0 for others)
+          example: 0
+        birthday:
+          type: string
+          format: date
+          description: User birthday
+        phone:
+          type: string
+          description: Phone number
+          example: 12345678901
+        address:
+          type: string
+          description: Address
+          example: 山东省泰安市泰山区泮河大街7号
+        age:
+          type: integer
+          description: Calculated age of user
+          example: -1
+        roleId:
+          type: integer
+          description: User role id
+          example: 1
+        createdBy:
+          type: integer
+          description: ID of the user who created this entry
+          example: 1
+        creationDate:
+          type: string
+          format: date-time
+          description: Date of creation
+        modifiedBy:
+          type: integer
+          description: ID of the user who last modified this entry
+          example: 1
+        modificationDate:
+          type: string
+          format: date-time
+          description: Date of last modification
+
+    Role:
+      type: object
+      required:
+        - id
+        - code
+        - name
+        - createdBy
+        - creationDate
+        - modifiedBy
+        - modificationDate
+      properties:
+        id:
+          type: integer
+          description: Role identifier
+          example: 1
+        code:
+          type: string
+          description: Role code
+          example: SMBMS_ADMIN
+        name:
+          type: string
+          description: Role name
+          example: 系统管理员
+        createdBy:
+          type: integer
+          description: ID of the user who created this role
+          example: 1
+        creationDate:
+          type: string
+          format: date-time
+          description: Date of role creation
+        modifiedBy:
+          type: integer
+          description: ID of the user who last modified this role
+          example: 1
+        modificationDate:
+          type: string
+          format: date-time
+          description: Date of last role modification
+
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: integer
+          example: 500
+        message:
+          type: string
+          example: internal error

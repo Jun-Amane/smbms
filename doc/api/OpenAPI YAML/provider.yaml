@@ -1,0 +1,309 @@
+openapi: 3.0.0
+info:
+  title: SMBMS - Provider API
+  version: 1.0.0
+  description: RESTful API for managing providers in SMBMS.
+  contact:
+    email: Jun.Amane@zzy040330.moe
+  license:
+    name: MIT
+    url: https://github.com/Jun-Amane/smbms
+  termsOfService:
+    url: https://github.com/Jun-Amane/smbms
+
+
+paths:
+  /api/provider:
+    get:
+      summary: Query providers
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: queryName
+          in: query
+          description: Provider Name
+          required: false
+          explode: true
+          schema:
+            type: string
+        - name: queryCode
+          in: query
+          description: Provider Code
+          required: false
+          explode: true
+          schema:
+            type: string
+        - name: pageIndex
+          in: query
+          description: Page Index
+          required: false
+          explode: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          description: Page Size
+          required: false
+          explode: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of providers
+          content:
+            application/json:
+              schema:
+              type: object
+              required:
+                  - pageSize
+                  - totalPages
+                  - curPage
+                  - totalItems
+                  - providers
+              properties:
+                pageSize:
+                  type: integer
+                  example: 15
+                totalPages:
+                  type: integer
+                  example: 3
+                curPage:
+                  type: integer
+                  example: 2
+                totalItems:
+                  type: integer
+                  example: 42
+                providers:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Add a new provider
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: Provider Entity
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Provider'
+      responses:
+        '201':
+          description: Provider added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/provider/{id}:
+    get:
+      summary: Get provider by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Provider ID
+          required: true
+          explode: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Provider information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+        '404':
+          description: Provider not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Modify provider
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Provider ID
+          required: true
+          explode: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Provider'
+      responses:
+        '204':
+          description: Provider modified successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+        '404':
+          description: Provider not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete a provider
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: Provider ID
+          required: true
+          explode: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Provider deleted successfully
+        '400':
+          description: Cannot delete the provider due to existing orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Provider not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Provider:
+      type: object
+      required:
+        - id
+        - code
+        - name
+        - description
+        - contact
+        - phone
+        - address
+        - fax
+        - createdBy
+        - creationDate
+        - modifiedBy
+        - modificationDate
+      properties:
+        id:
+          type: integer
+          description: Provider identifier
+          example: 1
+        code:
+          type: string
+          description: Provider code
+          example: JP_MRK001
+        name:
+          type: string
+          description: Provider name
+          example: 未来道具研究所
+        description:
+          type: string
+          description: Provider description
+          example: 长期合作伙伴
+        contact:
+          type: string
+          description: Provider contact person
+          example: Hououin Kyoma
+        phone:
+          type: string
+          description: Provider phone number
+          example: 12345678901
+        address:
+          type: string
+          description: Provider address
+          example: 藏前桥路交叉路口小巷
+        fax:
+          type: string
+          description: Provider fax number
+          example: 0532-12345678
+        createdBy:
+          type: integer
+          description: ID of the user who created this provider
+          example: 1
+        creationDate:
+          type: string
+          format: date-time
+          description: Date of provider creation
+        modifiedBy:
+          type: integer
+          description: ID of the user who last modified this provider
+          example: 1
+        modificationDate:
+          type: string
+          format: date-time
+          description: Date of last modification
+
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: integer
+          example: 500
+        message:
+          type: string
+          example: internal error
+
+
