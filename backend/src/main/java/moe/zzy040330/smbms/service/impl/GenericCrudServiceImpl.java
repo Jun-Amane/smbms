@@ -1,6 +1,6 @@
 /**
  * Package: moe.zzy040330.smbms.service.impl
- * File: GenericServiceImpl.java
+ * File: GenericCrudServiceImpl.java
  * Author: Ziyu ZHOU
  * Date: 04/01/2025
  * Time: 10:08
@@ -10,18 +10,18 @@ package moe.zzy040330.smbms.service.impl;
 
 import moe.zzy040330.smbms.entity.User;
 import moe.zzy040330.smbms.mapper.GenericMapper;
-import moe.zzy040330.smbms.service.GenericService;
+import moe.zzy040330.smbms.service.GenericCrudService;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
 @Service
-public class GenericServiceImpl<T, PK> implements GenericService<T, PK> {
+public class GenericCrudServiceImpl<T, PK> implements GenericCrudService<T, PK> {
 
     private final GenericMapper<T, PK> genericMapper;
 
-    public GenericServiceImpl(GenericMapper<T, PK> genericMapper) {
+    public GenericCrudServiceImpl(GenericMapper<T, PK> genericMapper) {
         this.genericMapper = genericMapper;
     }
 

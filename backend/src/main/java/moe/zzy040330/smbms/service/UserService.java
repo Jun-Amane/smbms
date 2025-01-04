@@ -9,7 +9,6 @@
  * operations, and it adds user-specific functionalities such as authentication,
  * querying with pagination, and checking for existing user codes.
  */
-
 package moe.zzy040330.smbms.service;
 
 import com.github.pagehelper.PageInfo;
@@ -23,15 +22,16 @@ import java.util.List;
  * UserService provides specific services for User entities including user
  * authentication and advanced searching functionality.
  */
-public interface UserService extends GenericService<User, Long> {
+public interface UserService extends GenericCrudService<User, Long> {
 
     /**
-     * Authenticates a user with their user code and password.
+     * REPLACED WITH AuthenticationService
      *
      * @param userCode     the code of the user trying to log in
      * @param userPassword the password associated with the user code
      * @return the User object if authentication is successful; null otherwise
      */
+    @Deprecated
     User login(String userCode, String userPassword);
 
     /**

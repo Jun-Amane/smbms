@@ -1,6 +1,6 @@
 /**
  * Package: moe.zzy040330.smbms.service
- * File: GenericService.java
+ * File: GenericCrudService.java
  * Author: Ziyu ZHOU
  * Date: 04/01/2025
  * Time: 09:50
@@ -20,7 +20,7 @@ import java.util.List;
  * @param <T>  the entity type handled by this service
  * @param <PK> the type of the primary key for the entity
  */
-public interface GenericService<T, PK> {
+public interface GenericCrudService<T, PK> {
     /**
      * Inserts a new entity into the database.
      *

@@ -18,7 +18,8 @@
 
         <association property="role" javaType="Role">
             <id property="id" column="userRole"/>
-            <result property="name" column="roleName"/>
+            <result property="name" column="role.roleName"/>
+            <result property="code" column="role.roleCode"/>
         </association>
 
         <association property="createdBy" javaType="User">
@@ -33,11 +34,24 @@
 
     <!-- select -->
     <select id="findById" resultType="User" resultMap="UserResultMap">
-        SELECT * FROM smbms_user WHERE id = #{ID}
+        SELECT u.*,
+        r.id AS "role.id",
+        r.roleCode AS "role.roleCode",
+        r.roleName AS "role.roleName"
+        FROM smbms_user AS u
+        LEFT JOIN smbms_role AS r
+        ON u.userRole=r.id
+        WHERE u.id = #{ID}
     </select>
 
     <select id="findAll" resultType="User" resultMap="UserResultMap">
-        SELECT * FROM smbms_user
+        SELECT u.*,
+        r.id AS "role.id",
+        r.roleCode AS "role.roleCode",
+        r.roleName AS "role.roleName"
+        FROM smbms_user AS u
+        LEFT JOIN smbms_role AS r
+        ON u.userRole=r.id
     </select>
 
     <!-- insert -->
@@ -85,13 +99,21 @@
 
     <!-- login -->
     <select id="findByCodeAndPassword" resultType="User" resultMap="UserResultMap">
-        SELECT * FROM smbms_user WHERE userCode = #{code} AND userPassword = #{password}
+        SELECT u.*,
+        r.id AS "role.id",
+        r.roleCode AS "role.roleCode",
+        r.roleName AS "role.roleName"
+        FROM smbms_user AS u
+        LEFT JOIN smbms_role AS r
+        ON u.userRole = r.id
+        WHERE userCode = #{code} AND userPassword = #{password}
     </select>
 
     <!-- query -->
     <select id="findAllUsersByQuery" resultType="User" resultMap="UserResultMap">
         SELECT u.*,
         r.id AS "role.id",
+        r.roleCode AS "role.roleCode",
         r.roleName AS "role.roleName"
         FROM smbms_user AS u
         LEFT JOIN smbms_role AS r
@@ -123,7 +145,14 @@
 
     <!-- find by code -->
     <select id="findByCode" resultType="User" resultMap="UserResultMap">
-        SELECT * FROM smbms_user WHERE userCode = #{code}
+        SELECT u.*,
+        r.id AS "role.id",
+        r.roleCode AS "role.roleCode",
+        r.roleName AS "role.roleName"
+        FROM smbms_user AS u
+        LEFT JOIN smbms_role AS r
+        ON u.userRole=r.id
+        WHERE userCode = #{code}
     </select>
 
 </mapper>

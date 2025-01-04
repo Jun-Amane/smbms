@@ -13,10 +13,12 @@ import moe.zzy040330.smbms.dto.PasswordUpdateRequest;
 import moe.zzy040330.smbms.dto.UserRequest;
 import moe.zzy040330.smbms.entity.Role;
 import moe.zzy040330.smbms.entity.User;
+import moe.zzy040330.smbms.service.JwtService;
 import moe.zzy040330.smbms.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -27,11 +29,14 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, JwtService jwtService) {
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
+    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("/codeexists")
     public Map<String, Object> apiUserCodeexistsGet(@RequestParam("code") String code) {
         var exists = this.userService.findIfUserCodeExists(code);
@@ -49,7 +54,8 @@ public class UserController {
         return response;
     }
 
-    @GetMapping("/")
+    @PreAuthorize("hasRole('SMBMS_ADMIN')")
+    @GetMapping("")
     public ResponseEntity<?> apiUserGet(@RequestParam("queryName") String queryName,
                                         @RequestParam("queryRole") Long roleId,
                                         @RequestParam("pageSize") Integer pageSize,
@@ -58,7 +64,6 @@ public class UserController {
         try {
             var pageInfo = this.userService.findByQuery(queryName, roleId, pageSize, pageIndex);
 
-            // Building the response
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());
             response.put("curPage", pageInfo.getPageNum());
@@ -74,6 +79,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
@@ -90,6 +96,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> apiUserGet(@PathVariable Long id) {
         try {
@@ -108,17 +115,24 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('SMBMS_ADMIN') or #id == authentication.principal.userId")
     @PatchMapping("/{id}/password")
-    public ResponseEntity<?> apiUserIdPasswordPatch(@PathVariable Long id, @RequestBody PasswordUpdateRequest passwordUpdateRequest) {
+    public ResponseEntity<?> apiUserIdPasswordPatch(@PathVariable Long id,
+                                                    @RequestBody PasswordUpdateRequest passwordUpdateRequest,
+                                                    @RequestHeader("Authorization") String authHeader) {
         try {
+
+            String token = authHeader.substring(7);
+
             String newPassword = passwordUpdateRequest.getNewPassword();
             if (newPassword == null || newPassword.isBlank()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ErrorResponse(400, "Invalid input: newPassword cannot be null or empty"));
             }
 
-            // TODO: add modified by here after implemented auth module.
-            boolean success = userService.changePassword(id, newPassword, null, new Date());
+            var modifiedBy = new User();
+            modifiedBy.setId(jwtService.extractUserId(token));
+            boolean success = userService.changePassword(id, newPassword, modifiedBy, new Date());
 
             if (success) {
                 return ResponseEntity.ok("Password updated successfully");
@@ -133,9 +147,13 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> apiUserIdPut(@PathVariable Long id, @RequestBody UserRequest user) {
+    public ResponseEntity<?> apiUserIdPut(@PathVariable Long id, @RequestBody UserRequest user,
+                                          @RequestHeader("Authorization") String authHeader) {
         try {
+            String token = authHeader.substring(7);
+
             if (id == null || user == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ErrorResponse(400, "Invalid input: cannot be null or empty"));
@@ -148,8 +166,10 @@ public class UserController {
 
                 var userObj = userRequest2userObj(user);
 
-                // TODO: add modified by here after implemented auth module.
-                boolean success = this.userService.update(userObj, null, new Date());
+                var modifiedBy = new User();
+                modifiedBy.setId(jwtService.extractUserId(token));
+
+                boolean success = this.userService.update(userObj, modifiedBy, new Date());
 
                 if (success) {
                     return ResponseEntity.ok(" User modified successfully ");
@@ -186,9 +206,13 @@ public class UserController {
         return userObj;
     }
 
-    @PostMapping("/")
-    public ResponseEntity<?> apiUserPost(@RequestBody UserRequest user) {
+    @PreAuthorize("hasRole('SMBMS_ADMIN')")
+    @PostMapping("")
+    public ResponseEntity<?> apiUserPost(@RequestBody UserRequest user,
+                                         @RequestHeader("Authorization") String authHeader) {
         try {
+
+            String token = authHeader.substring(7);
 
             if (user.getCode() == null || user.getCode().isBlank() ||
                     user.getPassword() == null || user.getPassword().isBlank() ||
@@ -205,8 +229,9 @@ public class UserController {
 
             var userObj = userRequest2userObj(user);
 
-            // TODO: createdBy
-            boolean succeed = this.userService.insert(userObj, null, new Date());
+            var modifiedBy = new User();
+            modifiedBy.setId(jwtService.extractUserId(token));
+            boolean succeed = this.userService.insert(userObj, modifiedBy, new Date());
 
             if (succeed) {
                 return ResponseEntity.ok("User added successfully");
@@ -222,6 +247,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("/rolelist")
     public ResponseEntity<?> apiUserRoleListGet() {
         try {
@@ -235,5 +261,4 @@ public class UserController {
         }
     }
 
-    // TODO: login & logout
 }

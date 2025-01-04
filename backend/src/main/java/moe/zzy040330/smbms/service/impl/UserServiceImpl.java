@@ -16,22 +16,25 @@ import moe.zzy040330.smbms.mapper.GenericMapper;
 import moe.zzy040330.smbms.mapper.RoleMapper;
 import moe.zzy040330.smbms.mapper.UserMapper;
 import moe.zzy040330.smbms.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
 @Service
-public class UserServiceImpl extends GenericServiceImpl<User, Long> implements UserService {
+public class UserServiceImpl extends GenericCrudServiceImpl<User, Long> implements UserService {
 
     private final UserMapper userMapper;
     private final RoleMapper roleMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(GenericMapper<User, Long> genericMapper, UserMapper userMapper, RoleMapper roleMapper) {
+    public UserServiceImpl(GenericMapper<User, Long> genericMapper, UserMapper userMapper, RoleMapper roleMapper, PasswordEncoder passwordEncoder) {
         super(genericMapper);
 
         this.userMapper = userMapper;
         this.roleMapper = roleMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -89,7 +92,21 @@ public class UserServiceImpl extends GenericServiceImpl<User, Long> implements U
      */
     @Override
     public Boolean changePassword(Long id, String newPassword, User modifiedBy, Date modificationDate) {
-        return this.userMapper.updateUserPassword(id, newPassword, modifiedBy, modificationDate) > 0;
+        return this.userMapper.updateUserPassword(id, passwordEncoder.encode(newPassword), modifiedBy, modificationDate) > 0;
+    }
+
+    /**
+     * Inserts a new entity into the database. The password should be encoded.
+     *
+     * @param entity       the entity to be inserted
+     * @param createdBy    the user who is creating the entity
+     * @param creationDate the date when the entity is created
+     * @return successful or not
+     */
+    @Override
+    public Boolean insert(User entity, User createdBy, Date creationDate) {
+        entity.setPassword(passwordEncoder.encode(entity.getPassword()));
+        return this.userMapper.insert(entity, createdBy, creationDate) > 0;
     }
 
     /**
