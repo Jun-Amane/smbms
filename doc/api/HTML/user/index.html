@@ -204,6 +204,8 @@
   <li><a href="#apiUserIdGet"><code><span class="http-method">get</span> /api/user/{id}</code></a></li>
   <li><a href="#apiUserIdPasswordPatch"><code><span class="http-method">patch</span> /api/user/{id}/password</code></a></li>
   <li><a href="#apiUserIdPut"><code><span class="http-method">put</span> /api/user/{id}</code></a></li>
+  <li><a href="#apiUserLoginPost"><code><span class="http-method">post</span> /api/user/login</code></a></li>
+  <li><a href="#apiUserLogoutPost"><code><span class="http-method">post</span> /api/user/logout</code></a></li>
   <li><a href="#apiUserPost"><code><span class="http-method">post</span> /api/user</code></a></li>
   <li><a href="#apiUserRolelistGet"><code><span class="http-method">get</span> /api/user/rolelist</code></a></li>
   </ul>
@@ -554,6 +556,102 @@
         <a href="#ErrorResponse">ErrorResponse</a>
   </div> <!-- method -->
   <hr/>
+  <div class="method"><a name="apiUserLoginPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /api/user/login</code></pre></div>
+    <div class="method-summary">User login (<span class="nickname">apiUserLoginPost</span>)</div>
+    <div class="method-notes">Authenticates a user and returns a token on successful login.</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">body <a href="#user_login_body">user_login_body</a> (required)</div>
+      
+            <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; User credentials </div>
+                </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#inline_response_200_2">inline_response_200_2</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "userName" : "系统管理员",
+  "userId" : 1,
+  "userCode" : "admin",
+  "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successfully authenticated
+        <a href="#inline_response_200_2">inline_response_200_2</a>
+    <h4 class="field-label">401</h4>
+    Authentication failed
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">500</h4>
+    Internal server error
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="apiUserLogoutPost"></a>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /api/user/logout</code></pre></div>
+    <div class="method-summary">User logout (<span class="nickname">apiUserLogoutPost</span>)</div>
+    <div class="method-notes">Invalidates the user's session token.</div>
+
+
+
+
+
+
+
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Successfully logged out
+        <a href="#"></a>
+    <h4 class="field-label">401</h4>
+    Unauthorized access
+        <a href="#ErrorResponse">ErrorResponse</a>
+    <h4 class="field-label">500</h4>
+    Internal server error
+        <a href="#ErrorResponse">ErrorResponse</a>
+  </div> <!-- method -->
+  <hr/>
   <div class="method"><a name="apiUserPost"></a>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
@@ -670,6 +768,8 @@
     <li><a href="#id_password_body"><code>id_password_body</code></a></li>
     <li><a href="#inline_response_200"><code>inline_response_200</code></a></li>
     <li><a href="#inline_response_200_1"><code>inline_response_200_1</code></a></li>
+    <li><a href="#inline_response_200_2"><code>inline_response_200_2</code></a></li>
+    <li><a href="#user_login_body"><code>user_login_body</code></a></li>
   </ol>
 
   <div class="model">
@@ -758,6 +858,30 @@
     
     <div class="field-items">
       <div class="param">result </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="inline_response_200_2"><code>inline_response_200_2</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">userId (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 1</span></div>
+<div class="param">userName (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: 系统管理员</span></div>
+<div class="param">userCode (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+          <div class="param-desc"><span class="param-type">example: admin</span></div>
+<div class="param">token (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Authentication token </div>
+          <div class="param-desc"><span class="param-type">example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</span></div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="user_login_body"><code>user_login_body</code></a> <a class="up" href="#__Models">Up</a></h3>
+    
+    <div class="field-items">
+      <div class="param">username </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The user&#x27;s username </div>
+          <div class="param-desc"><span class="param-type">example: admin</span></div>
+<div class="param">password </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> The user&#x27;s password </div>
+          <div class="param-desc"><span class="param-type">example: mypassword</span></div>
     </div>  <!-- field-items -->
   </div>
   </body>
