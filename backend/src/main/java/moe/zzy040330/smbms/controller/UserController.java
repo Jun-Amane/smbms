@@ -15,6 +15,8 @@ import moe.zzy040330.smbms.entity.Role;
 import moe.zzy040330.smbms.entity.User;
 import moe.zzy040330.smbms.service.JwtService;
 import moe.zzy040330.smbms.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,8 @@ import java.util.Map;
 @RequestMapping("/api/user")
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     private final UserService userService;
     private final JwtService jwtService;
 
@@ -38,20 +42,27 @@ public class UserController {
 
     @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("/codeexists")
-    public Map<String, Object> apiUserCodeexistsGet(@RequestParam("code") String code) {
-        var exists = this.userService.findIfUserCodeExists(code);
+    public ResponseEntity<?> apiUserCodeexistsGet(@RequestParam("code") String code) {
+        try {
+            var exists = this.userService.findIfUserCodeExists(code);
 
-        String result = "";
-        if (exists) {
-            result = "exists";
-        } else {
-            result = "not exists";
+            String result;
+            if (exists) {
+                result = "exists";
+            } else {
+                result = "not exists";
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("result", result);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(500, "Internal server error"));
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("result", result);
-
-        return response;
     }
 
     @PreAuthorize("hasRole('SMBMS_ADMIN')")
@@ -73,7 +84,7 @@ public class UserController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            // TODO: Log exception (consider using a logger rather than printing stack traces)
+            logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
@@ -90,7 +101,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "User not found"));
             }
         } catch (Exception e) {
-            // TODO: Log exception (consider using a logger rather than printing stack traces)
+            logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
@@ -109,7 +120,7 @@ public class UserController {
 
             return ResponseEntity.ok(user);
         } catch (Exception e) {
-            // TODO: Log exception (consider using a logger rather than printing stack traces)
+            logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
@@ -141,7 +152,7 @@ public class UserController {
                         .body(new ErrorResponse(404, "User not found"));
             }
         } catch (Exception e) {
-            // TODO: Log the exception
+            logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
@@ -183,11 +194,10 @@ public class UserController {
             }
 
         } catch (Exception e) {
-            // TODO: Log the exception
+            logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
-
     }
 
     private static User userRequest2userObj(UserRequest user) {
@@ -241,7 +251,7 @@ public class UserController {
             }
 
         } catch (Exception e) {
-            // TODO: Log the exception
+            logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
@@ -255,7 +265,7 @@ public class UserController {
 
             return ResponseEntity.ok(roleList);
         } catch (Exception e) {
-            // TODO: Log the exception
+            logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
