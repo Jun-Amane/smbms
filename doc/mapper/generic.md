@@ -8,11 +8,9 @@
 ## Methods
 
 - Basic CRUD methods
-	* `Integer insert(T entity)`
-		+ param: entity
+	* `Integer insert(T entity, User createdBy, Date creationDate)`
 		+ return: rows affected
-	* `Integer update(T entity)`
-		+ param: entity
+	* `Integer update(T entity, User modifiedBy, Date modificationDate)`
 		+ return: rows affected
 	* `Integer deleteById(PK id)`
 		+ param: primary key ID
