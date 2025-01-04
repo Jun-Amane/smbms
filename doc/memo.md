@@ -340,6 +340,8 @@ backend
     * 每个模块开发完成后，编写单元测试，测试成功后提交至git
     * controller层的RESTful API可以使用Python脚本测试，编写后放到`./scripts`目录中
 
+- 注意使用`org.slf4j.Logger`打印日志，而不是使用`System.out.println()`。
+
 - ***详细设计文档已给出***，参见`./doc/*`
 
 
