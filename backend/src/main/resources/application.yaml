@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver # TODO: there should be changed if you're using MySQL instead of MariaDB
+    url: jdbc:mariadb://localhost:3306/smbmsDB
+    username: s0phit1a
+    password: # TODO: change here
+
+pagehelper:
+  reasonable: true
+mybatis:
+  type-aliases-package: moe.zzy040330.smbms.entity
+  mapper-locations: classpath*:mapper/*.xml

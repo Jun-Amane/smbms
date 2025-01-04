@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="moe.zzy040330.smbms.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="User">
+        <id property="id" column="id"/>
+        <result property="code" column="userCode"/>
+        <result property="name" column="userName"/>
+        <result property="password" column="userPassword"/>
+        <result property="gender" column="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="creationDate" column="creationDate"/>
+        <result property="modificationDate" column="modifyDate"/>
+
+        <association property="role" javaType="Role">
+            <id property="id" column="userRole"/>
+            <result property="name" column="roleName"/>
+        </association>
+
+        <association property="createdBy" javaType="User">
+            <id property="id" column="createdBy"/>
+        </association>
+
+        <association property="modifiedBy" javaType="User">
+            <id property="id" column="modifyBy"/>
+        </association>
+    </resultMap>
+
+
+    <!-- select -->
+    <select id="findById" resultType="User" resultMap="UserResultMap">
+        SELECT * FROM smbms_user WHERE id = #{ID}
+    </select>
+
+    <select id="findAll" resultType="User" resultMap="UserResultMap">
+        SELECT * FROM smbms_user
+    </select>
+
+    <!-- insert -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="entity.id">
+        INSERT INTO smbms_user(userCode, userName, userPassword, gender, birthday, phone, address, createdBy,
+        creationDate, userRole)
+        VALUES(#{entity.code}, #{entity.name}, #{entity.password}, #{entity.gender}, #{entity.birthday},
+        #{entity.phone}, #{entity.address}, #{createdBy.id},
+        #{creationDate}, #{entity.role.id})
+    </insert>
+
+    <!-- modify -->
+    <update id="update">
+        UPDATE smbms_user
+        <set>
+            <if test="entity.name != null and entity.name != ''">
+                userName = #{entity.name},
+            </if>
+            <if test="entity.gender != null">
+                gender = #{entity.gender},
+            </if>
+            <if test="entity.birthday != null">
+                birthday = #{entity.birthday},
+            </if>
+            <if test="entity.address != null and entity.address != ''">
+                address = #{entity.address},
+            </if>
+            <if test="entity.phone != null and entity.phone != ''">
+                phone = #{entity.phone},
+            </if>
+            <if test="entity.role != null and entity.role.id != null">
+                userRole = #{entity.role.id},
+            </if>
+            modifyBy=#{modifiedBy.id},
+            modifyDate=#{modificationDate}
+        </set>
+        WHERE id=#{entity.id}
+    </update>
+
+    <!-- delete -->
+    <delete id="deleteById">
+        DELETE FROM smbms_user
+        WHERE id=#{id}
+    </delete>
+
+    <!-- login -->
+    <select id="findByCodeAndPassword" resultType="User" resultMap="UserResultMap">
+        SELECT * FROM smbms_user WHERE userCode = #{code} AND userPassword = #{password}
+    </select>
+
+    <!-- query -->
+    <select id="findAllUsersByQuery" resultType="User" resultMap="UserResultMap">
+        SELECT u.*,
+        r.id AS "role.id",
+        r.roleName AS "role.roleName"
+        FROM smbms_user AS u
+        LEFT JOIN smbms_role AS r
+        ON u.userRole = r.id
+        <where>
+            <if test="name != null and name != ''">
+                u.userName LIKE CONCAT('%', #{name}, '%')
+            </if>
+
+            <if test="roleId != null">
+                AND u.userRole = #{roleId}
+            </if>
+        </where>
+        ORDER BY u.id
+    </select>
+
+    <!-- change password -->
+    <update id="updateUserPassword">
+        UPDATE smbms_user
+        <set>
+            <if test="password != null and password != ''">
+                userPassword = #{password},
+            </if>
+            modifyBy = #{modifiedBy.id},
+            modifyDate = #{modificationDate}
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- find by code -->
+    <select id="findByCode" resultType="User" resultMap="UserResultMap">
+        SELECT * FROM smbms_user WHERE userCode = #{code}
+    </select>
+
+</mapper>
