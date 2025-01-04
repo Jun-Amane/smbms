@@ -208,6 +208,8 @@
      * Description: TODO: change me
      */
     ```
+- 每一个后端模块都需要编写相应的单元测试，提交前进行测试。
+- 对于RESTful API，可以撰写脚本进行测试，放入`./scripts`目录中。
 
 ---
 
