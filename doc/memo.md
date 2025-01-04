@@ -228,6 +228,123 @@
 
 ---
 
+## 关于后端开发
+
+### 目录结构
+```bash
+backend
+├── HELP.md
+├── mvnw
+├── mvnw.cmd
+├── pom.xml     # Maven配置文件
+├── src         # 源代码
+│   ├── main
+│   │   ├── java    # Java代码
+│   │   │   └── moe
+│   │   │       └── zzy040330
+│   │   │           └── smbms   # 基包：moe.zzy040330.smbms
+│   │   │               ├── config                              # SpringBoot配置相关类
+│   │   │               │   ├── ApplicationConfiguration.java
+│   │   │               │   ├── JwtAuthenticationFilter.java
+│   │   │               │   └── SecurityConfiguration.java
+│   │   │               ├── controller                          # Controller层
+│   │   │               │   ├── AuthenticationController.java
+│   │   │               │   └── UserController.java
+│   │   │               ├── dto                                 # DTO数据结构
+│   │   │               │   ├── ErrorResponse.java
+│   │   │               │   ├── LoginRequest.java
+│   │   │               │   ├── LoginResponse.java
+│   │   │               │   ├── PasswordUpdateRequest.java
+│   │   │               │   └── UserRequest.java
+│   │   │               ├── entity                              # 实体类
+│   │   │               │   ├── Role.java
+│   │   │               │   ├── SecurityUser.java
+│   │   │               │   └── User.java
+│   │   │               ├── mapper                              # 映射类
+│   │   │               │   ├── GenericMapper.java
+│   │   │               │   ├── RoleMapper.java
+│   │   │               │   └── UserMapper.java
+│   │   │               ├── service                             # 服务类
+│   │   │               │   ├── AuthenticationService.java      # 接口
+│   │   │               │   ├── GenericCrudService.java
+│   │   │               │   ├── impl                            # 具体实现类
+│   │   │               │   │   ├── AuthenticationServiceImpl.java
+│   │   │               │   │   ├── GenericCrudServiceImpl.java
+│   │   │               │   │   └── UserServiceImpl.java
+│   │   │               │   ├── JwtService.java
+│   │   │               │   └── UserService.java
+│   │   │               ├── SmbmsApplication.java               # 根SpringBoot程序类
+│   │   │               └── utils                               # 实用类
+│   │   └── resources                       # 资源文件
+│   │       ├── application.yaml            # SpringBoot配置文件
+│   │       ├── moe
+│   │       │   └── zzy040330
+│   │       │       └── smbms
+│   │       │           └── mapper              # Mybatis映射配置文件
+│   │       │               ├── RoleMapper.xml
+│   │       │               └── UserMapper.xml
+│   │       ├── static
+│   │       └── templates
+│   └── test                                # 单元测试类
+│       ├── java
+│       │   └── moe
+│       │       └── zzy040330
+│       │           └── smbms
+│       │               ├── mapper          # 用于测试mapper模块
+│       │               │   ├── RoleMapperTest.java
+│       │               │   └── UserMapperTest.java
+│       │               └── service                     # 用于测试service模块
+│       │                   ├── AuthenticationServiceTest.java
+│       │                   └── UserServiceTest.java
+│       └── resources                       # 单元测试的配置文件
+│           ├── application-test.yaml       # 测试环境配置文件（包含测试数据库等）
+│           └── schema.sql                  # 测试数据库结构
+└── target
+
+```
+
+### 注意事项
+
+- `User`相关实体类、mapper类、service类、controller类已经开发完成，可作参考。
+
+- ***注意所有的TODO注释，可能需要采取操作***
+    * 例如`application.yaml`中需要按需配置数据库驱动、地址、用户名和密码。
+    * 这类个人设置文件编辑后，***不要上传到git仓库***
+
+- 注意类的继承关系
+    * 例如mapper模块中，`GenericMapper`定义了基础的CRUD操作，各实体类的mappers需要继承`GenericMapper`，复用其中的CRUD操作。
+    * service模块中，首先需要定义实体类的Service接口，实现`GenericGrudService`接口（同样里面定义了基础的可复用的CRUD操作），再于`service.impl`中实现具体类，并继承`GenericCrudServiceImpl`。具体参见`UserService` 接口与`UserServiceImpl`实现类。
+
+- 注意RESTful API的路径
+    * 根路径是`/api`，按照实体分类
+    * 例如用户（User）相关API：`/api/user`
+    * 账单（Bill）相关API：`/api/bill`
+    * 供应商（Provider）相关API：`/api/provider`
+    * etc.
+    * 用户认证相关路径：
+        + 登录：`/auth/login`
+        + 退出：`/auth/logout`
+    * ***！！！具体细节参见API文档！！！***
+
+- 注意用户认证
+    * 除了登录以外，所有API操作都需要认证
+    * 使用请求头Authorization中附加的token认证
+    * 认证相关已经使用相关Filter实现，不需要额外操作
+    * 用户操作需要特别的管理员权限，使用@PreAuthorize注解实现（已经实现）
+    * **某些操作需要获取登录用户的身份（例如需要modifiedBy、createdBy参数时）**：
+        + 通过`@RequestHeader("Authorization") String authHeader`参数获取请求头的参数
+        + 使用`String token = authHeader.substring(7);`获取token字符串
+        + 使用`jwtService.extractUserId(token)`获取用户ID
+
+- 注意编写单元测试
+    * 每个模块开发完成后，编写单元测试，测试成功后提交至git
+    * controller层的RESTful API可以使用Python脚本测试，编写后放到`./scripts`目录中
+
+- ***详细设计文档已给出***，参见`./doc/*`
+
+
+---
+
 rev. 0401 by Jun.
 
 
