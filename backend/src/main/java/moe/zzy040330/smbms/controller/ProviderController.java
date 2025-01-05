@@ -22,11 +22,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/providers")
+@RequestMapping("/api/provider")
 public class ProviderController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProviderController.class);
@@ -40,9 +39,8 @@ public class ProviderController {
     }
 
     /**
-     * 获取所有供应商
+     * Fetch all providers
      *
-     * @return 返回所有供应商的信息
      */
     @GetMapping("")
     public ResponseEntity<?> apiprovidergetall(
@@ -59,7 +57,7 @@ public class ProviderController {
             response.put("curPage", pageInfo.getPageNum());
             response.put("totalPages", pageInfo.getPages());
             response.put("pageSize", pageInfo.getPageSize());
-            response.put("providers", pageInfo.getList());
+            response.put("providers", pageInfo.getList().stream().map(ProviderController::providerObj2ProviderDto));
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -71,10 +69,7 @@ public class ProviderController {
     }
 
     /**
-     * 删除供应商
-     *
-     * @param id 供应商 ID
-     * @return 删除结果
+     * Delete provider
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> apiproviderdelete(@PathVariable Long id) {
@@ -90,15 +85,12 @@ public class ProviderController {
             logger.error(e.getMessage());
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error" + e.getMessage()));
         }
     }
 
     /**
-     * 获取单个供应商
-     *
-     * @param id 供应商 ID
-     * @return 供应商详细信息
+     * Get provider by id
      */
     @GetMapping("/{id}")
     public ResponseEntity<?> apiproviderget(@PathVariable Long id) {
@@ -108,13 +100,12 @@ public class ProviderController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new ErrorResponse(404, "Provider not found"));
             }
-            return ResponseEntity.ok(provider);
+            return ResponseEntity.ok(providerObj2ProviderDto(provider));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
     }
-
 
     private static Provider providerDto2ProviderObj(ProviderDto providerDto) {
         Provider provider = new Provider();
@@ -145,11 +136,7 @@ public class ProviderController {
     }
 
     /**
-     * 更新供应商信息
-     *
-     * @param id          供应商 ID
-     * @param providerDto 供应商详细信息
-     * @return 更新结果
+     * Update provider by id
      */
     @PutMapping("/{id}")
     public ResponseEntity<?> apiproviderput(
@@ -176,6 +163,7 @@ public class ProviderController {
 
                 // Convert ProviderRequest to Provider entity
                 Provider providerObj = providerDto2ProviderObj(providerDto);
+                providerObj.setId(id);
 
                 // Get the modifiedBy user from the token
                 User modifiedBy = new User();
@@ -188,7 +176,7 @@ public class ProviderController {
                 boolean success = providerService.update(providerObj);
 
                 if (success) {
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+                    return ResponseEntity.ok("Provider modified succeed");
                 } else {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new ErrorResponse(500, "Internal server error"));
@@ -205,18 +193,13 @@ public class ProviderController {
     }
 
     /**
-     * 新增供应商
+     * Add new provider
      */
     @PostMapping
     public ResponseEntity<?> apiProviderPost(@RequestBody ProviderDto providerDto,
                                              @RequestHeader("Authorization") String authHeader) {
         try {
 
-            // Extract the token from the Authorization header
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ErrorResponse(400, "Invalid Authorization header format"));
-            }
             String token = authHeader.substring(7);
 
             // Validate the input data

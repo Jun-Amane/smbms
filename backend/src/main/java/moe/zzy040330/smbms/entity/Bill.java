@@ -1,6 +1,6 @@
 /**
  * Package: moe.zzy040330.smbms.entity
- * File: Provider.java
+ * File: Bill.java
  * Author: Mingxue Li
  * Date: 05/01/2025
  * Description: This class represents a Bill entity with basic information.

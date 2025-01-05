@@ -1,6 +1,6 @@
 /**
- * Package: moe.zzy040330.smbms.controller
- * File: ProviderRequest.java
+ * Package: moe.zzy040330.smbms.dto
+ * File: ProviderDto.java
  * Author: Wenqiang Chen
  * Date: 05/01/2025
  * Time: 11:49

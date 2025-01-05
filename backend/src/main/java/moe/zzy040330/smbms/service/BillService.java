@@ -1,3 +1,12 @@
+/**
+ * Package: moe.zzy040330.smbms.service
+ * File: BillService.java
+ * Author: Xiaoteng Ma & Mingxue Li
+ * Date: 05/01/2025
+ * Description: The BillService interface defines the business operations specific to the
+ * Bill entity. It extends the GenericService interface, inheriting basic CRUD
+ * operations, and it adds bill-specific functionalities.
+ */
 package moe.zzy040330.smbms.service;
 
 import com.github.pagehelper.PageInfo;

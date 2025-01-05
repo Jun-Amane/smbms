@@ -1,3 +1,10 @@
+/**
+ * Package: moe.zzy040330.smbms.service.impl
+ * File: BillServiceImpl.java
+ * Author: Xiaoteng Ma & Mingxue Li
+ * Date: 05/01/2025
+ * Description: implemented bill service interface
+ */
 package moe.zzy040330.smbms.service.impl;
 
 import moe.zzy040330.smbms.entity.Bill;

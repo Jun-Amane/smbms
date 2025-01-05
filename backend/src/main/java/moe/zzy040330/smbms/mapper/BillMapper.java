@@ -1,3 +1,12 @@
+/**
+ * Package: moe.zzy040330.smbms.mapper
+ * File: BillMapper.java
+ * Author: Mingxue Li & Xiaoteng Ma
+ * Date: 05/01/2025
+ * Description: This interface defines the database operations specific to
+ * the Bill entity. It extends the GenericMapper interface for basic CRUD
+ * operations but no specific operations required.
+ */
 package moe.zzy040330.smbms.mapper;
 
 import moe.zzy040330.smbms.entity.Bill;
