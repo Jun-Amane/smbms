@@ -35,7 +35,7 @@ public interface ProviderService extends GenericCrudService<User,Long> {
 
     /**
      * Deleting provider by specified id
-     * Before operation, use userMapper.findBillCountByProviderId() to find out the number of bills related to the provider.
+     * Before operation, use billMapper.findBillCountByProviderId() to find out the number of bills related to the provider.
      * If there are bills in system related to the provider, then the provider cannot be deleted.
      *
      * @param id    the ID of the provider who will be deleted
