@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="moe.zzy040330.smbms.mapper.BillMapper">
+    <resultMap id="BillResultMap" type="Bill">
+    <id property="id" column="id"/>
+    <result property="code" column="billcode"/>
+    <result property="productName" column="productName"/>
+    <result property="productDescription" column="productDesc"/>
+    <result property="productUnit" column="productUnit"/>
+    <result property="productCount" column="productCount"/>
+    <result property="totalPrice" column="totalPrice"/>
+    <result property="isPaid" column="isPayment"/>
+    <result property="createdBy.id" column="createdBy"/>
+    <result property="creationDate" column="creationDate"/>
+    <result property="modifiedBy.id" column="modifyBy"/>
+    <result property="modificationDate" column="modifyDate"/>
+        <result property="provider.id" column="provideId"/>
+        <association property="provider" javaType="Provider">
+            <id property="id" column="provideId"/>
+        </association>
+
+        <!-- CreatedBy association -->
+        <association property="createdBy" javaType="User">
+            <id property="id" column="createdBy"/>
+        </association>
+
+        <!-- ModifiedBy association -->
+        <association property="modifiedBy" javaType="User">
+            <id property="id" column="modifyBy"/>
+        </association>
+    </resultMap>
+    <!-- Select bill by ID -->
+    <select id="findById" resultType="Bill" resultMap="BillResultMap">
+        SELECT b.*,
+        p.id AS "provider.id",
+        u1.id AS "createdBy.id",
+        u2.id AS "modifiedBy.id"
+        FROM smbms_bill AS b
+        LEFT JOIN smbms_provider AS p ON b.provideId = p.id
+        LEFT JOIN smbms_user AS u1 ON b.createdBy = u1.id
+        LEFT JOIN smbms_user AS u2 ON b.modifyBy = u2.id
+        WHERE b.id = #{id}
+    </select>
+
+    <!-- Select all bills -->
+    <select id="findAll" resultType="Bill" resultMap="BillResultMap">
+        SELECT b.*,
+        p.id AS "provider.id",
+        u1.id AS "createdBy.id",
+        u2.id AS "modifiedBy.id"
+        FROM smbms_bill AS b
+        LEFT JOIN smbms_provider AS p ON b.provideId = p.id
+        LEFT JOIN smbms_user AS u1 ON b.createdBy = u1.id
+        LEFT JOIN smbms_user AS u2 ON b.modifyBy = u2.id
+    </select>
+
+    <!-- Select bills by query -->
+    <select id="findAllBillsByQuery" parameterType="Bill" resultMap="BillResultMap">
+        SELECT b.*,
+        p.id AS "provider.id",
+        u1.id AS "createdBy.id",
+        u2.id AS "modifiedBy.id"
+        FROM smbms_bill AS b
+        LEFT JOIN smbms_provider AS p ON b.provideId = p.id
+        LEFT JOIN smbms_user AS u1 ON b.createdBy = u1.id
+        LEFT JOIN smbms_user AS u2 ON b.modifyBy = u2.id
+        <where>
+            <if test="productName != null and productName != ''">
+                b.productName LIKE CONCAT('%', #{productName}, '%')
+            </if>
+            <if test="isPaid != null">
+                AND b.isPaid = #{isPaid}
+            </if>
+            <if test="provider.id != null">
+                AND b.provideId = #{provider.id}
+            </if>
+        </where>
+    </select>
+
+    <!-- Insert bill -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO smbms_bill (code, productName, productDescription, productUnit, productCount, totalPrice,
+        isPaid, provideId, createdBy, creationDate)
+        VALUES (#{code}, #{productName}, #{productDescription}, #{productUnit}, #{productCount}, #{totalPrice},
+        #{isPaid}, #{provider.id}, #{createdBy.id}, #{creationDate})
+    </insert>
+
+    <!-- Update bill -->
+    <update id="update">
+        UPDATE smbms_bill
+        <set>
+            <if test="productName != null and productName != ''">
+                productName = #{productName},
+            </if>
+            <if test="productDescription != null and productDescription != ''">
+                productDescription = #{productDescription},
+            </if>
+            <if test="productUnit != null and productUnit != ''">
+                productUnit = #{productUnit},
+            </if>
+            <if test="productCount != null">
+                productCount = #{productCount},
+            </if>
+            <if test="totalPrice != null">
+                totalPrice = #{totalPrice},
+            </if>
+            <if test="isPaid != null">
+                isPaid = #{isPaid},
+            </if>
+            <if test="provider != null and provider.id != null">
+                provideId = #{provider.id},
+            </if>
+            modifyBy = #{modifiedBy.id},
+            modifyDate = #{modificationDate}
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- Delete bill by ID -->
+    <delete id="deleteById">
+        DELETE FROM smbms_bill
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
