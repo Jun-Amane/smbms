@@ -90,7 +90,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
@@ -125,7 +125,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN') or #id == authentication.principal.id")
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or #id == authentication.principal.id")
     @PatchMapping("/{id}/password")
     public ResponseEntity<?> apiUserIdPasswordPatch(@PathVariable Long id,
                                                     @RequestBody PasswordUpdateRequest passwordUpdateRequest,
@@ -157,7 +157,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> apiUserIdPut(@PathVariable Long id, @RequestBody UserDTO user,
                                           @RequestHeader("Authorization") String authHeader) {
@@ -237,7 +237,7 @@ public class UserController {
         return roleResponse;
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN')")
     @PostMapping("")
     public ResponseEntity<?> apiUserPost(@RequestBody UserDTO user,
                                          @RequestHeader("Authorization") String authHeader) {
