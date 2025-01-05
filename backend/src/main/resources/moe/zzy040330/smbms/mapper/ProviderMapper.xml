@@ -65,7 +65,7 @@
             <if test="entity.fax != null and entity.fax != ''">
                 proFax = #{entity.fax},
             </if>
-            modifyBy = #{modifiedBy},
+            modifyBy = #{modifiedBy.id},
             modifyDate = #{modificationDate}
         </set>
         WHERE id = #{entity.id}
