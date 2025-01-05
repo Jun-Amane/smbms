@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/providers")
+@RequestMapping("/api/provider")
 public class ProviderController {
 
     private static final Logger logger = LoggerFactory.getLogger(ProviderController.class);
@@ -41,7 +41,7 @@ public class ProviderController {
     private final ProviderService providerService;
     private final JwtService jwtService;
 
-    public ProviderController(ProviderService providerService,JwtService jwtService) {
+    public ProviderController(ProviderService providerService, JwtService jwtService) {
         this.providerService = providerService;
         this.jwtService = jwtService;
     }
@@ -109,7 +109,6 @@ public class ProviderController {
     }
 
 
-
     private static Provider providerRequest2ProviderObj(ProviderRequest providerRequest) {
         // 创建新的 Provider 对象
         Provider provider = new Provider();
@@ -153,7 +152,7 @@ public class ProviderController {
     public ResponseEntity<?> apiproviderput(
             @PathVariable Long id,
             @RequestBody ProviderRequest providerDto,
-    @RequestHeader("Authorization") String authHeader) {
+            @RequestHeader("Authorization") String authHeader) {
         try {
             // Extract token from Authorization header
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -174,6 +173,7 @@ public class ProviderController {
 
                 // Convert ProviderRequest to Provider entity
                 Provider providerObj = providerRequest2ProviderObj(providerDto);
+                providerObj.setId(id);
 
                 // Get the modifiedBy user from the token
                 User modifiedBy = new User();
@@ -183,8 +183,9 @@ public class ProviderController {
                 boolean success = providerService.update(providerObj, modifiedBy, new Date());
 
                 if (success) {
-                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+                    return ResponseEntity.ok("modify success");
                 } else {
+                    logger.error("modify failed, returning 500");
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new ErrorResponse(500, "Internal server error"));
                 }
