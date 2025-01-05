@@ -10,6 +10,7 @@ package moe.zzy040330.smbms.controller;
 
 import moe.zzy040330.smbms.dto.ErrorResponse;
 import moe.zzy040330.smbms.dto.PasswordUpdateRequest;
+import moe.zzy040330.smbms.dto.RoleResponse;
 import moe.zzy040330.smbms.dto.UserRequest;
 import moe.zzy040330.smbms.entity.Role;
 import moe.zzy040330.smbms.entity.User;
@@ -217,6 +218,14 @@ public class UserController {
         return userObj;
     }
 
+    private static RoleResponse roleObj2roleResponse(Role role) {
+        var roleResponse = new RoleResponse();
+        roleResponse.setId(role.getId());
+        roleResponse.setName(role.getName());
+        roleResponse.setCode(role.getCode());
+        return roleResponse;
+    }
+
     @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @PostMapping("")
     public ResponseEntity<?> apiUserPost(@RequestBody UserRequest user,
@@ -262,7 +271,7 @@ public class UserController {
     @GetMapping("/rolelist")
     public ResponseEntity<?> apiUserRoleListGet() {
         try {
-            var roleList = this.userService.getRoleList();
+            var roleList = this.userService.getRoleList().stream().map(UserController::roleObj2roleResponse);
 
             return ResponseEntity.ok(roleList);
         } catch (Exception e) {
