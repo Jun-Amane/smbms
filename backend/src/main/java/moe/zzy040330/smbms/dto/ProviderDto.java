@@ -18,6 +18,20 @@ public class ProviderDto {
     private String fax;
     private String contact;
 
+    public ProviderDto() {
+    }
+
+    public ProviderDto(Long id, String code, String name, String description, String address, String phone, String fax, String contact) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.address = address;
+        this.phone = phone;
+        this.fax = fax;
+        this.contact = contact;
+    }
+
     // Getter and Setter methods
     public Long getId() {
         return id;
