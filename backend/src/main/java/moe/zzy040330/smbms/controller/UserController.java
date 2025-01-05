@@ -42,7 +42,6 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("/codeexists")
     public ResponseEntity<?> apiUserCodeexistsGet(@RequestParam("code") String code) {
         try {
@@ -67,7 +66,6 @@ public class UserController {
 
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("")
     public ResponseEntity<?> apiUserGet(@RequestParam(value = "queryName", required = false) String queryName,
                                         @RequestParam(value = "queryRole", required = false) Long roleId,
@@ -109,7 +107,6 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> apiUserGet(@PathVariable Long id) {
         try {
@@ -281,7 +278,6 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("/rolelist")
     public ResponseEntity<?> apiUserRoleListGet() {
         try {
