@@ -1,11 +1,14 @@
 package moe.zzy040330.smbms.service;
+
 import com.github.pagehelper.PageInfo;
 import moe.zzy040330.smbms.entity.Bill;
 import moe.zzy040330.smbms.service.GenericCrudService;
+
 /**
  * BillService provides specific services for Bill entities, including advanced searching functionality.
  */
 public interface BillService extends GenericCrudService<Bill, Long> {
+
     /**
      * Finds bills based on specified query conditions with pagination support.
      *
