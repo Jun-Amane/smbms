@@ -13,15 +13,17 @@ public class LoginResponse {
     private String userName;
     private Long userId;
     private String userCode;
+    private String userRoleCode;
 
     public LoginResponse() {
     }
 
-    public LoginResponse(String token, String userName, Long userId, String userCode) {
+    public LoginResponse(String token, String userName, Long userId, String userCode, String userRoleId) {
         this.token = token;
         this.userName = userName;
         this.userId = userId;
         this.userCode = userCode;
+        this.userRoleCode = userRoleId;
     }
 
     public String getToken() {
@@ -54,5 +56,13 @@ public class LoginResponse {
 
     public void setUserCode(String userCode) {
         this.userCode = userCode;
+    }
+
+    public String getUserRoleCode() {
+        return userRoleCode;
+    }
+
+    public void setUserRoleCode(String userRoleCode) {
+        this.userRoleCode = userRoleCode;
     }
 }
