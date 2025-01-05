@@ -39,7 +39,7 @@ public class ProviderServiceTest {
     private final User modifiedByUser = new User();
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         jdbcTemplate.execute("DELETE FROM smbms_provider");
 
         Provider testProvider = new Provider();
@@ -74,14 +74,14 @@ public class ProviderServiceTest {
     }
 
     @Test
-    public void testFindAll(){
+    public void testFindAll() {
         List<Provider> providers = providerService.findAll();
         assertFalse(providers.isEmpty());
-        assertEquals(1,providers.size());
+        assertEquals(1, providers.size());
     }
 
     @Test
-    public void testInsert(){
+    public void testInsert() {
         Provider newProvider = new Provider();
         newProvider.setCode("newCode");
         newProvider.setName("new Provider");
@@ -95,45 +95,45 @@ public class ProviderServiceTest {
         newProvider.setCreationDate(new Date());
         newProvider.setModificationDate(new Date());
 
-        var rowsAffected = providerService.insert(newProvider);
-        assertEquals(true,rowsAffected);
+        var succeed = providerService.insert(newProvider);
+        assertEquals(true, succeed);
         assertNotNull(newProvider.getId());
     }
 
     @Test
-    public void testUpdate(){
+    public void testUpdate() {
         Provider existingProvider = providerService.findById(testProviderId);
         existingProvider.setName("Updated Name");
         existingProvider.setModifiedBy(modifiedByUser);
         existingProvider.setModificationDate(new Date());
 
-        var rowsAffected = providerService.update(existingProvider);
-        assertEquals(true,rowsAffected);
+        var succeed = providerService.update(existingProvider);
+        assertEquals(true, succeed);
 
         Provider updatedProvider = providerService.findById(testProviderId);
-        assertEquals("Updated Name",updatedProvider.getName());
+        assertEquals("Updated Name", updatedProvider.getName());
     }
 
     @Test
-    public void testDeleteById(){
-        var rowsAffected = providerService.deleteById(testProviderId);
-        assertEquals(true,rowsAffected);
+    public void testDeleteById() {
+        var succeed = providerService.deleteById(testProviderId);
+        assertEquals(true, succeed);
 
         Provider deletedProvider = providerService.findById(testProviderId);
         assertNull(deletedProvider);
     }
 
     @Test
-    public void testFindAllProvidersByQuery(){
-        PageInfo<Provider> pageInfo = providerService.getProviderList("Test",null,1,10);
+    public void testFindAllProvidersByQuery() {
+        PageInfo<Provider> pageInfo = providerService.getProviderList("Test", null, 1, 10);
         assertNotNull(pageInfo);
         assertFalse(pageInfo.getList().isEmpty());
-        assertEquals(1,pageInfo.getList().size());
+        assertEquals(1, pageInfo.getList().size());
     }
 
     @Test
-    public void testDeleteProviderById(){
-        var rowsAffected = providerService.deleteProviderById(testProviderId);
-        assertEquals(true,rowsAffected);
+    public void testDeleteProviderById() {
+        var succeed = providerService.deleteProviderById(testProviderId);
+        assertEquals(true, succeed);
     }
 }
