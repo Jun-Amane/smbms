@@ -82,7 +82,7 @@
         SELECT p.*
         FROM smbms_provider AS p
         <where>
-            <if test="name != null and null != ''">
+            <if test="name != null and name != ''">
                 p.proName LIKE CONCAT('%', #{name}, '%')
             </if>
 
