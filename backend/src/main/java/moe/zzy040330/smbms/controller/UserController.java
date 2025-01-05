@@ -180,7 +180,10 @@ public class UserController {
                 var modifiedBy = new User();
                 modifiedBy.setId(jwtService.extractUserId(token));
 
-                boolean success = this.userService.update(userObj, modifiedBy, new Date());
+                userObj.setModifiedBy(modifiedBy);
+                userObj.setModificationDate(new Date());
+
+                boolean success = this.userService.update(userObj);
 
                 if (success) {
                     return ResponseEntity.ok(" User modified successfully ");
@@ -241,7 +244,13 @@ public class UserController {
 
             var modifiedBy = new User();
             modifiedBy.setId(jwtService.extractUserId(token));
-            boolean succeed = this.userService.insert(userObj, modifiedBy, new Date());
+
+            userObj.setModifiedBy(modifiedBy);
+            userObj.setCreatedBy(modifiedBy);
+            userObj.setCreationDate(new Date());
+            userObj.setModificationDate(new Date());
+
+            boolean succeed = this.userService.insert(userObj);
 
             if (succeed) {
                 return ResponseEntity.ok("User added successfully");

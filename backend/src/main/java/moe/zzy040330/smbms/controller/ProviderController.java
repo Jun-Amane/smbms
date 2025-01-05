@@ -4,7 +4,7 @@
  * Author: Wenqiang Chen
  * Date: 05/01/2025
  * Time: 10:49
- * Description: RESTful API for user entity.
+ * Description: RESTful API for provider entity.
  */
 package moe.zzy040330.smbms.controller;
 
@@ -179,8 +179,11 @@ public class ProviderController {
                 User modifiedBy = new User();
                 modifiedBy.setId(jwtService.extractUserId(token));
 
+                providerObj.setModifiedBy(modifiedBy);
+                providerObj.setModificationDate(new Date());
+
                 // Update the provider
-                boolean success = providerService.update(providerObj, modifiedBy, new Date());
+                boolean success = providerService.update(providerObj);
 
                 if (success) {
                     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -234,8 +237,13 @@ public class ProviderController {
             User modifiedBy = new User();
             modifiedBy.setId(jwtService.extractUserId(token));
 
+            providerObj.setModifiedBy(modifiedBy);
+            providerObj.setCreatedBy(modifiedBy);
+            providerObj.setCreationDate(new Date());
+            providerObj.setModificationDate(new Date());
+
             // Insert the new provider into the database
-            boolean succeed = providerService.insert(providerObj, modifiedBy, new Date());
+            boolean succeed = providerService.insert(providerObj);
 
             if (succeed) {
                 return ResponseEntity.ok("Provider added successfully");
