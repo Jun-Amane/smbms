@@ -75,7 +75,7 @@ public class UserController {
                                         @RequestParam("pageIndex") Integer pageIndex) {
 
         try {
-            var pageInfo = this.userService.findByQuery(queryName, roleId, pageSize, pageIndex);
+            var pageInfo = this.userService.findByQuery(queryName, roleId, pageIndex, pageSize);
 
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());
