@@ -12,6 +12,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import moe.zzy040330.smbms.entity.Provider;
 import moe.zzy040330.smbms.entity.User;
+import moe.zzy040330.smbms.mapper.BillMapper;
 import moe.zzy040330.smbms.mapper.GenericMapper;
 import moe.zzy040330.smbms.mapper.ProviderMapper;
 import moe.zzy040330.smbms.service.ProviderService;
