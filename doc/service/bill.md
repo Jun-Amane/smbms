@@ -25,6 +25,7 @@
 ## Attributes
 
 - **private BillMapper billMapper**: bill mapper, use constructor injection
+- **private ProviderMapper providerMapper**: provider mapper, use constructor injection
 
 ## Methods
 
