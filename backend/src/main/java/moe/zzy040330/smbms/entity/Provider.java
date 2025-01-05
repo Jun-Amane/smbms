@@ -1,3 +1,12 @@
+/**
+ * Package: moe.zzy040330.smbms.entity
+ * File: Provider.java
+ * Author: Xijian Sun
+ * Date: 05/01/2025
+ * Time: 10:12
+ * Description: This class represents a Provider entity with basic information.
+ */
+
 package moe.zzy040330.smbms.entity;
 
 import java.util.Date;
