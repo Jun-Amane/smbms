@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="moe.zzy040330.smbms.mapper.ProviderMapper">
+
+    <resultMap id="ProviderResultMap" type="Provider">
+        <id property="id" column="id"/>
+        <result property="code" column="proCode"/>
+        <result property="name" column="proName"/>
+        <result property="description" column="proDesc"/>
+        <result property="contact" column="proContact"/>
+        <result property="phone" column="proPhone"/>
+        <result property="address" column="proAddress"/>
+        <result property="fax" column="proFax"/>
+        <result property="creationDate" column="creationDate"/>
+        <result property="modificationDate" column="modifyDate"/>
+
+        <association property="createdBy" javaType="User">
+            <id property="id" column="createdBy"/>
+        </association>
+
+        <association property="modifiedBy" javaType="User">
+            <id property="id" column="modifyBy"/>
+        </association>
+    </resultMap>
+
+
+    <!-- select -->
+    <select id="findById" resultType="Provider" resultMap="ProviderResultMap">
+        SELECT p.*
+        FROM smbms_provider AS p
+        WHERE p.id = #{ID}
+    </select>
+
+    <select id="findAll" resultType="Provider" resultMap="ProviderResultMap">
+        SELECT p.*
+        FROM smbms_provider AS p
+    </select>
+
+    <!-- insert -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="entity.id">
+        INSERT INTO smbms_provider(proCode, proName, proDesc, proContact, proPhone,proAddress, proFax,
+        createdBy, creationDate)
+        VALUES(#{entity.code}, #{entity.name}, #{entity.description}, #{entity.contact}, #{entity.phone}, #{entity.address},
+        #{entity.fax}, #{createdBy.id}, #{creationDate})
+    </insert>
+
+    <!-- modify -->
+    <update id="update">
+        UPDATE smbms_provider
+        <set>
+            <if test="entity.name != null and entity.name != ''">
+                proName = #{entity.name},
+            </if>
+            <if test="entity.description != null and entity.description != ''">
+                proDesc = #{entity.description},
+            </if>
+            <if test="entity.contact != null and entity.contact != ''">
+                proContact = #{entity.contact},
+            </if>
+            <if test="entity.phone != null and entity.phone != ''">
+                proPhone = #{entity.phone},
+            </if>
+            <if test="entity.fax != null and entity.fax != ''">
+                proFax = #{entity.fax},
+            </if>
+            modifyBy = #{modifiedBy},
+            modifyDate = #{modificationDate}
+        </set>
+        WHERE id = #{entity.id}
+    </update>
+
+    <!-- delete -->
+    <delete id="deleteById">
+        DELETE FROM smbms_provider
+        WHERE id = #{id}
+    </delete>
+    
+    <!--query -->
+    <select id="findAllProvidersByQuery" resultType="Provider" resultMap="ProviderResultMap">
+        SELECT p.*
+        FROM smbms_provider AS p
+        <where>
+            <if test="name != null and null != ''">
+                p.proName LIKE CONCAT('%', #{name}, '%')
+            </if>
+
+            <if test="code != null and code != ''">
+                AND p.proCode LIKE CONCAT('%', #{code}, '%')
+            </if>
+        </where>
+        ORDER BY p.id
+    </select>
+
+</mapper>
