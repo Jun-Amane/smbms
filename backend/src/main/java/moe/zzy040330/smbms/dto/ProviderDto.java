@@ -6,10 +6,8 @@
  * Time: 11:49
  */
 package moe.zzy040330.smbms.dto;
-import java.time.OffsetDateTime;
-import java.util.Date;
 
-public class ProviderRequest{
+public class ProviderDto {
 
     private Long id;
     private String code;
@@ -19,10 +17,6 @@ public class ProviderRequest{
     private String phone;
     private String fax;
     private String contact;
-    private Date creationDate;
-    private Date modificationDate;
-    private Long createdBy;
-    private Long modifiedBy;
 
     // Getter and Setter methods
     public Long getId() {
@@ -89,35 +83,4 @@ public class ProviderRequest{
         this.contact = contact;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Date getModificationDate() {
-        return modificationDate;
-    }
-
-    public void setModificationDate(Date modificationDate) {
-        this.modificationDate = modificationDate;
-    }
-
-    public Long getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Long getModifiedBy() {
-        return modifiedBy;
-    }
-
-    public void setModifiedBy(Long modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
 }

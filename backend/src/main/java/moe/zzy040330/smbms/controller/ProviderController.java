@@ -9,28 +9,19 @@
 package moe.zzy040330.smbms.controller;
 
 import moe.zzy040330.smbms.dto.ErrorResponse;
-import moe.zzy040330.smbms.dto.PasswordUpdateRequest;
-import moe.zzy040330.smbms.dto.ProviderRequest;
+import moe.zzy040330.smbms.dto.ProviderDto;
 import moe.zzy040330.smbms.entity.Provider;
-import moe.zzy040330.smbms.entity.Role;
 import moe.zzy040330.smbms.entity.User;
 import moe.zzy040330.smbms.service.JwtService;
 import moe.zzy040330.smbms.service.ProviderService;
-import moe.zzy040330.smbms.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.access.prepost.PreAuthorize;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/providers")
@@ -110,33 +101,33 @@ public class ProviderController {
 
 
 
-    private static Provider providerRequest2ProviderObj(ProviderRequest providerRequest) {
+    private static Provider providerRequest2ProviderObj(ProviderDto providerDto) {
         // 创建新的 Provider 对象
         Provider provider = new Provider();
 
         // 设置 Provider 的基本属性
-        provider.setId(providerRequest.getId());
-        provider.setCode(providerRequest.getCode());
-        provider.setName(providerRequest.getName());
-        provider.setDescription(providerRequest.getDescription());
-        provider.setContact(providerRequest.getContact());
-        provider.setPhone(providerRequest.getPhone());
-        provider.setAddress(providerRequest.getAddress());
-        provider.setFax(providerRequest.getFax());
+        provider.setId(providerDto.getId());
+        provider.setCode(providerDto.getCode());
+        provider.setName(providerDto.getName());
+        provider.setDescription(providerDto.getDescription());
+        provider.setContact(providerDto.getContact());
+        provider.setPhone(providerDto.getPhone());
+        provider.setAddress(providerDto.getAddress());
+        provider.setFax(providerDto.getFax());
 
         // 处理创建者和修改者字段，这里假设传入的是 User 对象的 id
         // 假设 ProviderRequest 中创建者和修改者是通过 UserRequest 对象传递的
         User createdBy = new User();
-        createdBy.setId(providerRequest.getCreatedBy());
+        createdBy.setId(providerDto.getCreatedBy());
         provider.setCreatedBy(createdBy);
 
         User modifiedBy = new User();
-        modifiedBy.setId(providerRequest.getModifiedBy());
+        modifiedBy.setId(providerDto.getModifiedBy());
         provider.setModifiedBy(modifiedBy);
 
 
-        provider.setCreationDate(providerRequest.getCreationDate());
-        provider.setModificationDate(providerRequest.getModificationDate());
+        provider.setCreationDate(providerDto.getCreationDate());
+        provider.setModificationDate(providerDto.getModificationDate());
 
         return provider;
     }
@@ -152,7 +143,7 @@ public class ProviderController {
     @PutMapping("/{id}")
     public ResponseEntity<?> apiproviderput(
             @PathVariable Long id,
-            @RequestBody ProviderRequest providerDto,
+            @RequestBody ProviderDto providerDto,
     @RequestHeader("Authorization") String authHeader) {
         try {
             // Extract token from Authorization header
@@ -206,7 +197,7 @@ public class ProviderController {
      * 新增供应商
      */
     @PostMapping
-    public ResponseEntity<?> apiProviderPost(@RequestBody ProviderRequest providerRequest,
+    public ResponseEntity<?> apiProviderPost(@RequestBody ProviderDto providerDto,
                                              @RequestHeader("Authorization") String authHeader) {
         try {
 
@@ -218,20 +209,20 @@ public class ProviderController {
             String token = authHeader.substring(7);
 
             // Validate the input data
-            if (providerRequest.getCode() == null || providerRequest.getCode().isBlank() ||
-                    providerRequest.getName() == null || providerRequest.getName().isBlank() ||
-                    providerRequest.getContact() == null || providerRequest.getContact().isBlank() ||
-                    providerRequest.getPhone() == null || providerRequest.getPhone().isBlank() ||
-                    providerRequest.getAddress() == null || providerRequest.getAddress().isBlank() ||
-                    providerRequest.getFax() == null || providerRequest.getFax().isBlank() ||
-                    providerRequest.getDescription() == null || providerRequest.getDescription().isBlank()) {
+            if (providerDto.getCode() == null || providerDto.getCode().isBlank() ||
+                    providerDto.getName() == null || providerDto.getName().isBlank() ||
+                    providerDto.getContact() == null || providerDto.getContact().isBlank() ||
+                    providerDto.getPhone() == null || providerDto.getPhone().isBlank() ||
+                    providerDto.getAddress() == null || providerDto.getAddress().isBlank() ||
+                    providerDto.getFax() == null || providerDto.getFax().isBlank() ||
+                    providerDto.getDescription() == null || providerDto.getDescription().isBlank()) {
 
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ErrorResponse(400, "Invalid input: cannot be null or empty"));
             }
 
             // Convert ProviderRequest to Provider entity
-            var providerObj = providerRequest2ProviderObj(providerRequest);
+            var providerObj = providerRequest2ProviderObj(providerDto);
 
             // Get the modifiedBy user from the token
             User modifiedBy = new User();
