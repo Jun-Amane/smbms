@@ -10,8 +10,8 @@ package moe.zzy040330.smbms.controller;
 
 import moe.zzy040330.smbms.dto.ErrorResponse;
 import moe.zzy040330.smbms.dto.PasswordUpdateRequest;
-import moe.zzy040330.smbms.dto.RoleResponse;
-import moe.zzy040330.smbms.dto.UserRequest;
+import moe.zzy040330.smbms.dto.RoleDTO;
+import moe.zzy040330.smbms.dto.UserDTO;
 import moe.zzy040330.smbms.entity.Role;
 import moe.zzy040330.smbms.entity.User;
 import moe.zzy040330.smbms.service.JwtService;
@@ -82,7 +82,7 @@ public class UserController {
             response.put("curPage", pageInfo.getPageNum());
             response.put("totalPages", pageInfo.getPages());
             response.put("pageSize", pageInfo.getPageSize());
-            response.put("users", pageInfo.getList());
+            response.put("users", pageInfo.getList().stream().map(UserController::user2userDTO));
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -120,7 +120,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "User not found"));
             }
 
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(user2userDTO(user));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -162,7 +162,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> apiUserIdPut(@PathVariable Long id, @RequestBody UserRequest user,
+    public ResponseEntity<?> apiUserIdPut(@PathVariable Long id, @RequestBody UserDTO user,
                                           @RequestHeader("Authorization") String authHeader) {
         try {
             String token = authHeader.substring(7);
@@ -202,7 +202,7 @@ public class UserController {
         }
     }
 
-    private static User userRequest2userObj(UserRequest user) {
+    private static User userRequest2userObj(UserDTO user) {
         var userObj = new User();
         userObj.setId(user.getId());
         userObj.setPassword(user.getPassword());
@@ -218,8 +218,22 @@ public class UserController {
         return userObj;
     }
 
-    private static RoleResponse roleObj2roleResponse(Role role) {
-        var roleResponse = new RoleResponse();
+    private static UserDTO user2userDTO(User user) {
+        return new UserDTO(
+                user.getId(),
+                user.getCode(),
+                user.getName(),
+                user.getPassword(),
+                user.getGender(),
+                DateUtils.formatDate(user.getBirthday()),
+                user.getPhone(),
+                user.getAddress(),
+                user.getRole().getId()
+        );
+    }
+
+    private static RoleDTO roleObj2roleResponse(Role role) {
+        var roleResponse = new RoleDTO();
         roleResponse.setId(role.getId());
         roleResponse.setName(role.getName());
         roleResponse.setCode(role.getCode());
@@ -228,7 +242,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @PostMapping("")
-    public ResponseEntity<?> apiUserPost(@RequestBody UserRequest user,
+    public ResponseEntity<?> apiUserPost(@RequestBody UserDTO user,
                                          @RequestHeader("Authorization") String authHeader) {
         try {
 
