@@ -68,8 +68,8 @@ public class UserController {
 
     @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("")
-    public ResponseEntity<?> apiUserGet(@RequestParam("queryName") String queryName,
-                                        @RequestParam("queryRole") Long roleId,
+    public ResponseEntity<?> apiUserGet(@RequestParam(value = "queryName", required = false) String queryName,
+                                        @RequestParam(value = "queryRole", required = false) Long roleId,
                                         @RequestParam("pageSize") Integer pageSize,
                                         @RequestParam("pageIndex") Integer pageIndex) {
 
