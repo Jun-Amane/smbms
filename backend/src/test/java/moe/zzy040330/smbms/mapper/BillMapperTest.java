@@ -32,7 +32,7 @@ public class BillMapperTest {
     private JdbcTemplate jdbcTemplate;
 
     private Long testBillId;
-    private Provider testProvider = new Provider();
+    private final Provider testProvider = new Provider();
 
     private final User modifiedByUser = new User();
 

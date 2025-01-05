@@ -1,4 +1,5 @@
 package moe.zzy040330.smbms.service.impl;
+
 import moe.zzy040330.smbms.entity.Bill;
 import moe.zzy040330.smbms.entity.Provider;
 import moe.zzy040330.smbms.mapper.BillMapper;
@@ -8,6 +9,7 @@ import com.github.pagehelper.PageInfo;
 
 import moe.zzy040330.smbms.service.BillService;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -20,17 +22,18 @@ public class BillServiceImpl extends GenericCrudServiceImpl<Bill, Long> implemen
     }
 
     /**
-     * Get a paginated list of bills based on query conditions.
+     * Finds bills based on specified query conditions with pagination support.
      *
-     * @param condition query conditions packed into a Bill object
-     * @param pageNum   current page number
-     * @param pageSize  number of records per page
-     * @return a PageInfo object containing the paginated list of bills
+     * @param pageNum  the page number for pagination
+     * @param pageSize the number of records per page
+     * @return a PageInfo object containing the list of bills that match the query
      */
     @Override
-    public PageInfo<Bill> getBillList(Bill condition, Integer pageNum, Integer pageSize) {
+    public PageInfo<Bill> getBillList(String code, String productName, String productDesc, String providerCode,
+                                      String providerName, Integer isPaid, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<Bill> bills = billMapper.findAllBillsByQuery(condition);
+        List<Bill> bills = billMapper.findAllBillsByQuery(code, productName, productDesc,
+                providerCode, providerName, isPaid);
         return new PageInfo<>(bills);
     }
 }
