@@ -4,7 +4,7 @@
  * Author: Ziyu ZHOU
  * Date: 05/01/2025
  * Time: 14:36
- * Description: TODO: change me
+ * Description: The Role DTO, used in requests and responses.
  */
 package moe.zzy040330.smbms.dto;
 

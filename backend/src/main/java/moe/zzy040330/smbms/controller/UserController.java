@@ -128,7 +128,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN') or #id == authentication.principal.userId")
+    @PreAuthorize("hasRole('SMBMS_ADMIN') or #id == authentication.principal.id")
     @PatchMapping("/{id}/password")
     public ResponseEntity<?> apiUserIdPasswordPatch(@PathVariable Long id,
                                                     @RequestBody PasswordUpdateRequest passwordUpdateRequest,
