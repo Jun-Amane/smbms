@@ -1,8 +1,16 @@
+/**
+ * Package: moe.zzy040330.smbms.entity
+ * File: Provider.java
+ * Author: Mingxue Li
+ * Date: 05/01/2025
+ * Description: This class represents a Bill entity with basic information.
+ */
+
 package moe.zzy040330.smbms.entity;
-import java.util.Calendar;
+
 import java.util.Date;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+
 public class Bill {
     private Long id;// Unique identifier for the bill.
     private String code;// Code representing the bill.
@@ -17,12 +25,11 @@ public class Bill {
     private Date creationDate;// Date and time when the bill was created.
     private User modifiedBy;// User ID of the person who last modified the bill.
     private Date modificationDate;// Date and time when the bill was last updated.
-    private Long provideId;//The identity of provider
 
     public Bill() {
     }
 
-    public Bill(Long id, String code, String productName, String productDescription, String productUnit, BigDecimal productCount, BigDecimal totalPrice, Integer isPaid, Provider provider, User createdBy, Date creationDate, User modifiedBy, Date modificationDate, Long provideId) {
+    public Bill(Long id, String code, String productName, String productDescription, String productUnit, BigDecimal productCount, BigDecimal totalPrice, Integer isPaid, Provider provider, User createdBy, Date creationDate, User modifiedBy, Date modificationDate) {
         this.id = id;
         this.code = code;
         this.productName = productName;
@@ -36,7 +43,6 @@ public class Bill {
         this.creationDate = creationDate;
         this.modifiedBy = modifiedBy;
         this.modificationDate = modificationDate;
-        this.provideId = provideId;
     }
 
     public Long getId() {
@@ -142,11 +148,5 @@ public class Bill {
     public void setModificationDate(Date modificationDate) {
         this.modificationDate = modificationDate;
     }
-    public Long getProvideId() {
-        return provideId;
-    }
 
-    public void setProvideId(Long provideId) {
-        this.provideId = provideId;
-    }
 }
