@@ -15,10 +15,12 @@ import moe.zzy040330.smbms.entity.User;
 import moe.zzy040330.smbms.mapper.GenericMapper;
 import moe.zzy040330.smbms.mapper.ProviderMapper;
 import moe.zzy040330.smbms.service.ProviderService;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class ProviderServiceImpl extends GenericCrudServiceImpl<Provider, Long> implements ProviderService {
     private final ProviderMapper providerMapper;
     private final BillMapper billMapper;
