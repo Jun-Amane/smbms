@@ -64,7 +64,7 @@ public class ProviderController {
             logger.error(e.getMessage());
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error: " + e.getMessage()));
         }
     }
 
@@ -103,7 +103,7 @@ public class ProviderController {
             return ResponseEntity.ok(providerObj2ProviderDto(provider));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error: " + e.getMessage()));
         }
     }
 
@@ -188,7 +188,7 @@ public class ProviderController {
         } catch (Exception e) {
             logger.error("Error occurred while modifying provider", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error: " + e.getMessage()));
         }
     }
 
@@ -240,7 +240,7 @@ public class ProviderController {
         } catch (Exception e) {
             logger.error("Error occurred while adding provider", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error: " + e.getMessage()));
         }
     }
 }

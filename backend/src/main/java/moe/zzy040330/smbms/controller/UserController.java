@@ -61,7 +61,7 @@ public class UserController {
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error: " + e.getMessage()));
         }
 
     }
@@ -86,7 +86,7 @@ public class UserController {
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error: " + e.getMessage()));
         }
     }
 
@@ -103,7 +103,7 @@ public class UserController {
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error: " + e.getMessage()));
         }
     }
 
@@ -114,14 +114,15 @@ public class UserController {
             var user = this.userService.findById(id);
 
             if (user == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "User not found"));
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse(404, "User not found"));
             }
 
             return ResponseEntity.ok(user2userDTO(user));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error: " + e.getMessage()));
         }
     }
 
@@ -153,7 +154,7 @@ public class UserController {
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error: " + e.getMessage()));
         }
     }
 
@@ -198,7 +199,7 @@ public class UserController {
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error: " + e.getMessage()));
         }
     }
 
@@ -283,7 +284,7 @@ public class UserController {
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error: ") + e.getMessage());
         }
     }
 
@@ -296,7 +297,7 @@ public class UserController {
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
+                    .body(new ErrorResponse(500, "Internal server error: ") + e.getMessage());
         }
     }
 
