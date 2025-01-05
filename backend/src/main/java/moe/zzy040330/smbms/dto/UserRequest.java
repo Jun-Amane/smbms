@@ -8,15 +8,13 @@
  */
 package moe.zzy040330.smbms.dto;
 
-import java.util.Date;
-
 public class UserRequest {
     private Long id;
     private String code;
     private String name;
     private String password;
     private Integer gender;
-    private Date birthday;
+    private String birthday;
     private String phone;
     private String address;
     private Long roleId;
@@ -24,7 +22,7 @@ public class UserRequest {
     public UserRequest() {
     }
 
-    public UserRequest(Long id, String code, String name, String password, Integer gender, Date birthday, String phone, String address, Long roleId) {
+    public UserRequest(Long id, String code, String name, String password, Integer gender, String birthday, String phone, String address, Long roleId) {
         this.id = id;
         this.code = code;
         this.name = name;
@@ -76,11 +74,11 @@ public class UserRequest {
         this.gender = gender;
     }
 
-    public Date getBirthday() {
+    public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
     }
 

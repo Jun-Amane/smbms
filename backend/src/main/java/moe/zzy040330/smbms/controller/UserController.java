@@ -15,6 +15,7 @@ import moe.zzy040330.smbms.entity.Role;
 import moe.zzy040330.smbms.entity.User;
 import moe.zzy040330.smbms.service.JwtService;
 import moe.zzy040330.smbms.service.UserService;
+import moe.zzy040330.smbms.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -207,7 +208,7 @@ public class UserController {
         userObj.setCode(user.getCode());
         userObj.setName(user.getName());
         userObj.setGender(user.getGender());
-        userObj.setBirthday(user.getBirthday());
+        userObj.setBirthday(DateUtils.parseDate(user.getBirthday()));
         userObj.setPhone(user.getPhone());
         userObj.setAddress(user.getAddress());
         var role = new Role();
