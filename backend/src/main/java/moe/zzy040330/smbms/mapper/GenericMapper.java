@@ -33,11 +33,9 @@ public interface GenericMapper<T, PK> {
      * Inserts a new record into the database.
      *
      * @param entity the entity to insert
-     * @param createdBy the user who creates this record
-     * @param creationDate the timestamp when this record is created
      * @return the number of rows affected
      */
-    Integer insert(T entity, User createdBy, Date creationDate);
+    Integer insert(T entity);
 
     /**
      * Deletes a record from the database identified by the primary key.
@@ -51,11 +49,9 @@ public interface GenericMapper<T, PK> {
      * Updates an existing record in the database.
      *
      * @param entity the entity to update
-     * @param modifiedBy the user who modifies this record
-     * @param modificationDate the timestamp when this record is modified
      * @return the number of rows affected
      */
-    Integer update(T entity, User modifiedBy, Date modificationDate);
+    Integer update(T entity);
 
     /**
      * Selects a record from the database by its primary key.

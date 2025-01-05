@@ -1,6 +1,7 @@
 package moe.zzy040330.smbms.mapper;
 
 import moe.zzy040330.smbms.entity.Bill;
+import moe.zzy040330.smbms.entity.Provider;
 import moe.zzy040330.smbms.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,15 +26,38 @@ public class BillMapperTest {
     private BillMapper billMapper;
 
     @Autowired
+    private ProviderMapper providerMapper;
+
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     private Long testBillId;
+    private Provider testProvider = new Provider();
 
     private final User modifiedByUser = new User();
 
     @BeforeEach
     public void setUp() {
         jdbcTemplate.execute("DELETE FROM smbms_bill");
+        jdbcTemplate.execute("DELETE FROM smbms_provider");
+
+        testProvider.setCode("testCode");
+        testProvider.setName("Test Provider");
+        testProvider.setDescription("Test Description");
+        testProvider.setContact("testContact");
+        testProvider.setPhone("1234567890");
+        testProvider.setAddress("Test Address");
+        testProvider.setFax("Test Fax");
+        modifiedByUser.setId(1L);
+
+        testProvider.setModificationDate(new Date());
+        testProvider.setCreatedBy(modifiedByUser);
+        testProvider.setCreationDate(new Date());
+        testProvider.setModifiedBy(modifiedByUser);
+
+        providerMapper.insert(testProvider);
+
+        assertNotNull(testProvider.getName());
 
         Bill testBill = new Bill();
         testBill.setCode("BILL001");
@@ -43,10 +67,14 @@ public class BillMapperTest {
         testBill.setProductCount(BigDecimal.valueOf(100));
         testBill.setTotalPrice(BigDecimal.valueOf(500.00));
         testBill.setIsPaid(1);
-        testBill.setProvideId(1L);
+        testBill.setProvider(testProvider);
+        testBill.setModificationDate(new Date());
+        testBill.setCreatedBy(modifiedByUser);
+        testBill.setCreationDate(new Date());
+        testBill.setModifiedBy(modifiedByUser);
         modifiedByUser.setId(1L);
 
-        billMapper.insert(testBill, modifiedByUser, new Date());
+        billMapper.insert(testBill);
         testBillId = testBill.getId();
 
         assertNotNull(testBill.getProductName());
@@ -80,9 +108,13 @@ public class BillMapperTest {
         newBill.setProductCount(BigDecimal.valueOf(200));
         newBill.setTotalPrice(BigDecimal.valueOf(1000.00));
         newBill.setIsPaid(0);
-        newBill.setProvideId(2L);
+        newBill.setProvider(testProvider);
+        newBill.setModificationDate(new Date());
+        newBill.setModifiedBy(modifiedByUser);
+        newBill.setCreationDate(new Date());
+        newBill.setCreatedBy(modifiedByUser);
 
-        int rowsAffected = billMapper.insert(newBill, modifiedByUser, new Date());
+        int rowsAffected = billMapper.insert(newBill);
         assertEquals(1, rowsAffected);
         assertNotNull(newBill.getId());
     }
@@ -91,12 +123,20 @@ public class BillMapperTest {
     public void testUpdate() {
         Bill existingBill = billMapper.findById(testBillId);
         existingBill.setProductName("Updated Product");
+        existingBill.setModificationDate(new Date());
+        existingBill.setModifiedBy(modifiedByUser);
 
-        int rowsAffected = billMapper.update(existingBill, modifiedByUser, new Date());
+        int rowsAffected = billMapper.update(existingBill);
         assertEquals(1, rowsAffected);
 
         Bill updatedBill = billMapper.findById(testBillId);
         assertEquals("Updated Product", updatedBill.getProductName());
+    }
+
+    @Test
+    public void testFindByQuery() {
+        List<Bill> result = billMapper.findAllBillsByQuery("BILL00", null, null, null, null, null);
+        assertFalse(result.isEmpty());
     }
 
     @Test
@@ -108,9 +148,4 @@ public class BillMapperTest {
         assertNull(deletedBill);
     }
 
-    @Test
-    public void testFindByQuery() {
-        List<Bill> result = billMapper.findAllBillsByQuery();
-        assertFalse(result.isEmpty());
-    }
 }

@@ -51,8 +51,12 @@ public class ProviderServiceTest {
         testProvider.setAddress("Test Address");
         testProvider.setFax("Test Fax");
         modifiedByUser.setId(1L);
+        testProvider.setModifiedBy(modifiedByUser);
+        testProvider.setCreatedBy(modifiedByUser);
+        testProvider.setModificationDate(new Date());
+        testProvider.setCreationDate(new Date());
 
-        providerService.insert(testProvider,modifiedByUser,new Date());
+        providerService.insert(testProvider);
         testProviderId = testProvider.getId();
 
         assertNotNull(testProvider.getName());
@@ -86,8 +90,12 @@ public class ProviderServiceTest {
         newProvider.setPhone("0987654321");
         newProvider.setAddress("new Address");
         newProvider.setFax("new Fax");
+        newProvider.setModifiedBy(modifiedByUser);
+        newProvider.setCreatedBy(modifiedByUser);
+        newProvider.setCreationDate(new Date());
+        newProvider.setModificationDate(new Date());
 
-        var rowsAffected = providerService.insert(newProvider,modifiedByUser,new Date());
+        var rowsAffected = providerService.insert(newProvider);
         assertEquals(true,rowsAffected);
         assertNotNull(newProvider.getId());
     }
@@ -96,8 +104,10 @@ public class ProviderServiceTest {
     public void testUpdate(){
         Provider existingProvider = providerService.findById(testProviderId);
         existingProvider.setName("Updated Name");
+        existingProvider.setModifiedBy(modifiedByUser);
+        existingProvider.setModificationDate(new Date());
 
-        var rowsAffected = providerService.update(existingProvider,modifiedByUser,new Date());
+        var rowsAffected = providerService.update(existingProvider);
         assertEquals(true,rowsAffected);
 
         Provider updatedProvider = providerService.findById(testProviderId);

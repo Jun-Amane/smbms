@@ -72,7 +72,7 @@
     </select>
 
     <!-- insert -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="entity.id">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO smbms_bill (
         billCode,
         productName,
@@ -87,18 +87,18 @@
         modifyDate,
         providerId
         ) VALUES (
-        #{entity.code},
-        #{entity.productName},
-        #{entity.productDescription},
-        #{entity.productUnit},
-        #{entity.productCount},
-        #{entity.totalPrice},
-        #{entity.isPaid},
-        #{entity.createdBy.id},
-        #{entity.creationDate},
-        #{entity.modifiedBy.id},
-        #{entity.modificationDate},
-        #{entity.provider.id}
+        #{code},
+        #{productName},
+        #{productDescription},
+        #{productUnit},
+        #{productCount},
+        #{totalPrice},
+        #{isPaid},
+        #{createdBy.id},
+        #{creationDate},
+        #{modifiedBy.id},
+        #{modificationDate},
+        #{provider.id}
         )
     </insert>
 
@@ -106,34 +106,34 @@
     <update id="update">
         UPDATE smbms_bill
         <set>
-            <if test="entity.code != null and entity.code != ''">
-                billCode = #{entity.code},
+            <if test="code != null and code != ''">
+                billCode = #{code},
             </if>
-            <if test="entity.productName != null and entity.productName != ''">
-                productName = #{entity.productName},
+            <if test="productName != null and productName != ''">
+                productName = #{productName},
             </if>
-            <if test="entity.productDescription != null and entity.productDescription != ''">
-                productDesc = #{entity.productDescription},
+            <if test="productDescription != null and productDescription != ''">
+                productDesc = #{productDescription},
             </if>
-            <if test="entity.productUnit != null and entity.productUnit != ''">
-                productUnit = #{entity.productUnit},
+            <if test="productUnit != null and productUnit != ''">
+                productUnit = #{productUnit},
             </if>
-            <if test="entity.productCount != null">
-                productCount = #{entity.productCount},
+            <if test="productCount != null">
+                productCount = #{productCount},
             </if>
-            <if test="entity.totalPrice != null">
-                totalPrice = #{entity.totalPrice},
+            <if test="totalPrice != null">
+                totalPrice = #{totalPrice},
             </if>
-            <if test="entity.isPaid != null">
-                isPayment = #{entity.isPaid},
+            <if test="isPaid != null">
+                isPayment = #{isPaid},
             </if>
-            <if test="entity.provider != null and entity.provider.id != null">
-                providerId = #{entity.provider.id},
+            <if test="provider != null and provider.id != null">
+                providerId = #{provider.id},
             </if>
-            modifyBy = #{entity.modifiedBy.id},
-            modifyDate = #{entity.modificationDate}
+            modifyBy = #{modifiedBy.id},
+            modifyDate = #{modificationDate}
         </set>
-        WHERE id = #{entity.id}
+        WHERE id = #{id}
     </update>
 
     <!-- delete -->

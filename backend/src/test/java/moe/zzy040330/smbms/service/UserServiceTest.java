@@ -52,8 +52,12 @@ public class UserServiceTest {
         testUser.setPhone("1234567890");
         testUser.setAddress("Test Address");
         modifiedByUser.setId(1L);
+        testUser.setModifiedBy(modifiedByUser);
+        testUser.setModificationDate(new Date());
+        testUser.setCreatedBy(modifiedByUser);
+        testUser.setCreationDate(new Date());
 
-        userService.insert(testUser, modifiedByUser, new Date());
+        userService.insert(testUser);
         testUserId = testUser.getId();
 
         assertNotNull(testUser.getName());
@@ -117,8 +121,12 @@ public class UserServiceTest {
         newUser.setBirthday(new Date(946684800000L));
         newUser.setPhone("0987654321");
         newUser.setAddress("New Address");
+        newUser.setModifiedBy(modifiedByUser);
+        newUser.setModificationDate(new Date());
+        newUser.setCreatedBy(modifiedByUser);
+        newUser.setCreationDate(new Date());
 
-        var result = userService.insert(newUser, modifiedByUser, new Date());
+        var result = userService.insert(newUser);
         assertEquals(true, result);
         assertNotNull(newUser.getId());
     }
@@ -127,8 +135,10 @@ public class UserServiceTest {
     public void testUpdate() {
         User existingUser = userService.findById(testUserId);
         existingUser.setName("Updated Name");
+        existingUser.setModifiedBy(modifiedByUser);
+        existingUser.setModificationDate(new Date());
 
-        var result = userService.update(existingUser, modifiedByUser, new Date());
+        var result = userService.update(existingUser);
         assertEquals(true,result);
 
         User updatedUser = userService.findById(testUserId);
