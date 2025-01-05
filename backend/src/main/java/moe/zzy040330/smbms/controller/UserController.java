@@ -10,11 +10,13 @@ package moe.zzy040330.smbms.controller;
 
 import moe.zzy040330.smbms.dto.ErrorResponse;
 import moe.zzy040330.smbms.dto.PasswordUpdateRequest;
-import moe.zzy040330.smbms.dto.UserRequest;
+import moe.zzy040330.smbms.dto.RoleDTO;
+import moe.zzy040330.smbms.dto.UserDTO;
 import moe.zzy040330.smbms.entity.Role;
 import moe.zzy040330.smbms.entity.User;
 import moe.zzy040330.smbms.service.JwtService;
 import moe.zzy040330.smbms.service.UserService;
+import moe.zzy040330.smbms.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -40,7 +42,6 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("/codeexists")
     public ResponseEntity<?> apiUserCodeexistsGet(@RequestParam("code") String code) {
         try {
@@ -65,22 +66,21 @@ public class UserController {
 
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("")
-    public ResponseEntity<?> apiUserGet(@RequestParam("queryName") String queryName,
-                                        @RequestParam("queryRole") Long roleId,
+    public ResponseEntity<?> apiUserGet(@RequestParam(value = "queryName", required = false) String queryName,
+                                        @RequestParam(value = "queryRole", required = false) Long roleId,
                                         @RequestParam("pageSize") Integer pageSize,
                                         @RequestParam("pageIndex") Integer pageIndex) {
 
         try {
-            var pageInfo = this.userService.findByQuery(queryName, roleId, pageSize, pageIndex);
+            var pageInfo = this.userService.findByQuery(queryName, roleId, pageIndex, pageSize);
 
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());
             response.put("curPage", pageInfo.getPageNum());
             response.put("totalPages", pageInfo.getPages());
             response.put("pageSize", pageInfo.getPageSize());
-            response.put("users", pageInfo.getList());
+            response.put("users", pageInfo.getList().stream().map(UserController::user2userDTO));
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -90,7 +90,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
@@ -107,7 +107,6 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> apiUserGet(@PathVariable Long id) {
         try {
@@ -118,7 +117,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "User not found"));
             }
 
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(user2userDTO(user));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -126,7 +125,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN') or #id == authentication.principal.userId")
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or #id == authentication.principal.id")
     @PatchMapping("/{id}/password")
     public ResponseEntity<?> apiUserIdPasswordPatch(@PathVariable Long id,
                                                     @RequestBody PasswordUpdateRequest passwordUpdateRequest,
@@ -158,9 +157,9 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> apiUserIdPut(@PathVariable Long id, @RequestBody UserRequest user,
+    public ResponseEntity<?> apiUserIdPut(@PathVariable Long id, @RequestBody UserDTO user,
                                           @RequestHeader("Authorization") String authHeader) {
         try {
             String token = authHeader.substring(7);
@@ -203,14 +202,14 @@ public class UserController {
         }
     }
 
-    private static User userRequest2userObj(UserRequest user) {
+    private static User userRequest2userObj(UserDTO user) {
         var userObj = new User();
         userObj.setId(user.getId());
         userObj.setPassword(user.getPassword());
         userObj.setCode(user.getCode());
         userObj.setName(user.getName());
         userObj.setGender(user.getGender());
-        userObj.setBirthday(user.getBirthday());
+        userObj.setBirthday(DateUtils.parseDate(user.getBirthday()));
         userObj.setPhone(user.getPhone());
         userObj.setAddress(user.getAddress());
         var role = new Role();
@@ -219,9 +218,31 @@ public class UserController {
         return userObj;
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
+    private static UserDTO user2userDTO(User user) {
+        return new UserDTO(
+                user.getId(),
+                user.getCode(),
+                user.getName(),
+                user.getPassword(),
+                user.getGender(),
+                DateUtils.formatDate(user.getBirthday()),
+                user.getPhone(),
+                user.getAddress(),
+                user.getRole().getId()
+        );
+    }
+
+    private static RoleDTO roleObj2roleResponse(Role role) {
+        var roleResponse = new RoleDTO();
+        roleResponse.setId(role.getId());
+        roleResponse.setName(role.getName());
+        roleResponse.setCode(role.getCode());
+        return roleResponse;
+    }
+
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN')")
     @PostMapping("")
-    public ResponseEntity<?> apiUserPost(@RequestBody UserRequest user,
+    public ResponseEntity<?> apiUserPost(@RequestBody UserDTO user,
                                          @RequestHeader("Authorization") String authHeader) {
         try {
 
@@ -266,11 +287,10 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
     @GetMapping("/rolelist")
     public ResponseEntity<?> apiUserRoleListGet() {
         try {
-            var roleList = this.userService.getRoleList();
+            var roleList = this.userService.getRoleList().stream().map(UserController::roleObj2roleResponse);
 
             return ResponseEntity.ok(roleList);
         } catch (Exception e) {
