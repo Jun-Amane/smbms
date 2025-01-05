@@ -8,15 +8,15 @@
  */
 package moe.zzy040330.smbms.dto;
 
-public class RoleDTO {
+public class RoleDto {
     private Long id;
     private String name;
     private String code;
 
-    public RoleDTO() {
+    public RoleDto() {
     }
 
-    public RoleDTO(Long id, String name, String code) {
+    public RoleDto(Long id, String name, String code) {
         this.id = id;
         this.name = name;
         this.code = code;

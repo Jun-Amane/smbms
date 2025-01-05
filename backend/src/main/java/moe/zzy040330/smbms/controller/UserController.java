@@ -10,8 +10,8 @@ package moe.zzy040330.smbms.controller;
 
 import moe.zzy040330.smbms.dto.ErrorResponse;
 import moe.zzy040330.smbms.dto.PasswordUpdateRequest;
-import moe.zzy040330.smbms.dto.RoleDTO;
-import moe.zzy040330.smbms.dto.UserDTO;
+import moe.zzy040330.smbms.dto.RoleDto;
+import moe.zzy040330.smbms.dto.UserDto;
 import moe.zzy040330.smbms.entity.Role;
 import moe.zzy040330.smbms.entity.User;
 import moe.zzy040330.smbms.service.JwtService;
@@ -159,7 +159,7 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('SMBMS_ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> apiUserIdPut(@PathVariable Long id, @RequestBody UserDTO user,
+    public ResponseEntity<?> apiUserIdPut(@PathVariable Long id, @RequestBody UserDto user,
                                           @RequestHeader("Authorization") String authHeader) {
         try {
             String token = authHeader.substring(7);
@@ -202,7 +202,7 @@ public class UserController {
         }
     }
 
-    private static User userRequest2userObj(UserDTO user) {
+    private static User userRequest2userObj(UserDto user) {
         var userObj = new User();
         userObj.setId(user.getId());
         userObj.setPassword(user.getPassword());
@@ -218,8 +218,8 @@ public class UserController {
         return userObj;
     }
 
-    private static UserDTO user2userDTO(User user) {
-        return new UserDTO(
+    private static UserDto user2userDTO(User user) {
+        return new UserDto(
                 user.getId(),
                 user.getCode(),
                 user.getName(),
@@ -232,8 +232,8 @@ public class UserController {
         );
     }
 
-    private static RoleDTO roleObj2roleResponse(Role role) {
-        var roleResponse = new RoleDTO();
+    private static RoleDto roleObj2roleResponse(Role role) {
+        var roleResponse = new RoleDto();
         roleResponse.setId(role.getId());
         roleResponse.setName(role.getName());
         roleResponse.setCode(role.getCode());
@@ -242,7 +242,7 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('SMBMS_ADMIN')")
     @PostMapping("")
-    public ResponseEntity<?> apiUserPost(@RequestBody UserDTO user,
+    public ResponseEntity<?> apiUserPost(@RequestBody UserDto user,
                                          @RequestHeader("Authorization") String authHeader) {
         try {
 

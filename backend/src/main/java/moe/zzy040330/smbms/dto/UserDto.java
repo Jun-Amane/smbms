@@ -8,7 +8,7 @@
  */
 package moe.zzy040330.smbms.dto;
 
-public class UserDTO {
+public class UserDto {
     private Long id;
     private String code;
     private String name;
@@ -19,10 +19,10 @@ public class UserDTO {
     private String address;
     private Long roleId;
 
-    public UserDTO() {
+    public UserDto() {
     }
 
-    public UserDTO(Long id, String code, String name, String password, Integer gender, String birthday, String phone, String address, Long roleId) {
+    public UserDto(Long id, String code, String name, String password, Integer gender, String birthday, String phone, String address, Long roleId) {
         this.id = id;
         this.code = code;
         this.name = name;
