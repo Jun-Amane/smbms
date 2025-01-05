@@ -13,7 +13,6 @@ package moe.zzy040330.smbms.service;
 
 import com.github.pagehelper.PageInfo;
 import moe.zzy040330.smbms.entity.Provider;
-import moe.zzy040330.smbms.entity.User;
 import moe.zzy040330.smbms.service.GenericCrudService;
 
 
@@ -21,7 +20,7 @@ import moe.zzy040330.smbms.service.GenericCrudService;
  * ProviderService provides specific services for Provider entities including provider
  * advanced searching functionality and deleting Provider
  */
-public interface ProviderService extends GenericCrudService<User,Long> {
+public interface ProviderService extends GenericCrudService<Provider,Long> {
     /**
      * Finds providers based on specified name and code with pagination support.
      *
