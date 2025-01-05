@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.sdagri.smbms.mapper.UserMapper">
+    <delete id="delete">
+        delete from smbms_user where id=#{id}
+    </delete>
+    <update id="update">
+        update smbms_user
+        <set>
+            <if test="userName!=null and userName!=''">
+                 username=#{userName},
+            </if>
+            <if test="gender!=null">
+                gender=#{gender},
+            </if>
+            <if test="birthday!=null">
+                birthday=#{birthday},
+            </if>
+            <if test="address!=null and address!=''">
+                address=#{address},
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone=#{phone},
+            </if>
+            <if test="role!=null and role.id!=null">
+                userRole=#{role.id},
+            </if>
+        modifyBy=#{modifyBy.id},modifyDate=#{modifyDate}
+
+
+        </set>
+
+        where id=#{id}
+    </update>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into smbms_user(userCode,userName,userPassword,gender,birthday,phone,address,createdBy,creationDate,userRole) values(#{userCode},#{userName},#{userPassword},#{gender},#{birthday},#{phone},#{address},#{createdBy.id},#{creationDate},#{role.id});
+    </insert>
+    <select id="selectByPage" resultType="User">
+        SELECT u.*,r.id 'role.id',r.roleName 'role.roleName' FROM  smbms_user u left join smbms_role r on u.userRole=r.id
+        <if test="condition!=null">
+
+            <where>
+                <if test="condition.userName!=null and condition.userName!=''">
+                    userName like concat('%',#{condition.userName},'%')
+                </if>
+                <if test="condition.role!=null and condition.role.id!=null and condition.role.id!=0">
+                    and userRole=#{condition.role.id}
+                </if>
+
+            </where>
+        </if>
+        order by id
+    </select>
+    <select id="selectById"  resultType="User">
+        select u.*,u.userRole 'role.id',r.roleName 'role.roleName' from smbms_user u left join smbms_role r on u.userRole=r.id where u.id=#{id}
+    </select>
+    <select id="selectUser" resultType="User">
+        select * from smbms_user where userCode=#{userCode} AND userPassword=#{userPassword}
+    </select>
+    <select id="selectCount" resultType="Integer">
+        select count(1) from smbms_user
+        <if test="condition!=null">
+
+            <where>
+                <if test="condition.userName!=null and condition.userName!=''">
+                    userName like concat('%',#{condition.userName},'%')
+                </if>
+                <if test="condition.role!=null and condition.role.id!=null">
+                    and userRole=#{condition.role.id}
+                </if>
+
+            </where>
+        </if>
+    </select>
+    <select id="select" resultType="User">
+
+    <bind name="from" value="(pageNum-1)*pageSize"/>
+        SELECT u.*,r.id 'role.id',r.roleName 'role.roleName' FROM  smbms_user u left join smbms_role r on u.userRole=r.id
+                 <if test="condition!=null">
+
+                     <where>
+                        <if test="condition.userName!=null and condition.userName!=''">
+                            userName like concat('%',#{condition.userName},'%')
+                        </if>
+                        <if test="condition.role!=null and condition.role.id!=null">
+                            and userRole=#{condition.role.id}
+                         </if>
+
+                     </where>
+                 </if>
+                order by id
+                limit #{from},#{pageSize}
+    </select>
+</mapper>
