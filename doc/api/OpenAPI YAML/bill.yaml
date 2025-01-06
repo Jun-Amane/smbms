@@ -18,30 +18,51 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: queryProductName
+        - name: queryCode
           in: query
-          description: Product Name
+          description: Bill code
           required: false
           explode: true
           schema:
             type: string
-        - name: queryProviderId
+        - name: queryProductName
           in: query
-          description: Provider Id
+          description: Product name
           required: false
           explode: true
           schema:
-            type: integer
+            type: string
+        - name: queryProductDesc
+          in: query
+          description: Product description
+          required: false
+          explode: true
+          schema:
+            type: string
+        - name: queryProviderName
+          in: query
+          description: Provider Name
+          required: false
+          explode: true
+          schema:
+            type: string
+        - name: queryProviderCode
+          in: query
+          description: Provider code
+          required: false
+          explode: true
+          schema:
+            type: string
         - name: queryIsPaid
           in: query
           description: Is Paid or not
           required: false
           explode: true
           schema:
-            type: string
+            type: integer
             enum:
-              - true
-              - false
+              - 0
+              - 1
         - name: pageIndex
           in: query
           description: Page Index
@@ -252,6 +273,7 @@ components:
         - productName
         - productDescription
         - productCount
+        - productUnit
         - totalPrice
         - isPaid
         - providerId
