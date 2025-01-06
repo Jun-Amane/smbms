@@ -2,14 +2,18 @@ package moe.zzy040330.smbms.service;
 
 import com.github.pagehelper.PageInfo;
 import moe.zzy040330.smbms.entity.Bill;
+import moe.zzy040330.smbms.entity.Provider;
 import moe.zzy040330.smbms.entity.User;
 import moe.zzy040330.smbms.mapper.BillMapper;
+import moe.zzy040330.smbms.mapper.ProviderMapper;
 import moe.zzy040330.smbms.service.impl.BillServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -17,84 +21,141 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@ActiveProfiles("test")
+@AutoConfigureMybatis
 public class BillServiceTest {
-    @Mock
-    private BillMapper billMapper;
 
-    @InjectMocks
-    private BillServiceImpl billService;
+    @Autowired
+    private BillService billService;
 
-    private Bill testBill;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private ProviderService providerService;
+
+    private Long testBillId;
+    private final Provider testProvider = new Provider();
+    private final User modifiedByUser = new User();
+
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
         // Initialize a sample Bill object for testing
-        testBill = new Bill();
-        testBill.setId(1L);
+
+        jdbcTemplate.execute("DELETE FROM smbms_bill");
+        jdbcTemplate.execute("DELETE FROM smbms_provider");
+
+        testProvider.setCode("testCode");
+        testProvider.setName("Test Provider");
+        testProvider.setDescription("Test Description");
+        testProvider.setContact("testContact");
+        testProvider.setPhone("1234567890");
+        testProvider.setAddress("Test Address");
+        testProvider.setFax("Test Fax");
+        modifiedByUser.setId(1L);
+
+        testProvider.setModificationDate(new Date());
+        testProvider.setCreatedBy(modifiedByUser);
+        testProvider.setCreationDate(new Date());
+        testProvider.setModifiedBy(modifiedByUser);
+
+        providerService.insert(testProvider);
+
+        assertNotNull(testProvider.getName());
+
+        Bill testBill = new Bill();
         testBill.setCode("BILL001");
         testBill.setProductName("Test Product");
-        testBill.setProductDescription("This is a test product");
+        testBill.setProductDescription("Test Description");
         testBill.setProductUnit("pcs");
-        testBill.setProductCount(BigDecimal.valueOf(10));
-        testBill.setTotalPrice(BigDecimal.valueOf(100.00));
+        testBill.setProductCount(BigDecimal.valueOf(100));
+        testBill.setTotalPrice(BigDecimal.valueOf(500.00));
         testBill.setIsPaid(1);
-        testBill.setProvideId(1L);
-        User testUser = new User();
-        testUser.setId(1L);
-        testBill.setCreatedBy(testUser);
-        testBill.setCreationDate(new Date());
-        testBill.setModifiedBy(testUser);
+        testBill.setProvider(testProvider);
         testBill.setModificationDate(new Date());
-    }
-    @Test
-    public void testGetBillList() {
-        // Mock the behavior of billMapper.findAllBillsByQuery
-        Bill condition = new Bill();
-        List<Bill> mockBillList = Arrays.asList(testBill);
-        when(billMapper.findAllBillsByQuery()).thenReturn(mockBillList);
-        // Call the service method
-        PageInfo<Bill> pageInfo = billService.getBillList(condition, 1, 10);
-        // Assertions
-        assertNotNull(pageInfo);
-        assertEquals(1, pageInfo.getTotal());
-        assertEquals(1, pageInfo.getList().size());
-        assertEquals("Test Product", pageInfo.getList().get(0).getProductName());
-        // Verify interaction with the mock
-        verify(billMapper, times(1)).findAllBillsByQuery();
-    }
-    @Test
-    public void testGetBillListEmptyResult() {
-        // Mock empty result
-        Bill condition = new Bill();
-        when(billMapper.findAllBillsByQuery()).thenReturn(Arrays.asList());
-        // Call the service method
-        PageInfo<Bill> pageInfo = billService.getBillList(condition, 1, 10);
-        // Assertions
-        assertNotNull(pageInfo);
-        assertTrue(pageInfo.getList().isEmpty());
-        assertEquals(0, pageInfo.getTotal());
+        testBill.setCreatedBy(modifiedByUser);
+        testBill.setCreationDate(new Date());
+        testBill.setModifiedBy(modifiedByUser);
+        modifiedByUser.setId(1L);
 
-        // Verify interaction with the mock
-        verify(billMapper, times(1)).findAllBillsByQuery();
+        billService.insert(testBill);
+        testBillId = testBill.getId();
+
+        assertNotNull(testBill.getProductName());
+
     }
+
     @Test
-    public void testPaginationBehavior() {
-        // Mock a list of bills for pagination
-        List<Bill> mockBillList = Arrays.asList(
-                new Bill(1L, "BILL001", "Product1", "Description1", "pcs", BigDecimal.ONE, BigDecimal.TEN, 1, null, null, new Date(), null, new Date(), 1L),
-                new Bill(2L, "BILL002", "Product2", "Description2", "pcs", BigDecimal.ONE, BigDecimal.TEN, 1, null, null, new Date(), null, new Date(), 1L)
-        );
-        when(billMapper.findAllBillsByQuery()).thenReturn(mockBillList);
-        // Call the service method
-        PageInfo<Bill> pageInfo = billService.getBillList(new Bill(), 1, 2);
-        // Assertions
-        assertNotNull(pageInfo);
-        assertEquals(2, pageInfo.getList().size());
-        assertEquals("Product1", pageInfo.getList().get(0).getProductName());
-        assertEquals("Product2", pageInfo.getList().get(1).getProductName());
-        // Verify interaction with the mock
-        verify(billMapper, times(1)).findAllBillsByQuery();
+    void contextLoads() {
     }
+
+    @Test
+    public void testFindById() {
+        Bill bill = billService.findById(testBillId);
+        assertNotNull(bill);
+        assertEquals("Test Product", bill.getProductName());
+    }
+
+    @Test
+    public void testFindAll() {
+        List<Bill> bills = billService.findAll();
+        assertFalse(bills.isEmpty());
+        assertEquals(1, bills.size());
+    }
+
+    @Test
+    public void testInsert() {
+        Bill newBill = new Bill();
+        newBill.setCode("BILL002");
+        newBill.setProductName("New Product");
+        newBill.setProductDescription("New Description");
+        newBill.setProductUnit("kg");
+        newBill.setProductCount(BigDecimal.valueOf(200));
+        newBill.setTotalPrice(BigDecimal.valueOf(1000.00));
+        newBill.setIsPaid(0);
+        newBill.setProvider(testProvider);
+        newBill.setModificationDate(new Date());
+        newBill.setModifiedBy(modifiedByUser);
+        newBill.setCreationDate(new Date());
+        newBill.setCreatedBy(modifiedByUser);
+
+        Boolean succeed = billService.insert(newBill);
+        assertTrue(succeed);
+        assertNotNull(newBill.getId());
+    }
+
+    @Test
+    public void testUpdate() {
+        Bill existingBill = billService.findById(testBillId);
+        existingBill.setProductName("Updated Product");
+        existingBill.setModificationDate(new Date());
+        existingBill.setModifiedBy(modifiedByUser);
+
+        var succeed = billService.update(existingBill);
+        assertTrue(succeed);
+
+        Bill updatedBill = billService.findById(testBillId);
+        assertEquals("Updated Product", updatedBill.getProductName());
+    }
+
+    @Test
+    public void testQuery() {
+        PageInfo<Bill> pageInfo = billService.getBillList("BILL00", null, null,
+                null, null, null, 1, 10);
+        assertNotNull(pageInfo);
+        assertFalse(pageInfo.getList().isEmpty());
+        assertEquals(1,pageInfo.getList().size());
+    }
+
+    @Test
+    public void testDelete() {
+        var succeed = billService.deleteById(testBillId);
+        assertTrue(succeed);
+
+        Bill deletedBill = billService.findById(testBillId);
+        assertNull(deletedBill);
+    }
+
 }

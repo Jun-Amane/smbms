@@ -38,6 +38,15 @@ public record SecurityUser(User user) implements UserDetails {
     }
 
     /**
+     * Retrieves the ID used to identify the user.
+     *
+     * @return the userId
+     */
+    public Long getId() {
+        return user.getId();
+    }
+
+    /**
      * Retrieves the username used to authenticate the user. In this context,
      * it returns the user's unique code.
      *

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="moe.zzy040330.smbms.mapper.ProviderMapper">
+
+    <resultMap id="ProviderResultMap" type="Provider">
+        <id property="id" column="id"/>
+        <result property="code" column="proCode"/>
+        <result property="name" column="proName"/>
+        <result property="description" column="proDesc"/>
+        <result property="contact" column="proContact"/>
+        <result property="phone" column="proPhone"/>
+        <result property="address" column="proAddress"/>
+        <result property="fax" column="proFax"/>
+        <result property="creationDate" column="creationDate"/>
+        <result property="modificationDate" column="modifyDate"/>
+
+        <association property="createdBy" javaType="User">
+            <id property="id" column="createdBy"/>
+        </association>
+
+        <association property="modifiedBy" javaType="User">
+            <id property="id" column="modifyBy"/>
+        </association>
+    </resultMap>
+
+
+    <!-- select -->
+    <select id="findById" resultType="Provider" resultMap="ProviderResultMap">
+        SELECT p.*
+        FROM smbms_provider AS p
+        WHERE p.id = #{ID}
+    </select>
+
+    <select id="findAll" resultType="Provider" resultMap="ProviderResultMap">
+        SELECT p.*
+        FROM smbms_provider AS p
+    </select>
+
+    <!-- insert -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO smbms_provider(
+        proCode,
+        proName,
+        proDesc,
+        proContact,
+        proPhone,
+        proAddress,
+        proFax,
+        modifyBy,
+        modifyDate,
+        createdBy,
+        creationDate)
+        VALUES (
+        #{code},
+        #{name},
+        #{description},
+        #{contact},
+        #{phone},
+        #{address},
+        #{fax},
+        #{modifiedBy.id},
+        #{modificationDate},
+        #{createdBy.id},
+        #{creationDate})
+    </insert>
+
+    <!-- modify -->
+    <update id="update">
+        UPDATE smbms_provider
+        <set>
+            <if test="name != null and name != ''">
+                proName = #{name},
+            </if>
+            <if test="description != null and description != ''">
+                proDesc = #{description},
+            </if>
+            <if test="contact != null and contact != ''">
+                proContact = #{contact},
+            </if>
+            <if test="phone != null and phone != ''">
+                proPhone = #{phone},
+            </if>
+            <if test="fax != null and fax != ''">
+                proFax = #{fax},
+            </if>
+            modifyBy = #{modifiedBy.id},
+            modifyDate = #{modificationDate}
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- delete -->
+    <delete id="deleteById">
+        DELETE FROM smbms_provider
+        WHERE id = #{id}
+    </delete>
+
+    <!--query -->
+    <select id="findAllProvidersByQuery" resultType="Provider" resultMap="ProviderResultMap">
+        SELECT p.*
+        FROM smbms_provider AS p
+        <where>
+            <if test="name != null and name != ''">
+                p.proName LIKE CONCAT('%', #{name}, '%')
+            </if>
+
+            <if test="code != null and code != ''">
+                AND p.proCode LIKE CONCAT('%', #{code}, '%')
+            </if>
+        </where>
+        ORDER BY p.id
+    </select>
+
+</mapper>

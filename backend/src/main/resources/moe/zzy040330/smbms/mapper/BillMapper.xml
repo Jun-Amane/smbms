@@ -3,99 +3,117 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="moe.zzy040330.smbms.mapper.BillMapper">
+
     <resultMap id="BillResultMap" type="Bill">
-    <id property="id" column="id"/>
-    <result property="code" column="billcode"/>
-    <result property="productName" column="productName"/>
-    <result property="productDescription" column="productDesc"/>
-    <result property="productUnit" column="productUnit"/>
-    <result property="productCount" column="productCount"/>
-    <result property="totalPrice" column="totalPrice"/>
-    <result property="isPaid" column="isPayment"/>
-    <result property="createdBy.id" column="createdBy"/>
-    <result property="creationDate" column="creationDate"/>
-    <result property="modifiedBy.id" column="modifyBy"/>
-    <result property="modificationDate" column="modifyDate"/>
-        <result property="provider.id" column="provideId"/>
+        <!-- Bill class mappings -->
+        <id property="id" column="id"/>
+        <result property="code" column="billCode"/>
+        <result property="productName" column="productName"/>
+        <result property="productDescription" column="productDesc"/>
+        <result property="productUnit" column="productUnit"/>
+        <result property="productCount" column="productCount"/>
+        <result property="totalPrice" column="totalPrice"/>
+        <result property="isPaid" column="isPayment"/>
+        <result property="creationDate" column="creationDate"/>
+        <result property="modificationDate" column="modificationDate"/>
+
+        <!-- Association to the Provider class -->
         <association property="provider" javaType="Provider">
-            <id property="id" column="provideId"/>
+            <id property="id" column="providerId"/>
+            <result property="code" column="proCode"/>
+            <result property="name" column="proName"/>
+            <result property="description" column="proDesc"/>
+            <result property="contact" column="proContact"/>
+            <result property="phone" column="proPhone"/>
+            <result property="address" column="proAddress"/>
+            <result property="fax" column="proFax"/>
         </association>
 
-        <!-- CreatedBy association -->
         <association property="createdBy" javaType="User">
             <id property="id" column="createdBy"/>
         </association>
 
-        <!-- ModifiedBy association -->
         <association property="modifiedBy" javaType="User">
             <id property="id" column="modifyBy"/>
         </association>
     </resultMap>
-    <!-- Select bill by ID -->
+
+
+    <!-- select -->
     <select id="findById" resultType="Bill" resultMap="BillResultMap">
         SELECT b.*,
         p.id AS "provider.id",
-        u1.id AS "createdBy.id",
-        u2.id AS "modifiedBy.id"
+        p.proCode AS "provider.proCode",
+        p.proName AS "provider.proName",
+        p.proDesc AS "provider.proDesc",
+        p.proContact AS "provider.proContact",
+        p.proPhone AS "provider.proPhone",
+        p.proAddress AS "provider.proAddress",
+        p.proFax AS "provider.proFax"
         FROM smbms_bill AS b
-        LEFT JOIN smbms_provider AS p ON b.provideId = p.id
-        LEFT JOIN smbms_user AS u1 ON b.createdBy = u1.id
-        LEFT JOIN smbms_user AS u2 ON b.modifyBy = u2.id
+        LEFT JOIN smbms_provider as p
+        ON b.providerId = p.id
         WHERE b.id = #{id}
     </select>
 
-    <!-- Select all bills -->
     <select id="findAll" resultType="Bill" resultMap="BillResultMap">
         SELECT b.*,
         p.id AS "provider.id",
-        u1.id AS "createdBy.id",
-        u2.id AS "modifiedBy.id"
+        p.proCode AS "provider.proCode",
+        p.proName AS "provider.proName",
+        p.proDesc AS "provider.proDesc",
+        p.proContact AS "provider.proContact",
+        p.proPhone AS "provider.proPhone",
+        p.proAddress AS "provider.proAddress",
+        p.proFax AS "provider.proFax"
         FROM smbms_bill AS b
-        LEFT JOIN smbms_provider AS p ON b.provideId = p.id
-        LEFT JOIN smbms_user AS u1 ON b.createdBy = u1.id
-        LEFT JOIN smbms_user AS u2 ON b.modifyBy = u2.id
+        LEFT JOIN smbms_provider as p
+        ON b.providerId = p.id
     </select>
 
-    <!-- Select bills by query -->
-    <select id="findAllBillsByQuery" parameterType="Bill" resultMap="BillResultMap">
-        SELECT b.*,
-        p.id AS "provider.id",
-        u1.id AS "createdBy.id",
-        u2.id AS "modifiedBy.id"
-        FROM smbms_bill AS b
-        LEFT JOIN smbms_provider AS p ON b.provideId = p.id
-        LEFT JOIN smbms_user AS u1 ON b.createdBy = u1.id
-        LEFT JOIN smbms_user AS u2 ON b.modifyBy = u2.id
-        <where>
-            <if test="productName != null and productName != ''">
-                b.productName LIKE CONCAT('%', #{productName}, '%')
-            </if>
-            <if test="isPaid != null">
-                AND b.isPaid = #{isPaid}
-            </if>
-            <if test="provider.id != null">
-                AND b.provideId = #{provider.id}
-            </if>
-        </where>
-    </select>
-
-    <!-- Insert bill -->
+    <!-- insert -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO smbms_bill (code, productName, productDescription, productUnit, productCount, totalPrice,
-        isPaid, provideId, createdBy, creationDate)
-        VALUES (#{code}, #{productName}, #{productDescription}, #{productUnit}, #{productCount}, #{totalPrice},
-        #{isPaid}, #{provider.id}, #{createdBy.id}, #{creationDate})
+        INSERT INTO smbms_bill (
+        billCode,
+        productName,
+        productDesc,
+        productUnit,
+        productCount,
+        totalPrice,
+        isPayment,
+        createdBy,
+        creationDate,
+        modifyBy,
+        modifyDate,
+        providerId
+        ) VALUES (
+        #{code},
+        #{productName},
+        #{productDescription},
+        #{productUnit},
+        #{productCount},
+        #{totalPrice},
+        #{isPaid},
+        #{createdBy.id},
+        #{creationDate},
+        #{modifiedBy.id},
+        #{modificationDate},
+        #{provider.id}
+        )
     </insert>
 
-    <!-- Update bill -->
+    <!-- modify -->
     <update id="update">
         UPDATE smbms_bill
         <set>
+            <if test="code != null and code != ''">
+                billCode = #{code},
+            </if>
             <if test="productName != null and productName != ''">
                 productName = #{productName},
             </if>
             <if test="productDescription != null and productDescription != ''">
-                productDescription = #{productDescription},
+                productDesc = #{productDescription},
             </if>
             <if test="productUnit != null and productUnit != ''">
                 productUnit = #{productUnit},
@@ -107,10 +125,10 @@
                 totalPrice = #{totalPrice},
             </if>
             <if test="isPaid != null">
-                isPaid = #{isPaid},
+                isPayment = #{isPaid},
             </if>
             <if test="provider != null and provider.id != null">
-                provideId = #{provider.id},
+                providerId = #{provider.id},
             </if>
             modifyBy = #{modifiedBy.id},
             modifyDate = #{modificationDate}
@@ -118,10 +136,68 @@
         WHERE id = #{id}
     </update>
 
-    <!-- Delete bill by ID -->
+    <!-- delete -->
     <delete id="deleteById">
         DELETE FROM smbms_bill
         WHERE id = #{id}
     </delete>
 
+    <!--query -->
+    <select id="findAllBillsByQuery" resultType="Bill" resultMap="BillResultMap">
+        SELECT b.*,
+        p.id AS "provider.id",
+        p.proCode AS "provider.proCode",
+        p.proName AS "provider.proName",
+        p.proDesc AS "provider.proDesc",
+        p.proContact AS "provider.proContact",
+        p.proPhone AS "provider.proPhone",
+        p.proAddress AS "provider.proAddress",
+        p.proFax AS "provider.proFax"
+        FROM smbms_bill AS b
+        LEFT JOIN smbms_provider as p
+        ON b.providerId = p.id
+        <where>
+            <if test="code != null and code != ''">
+                b.billCode LIKE CONCAT('%', #{code}, '%')
+            </if>
+
+            <if test="productName != null and productName != ''">
+                AND b.productName LIKE CONCAT('%', #{productName}, '%')
+            </if>
+
+            <if test="productDesc != null and productDesc != ''">
+                AND b.productDesc LIKE CONCAT('%', #{productDesc}, '%')
+            </if>
+
+            <!-- TODO: upper & lower bound -->
+            <!--            <if test="productCount != null and productCount  != ''">-->
+            <!--                AND p.proCode LIKE CONCAT('%', #{code}, '%')-->
+            <!--            </if>-->
+            <!--            <if test="totalPrice != null and totalPrice  != ''">-->
+            <!--                AND p.proCode LIKE CONCAT('%', #{code}, '%')-->
+            <!--            </if>-->
+
+            <if test="providerCode != null and providerCode != ''">
+                AND p.proCode LIKE CONCAT('%', #{providerCode}, '%')
+            </if>
+
+            <if test="providerName != null and providerName != ''">
+                AND p.proName LIKE CONCAT('%', #{providerName}, '%')
+            </if>
+
+            <if test="isPaid != null">
+                AND b.isPayment = #{isPaid}
+            </if>
+
+        </where>
+        ORDER BY b.id
+    </select>
+
+    <!-- delete -->
+    <select id="findBillCountByProviderId" resultType="Integer">
+        SELECT COUNT(1)
+        FROM smbms_bill AS b
+        WHERE b.providerId = #{providerId}
+    </select>
+    
 </mapper>

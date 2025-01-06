@@ -1,13 +1,13 @@
 /**
- * Package: moe.zzy040330.smbms.service.impl
+ * Package: moe.zzy040330.smbms.service
  * File: ProviderService.java
  * Author: Xijian Sun
  * Date: 05/01/2025
  * Time: 10:55
  * Description: The ProviderService interface defines the business operations specific to the
- *  * Provider entity. It extends the GenericService interface, inheriting basic CRUD
- *  * operations, and it adds provider-specific functionalities such as authentication,
- *  * querying with pagination, and checking for existing provider codes.
+ * Provider entity. It extends the GenericService interface, inheriting basic CRUD
+ * operations, and it adds provider-specific functionalities such as authentication,
+ * querying with pagination, and checking for existing provider codes.
  */
 package moe.zzy040330.smbms.service;
 

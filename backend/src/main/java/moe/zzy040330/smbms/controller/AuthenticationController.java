@@ -42,6 +42,7 @@ public class AuthenticationController {
         loginResponse.setUserCode(authenticatedUser.user().getCode());
         loginResponse.setUserName(authenticatedUser.user().getName());
         loginResponse.setUserId(authenticatedUser.user().getId());
+        loginResponse.setUserRoleCode(authenticatedUser.user().getRole().getCode());
         return ResponseEntity.ok(loginResponse);
     }
 

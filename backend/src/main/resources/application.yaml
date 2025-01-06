@@ -13,3 +13,9 @@ pagehelper:
 mybatis:
   type-aliases-package: moe.zzy040330.smbms.entity
   mapper-locations: classpath*:mapper/*.xml
+
+logging:
+  level:
+    root: info
+    org.springframework.web: debug
+    org.springframework.security: debug
