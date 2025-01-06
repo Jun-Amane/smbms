@@ -1,25 +1,21 @@
-/**
- * Package: moe.zzy040330.smbms.controller
- * File: BillController.java
- * Author: Ziyu ZHOU
- * Date: 04/01/2025
- * Time: 10:41
- * Description: RESTful API for bill and provider entities.
- */
 package moe.zzy040330.smbms.controller;
 
+import com.github.pagehelper.PageInfo;
+import moe.zzy040330.smbms.dto.BillDto;
 import moe.zzy040330.smbms.dto.ErrorResponse;
 import moe.zzy040330.smbms.entity.Bill;
 import moe.zzy040330.smbms.entity.Provider;
 import moe.zzy040330.smbms.entity.User;
 import moe.zzy040330.smbms.service.BillService;
+import moe.zzy040330.smbms.service.JwtService;
 import moe.zzy040330.smbms.service.ProviderService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.yaml.snakeyaml.events.Event;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -34,22 +30,25 @@ public class BillController {
 
     private final BillService billService;
     private final ProviderService providerService;
+    private final JwtService jwtService;
 
-    public BillController(BillService billService, ProviderService providerService) {
+    public BillController(BillService billService, ProviderService providerService, JwtService jwtService) {
         this.billService = billService;
         this.providerService = providerService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping("")
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
-    public ResponseEntity<?> apiBillGet(@RequestParam(value = "queryProductName") String productName,
-                                        @RequestParam(value = "queryProviderId") Long providerId,
-                                        @RequestParam(value = "queryIsPaid") Boolean isPaid,
-                                        @RequestParam(value = "pageIndex") Integer pageIndex,
-                                        @RequestParam(value = "pageSize") Integer pageSize) {
+    public ResponseEntity<?> getBills(@RequestParam(value = "queryCode", required = false) String code,
+                                      @RequestParam(value = "queryProductName", required = false) String productName,
+                                      @RequestParam(value = "queryProductDesc", required = false) String productDesc,
+                                      @RequestParam(value = "queryProviderCode", required = false) String providerCode,
+                                      @RequestParam(value = "queryProviderName", required = false) String providerName,
+                                      @RequestParam(value = "queryIsPaid", required = false) Integer isPaid,
+                                      @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
+                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
         try {
-            var pageInfo = this.billService.getBillList("A","L","Desc","12","LL",1,10,12);
-
+            PageInfo<Bill> pageInfo = billService.getBillList(code, productName, productDesc, providerCode, providerName, isPaid, pageIndex, pageSize);
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());
             response.put("curPage", pageInfo.getPageNum());
@@ -59,100 +58,112 @@ public class BillController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Error fetching bills", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
-    public ResponseEntity<?> apiBillIdGet(@PathVariable Long id) {
+    public ResponseEntity<?> getBillById(@PathVariable Long id) {
         try {
             Bill bill = billService.findById(id);
             if (bill == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "Bill not found"));
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse(404, "Bill not found"));
             }
             return ResponseEntity.ok(bill);
         } catch (Exception e) {
-            logger.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse(500, "Internal server error"));
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
-    public ResponseEntity<?> apiBillIdDelete(@PathVariable Long id) {
-        try {
-            boolean deleted = billService.deleteById(id);
-            if (deleted) {
-                return ResponseEntity.ok("Bill deleted successfully");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "Bill not found"));
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Error fetching bill by ID", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
-    public ResponseEntity<?> apiBillIdPut(@PathVariable Long id, @RequestBody Bill bill) {
+    public ResponseEntity<?> updateBill(@PathVariable Long id, @RequestBody BillDto billDto, @RequestHeader("Authorization") String authHeader) {
         try {
-            if (id == null || bill == null) {
+            if (id == null || billDto == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ErrorResponse(400, "Invalid input: cannot be null"));
+                        .body(new ErrorResponse(400, "Invalid input: ID or Bill data is null"));
             }
 
-            bill.setId(id);
-            boolean updated = billService.update(new Bill());
+            Bill existingBill = billService.findById(id);
+            if (existingBill == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse(404, "Bill not found"));
+            }
 
-            if (updated) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Bill modified successfully");
+            Long userId = jwtService.extractUserId(authHeader);
+            User user = new User();
+
+            Bill updatedBill = new Bill();
+            updatedBill.setId(id);
+            updatedBill.setProductName(billDto.getProductName());
+            updatedBill.setProductDescription(billDto.getProductDesc());
+            updatedBill.setTotalPrice(billDto.getTotalPrice());
+            updatedBill.setProvider(billDto.getProviderId());
+            updatedBill.setIsPaid(billDto.getIsPaid());
+            updatedBill.setModifiedBy(user);
+            updatedBill.setModificationDate(new Date());
+
+            boolean success = billService.update(updatedBill);
+            if (success) {
+                return ResponseEntity.noContent().build();
             } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "Bill not found"));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ErrorResponse(500, "Failed to update bill"));
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Error updating bill", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
     }
 
     @PostMapping("")
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
-    public ResponseEntity<?> apiBillPost(@RequestBody Bill bill) {
+    public ResponseEntity<?> createBill(@RequestBody BillDto billDto, @RequestHeader("Authorization") String authHeader) {
         try {
-            if (bill == null || bill.getProductName() == null || bill.getTotalPrice() == null || bill.getProductName() == null) {
+            if (billDto == null || billDto.getProductName() == null || billDto.getTotalPrice() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ErrorResponse(400, "Invalid input: required fields are missing"));
             }
 
-            boolean created = billService.insert(new Bill());
-            if (created) {
-                return ResponseEntity.status(HttpStatus.CREATED).body("Bill added successfully");
+            Long userId = jwtService.extractUserId(authHeader);
+            User user = new User();
+
+            Bill newBill = new Bill();
+            newBill.setProductName(billDto.getProductName());
+            newBill.setProductDescription(billDto.getProductDesc());
+            newBill.setTotalPrice(billDto.getTotalPrice());
+            newBill.setProvider(billDto.getProviderId());
+            newBill.setIsPaid(billDto.getIsPaid());
+            newBill.setCreatedBy(user);
+            newBill.setModifiedBy(user);
+            newBill.setCreationDate(new Date());
+            newBill.setModificationDate(new Date());
+
+            boolean success = billService.insert(newBill);
+            if (success) {
+                return ResponseEntity.status(HttpStatus.CREATED).build();
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(new ErrorResponse(500, "Internal server error"));
+                        .body(new ErrorResponse(500, "Failed to create bill"));
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Error creating bill", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
     }
 
     @GetMapping("/providerlist")
-    @PreAuthorize("hasRole('SMBMS_ADMIN')")
-    public ResponseEntity<?> apiBillProviderListGet() {
+    public ResponseEntity<?> getProviderList() {
         try {
-            List<Provider> providerList = (List<Provider>) providerService.getProviderList("L","a",2,12);
-            return ResponseEntity.ok(providerList);
+            List<Provider> providers = providerService.findAll();
+            return ResponseEntity.ok(providers);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Error fetching provider list", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
