@@ -1,7 +1,5 @@
 package moe.zzy040330.smbms.dto;
 
-import moe.zzy040330.smbms.entity.Provider;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -15,15 +13,27 @@ public class BillDto {
     private String billCode;           // Bill code
     private String productName;        // Product name
     private String productDesc;        // Product description
-    private Integer productUnit;       // Product unit
+    private String productUnit;       // Product unit
     private BigDecimal totalPrice;     // Total price of the bill
     private Integer isPaid;            // Payment status: 0 for unpaid, 1 for paid
     private Long providerId;           // ID of the provider
     private String providerName;       // Name of the provider
-    private Long createdBy;            // User ID of the creator
-    private Date creationDate;         // Date of creation
-    private Long modifiedBy;           // User ID of the last modifier
-    private Date modificationDate;     // Date of last modification
+
+    public BillDto() {
+    }
+
+    public BillDto(Long id, String billCode, String productName, String productDesc, String productUnit, BigDecimal totalPrice, Integer isPaid, Long providerId, String providerName) {
+        this.id = id;
+        this.billCode = billCode;
+        this.productName = productName;
+        this.productDesc = productDesc;
+        this.productUnit=productUnit;
+        this.totalPrice = totalPrice;
+        this.isPaid = isPaid;
+        this.providerId = providerId;
+        this.providerName = providerName;
+    }
+
 
     // Getters and Setters
 
@@ -59,11 +69,11 @@ public class BillDto {
         this.productDesc = productDesc;
     }
 
-    public Integer getProductUnit() {
+    public String getProductUnit() {
         return productUnit;
     }
 
-    public void setProductUnit(Integer productUnit) {
+    public void setProductUnit(String productUnit) {
         this.productUnit = productUnit;
     }
 
@@ -83,8 +93,19 @@ public class BillDto {
         this.isPaid = isPaid;
     }
 
-    public Provider getProviderId() {
+    public Long getProviderId() {
         return providerId;
+
+        /* TODO: 这里返回值类型改成Long， 与成员保持一致。
+        *   调用处，若需要从BillDto构建Bill对象，
+        *       1. 新建一个Provider实体： var provider = new Provider()
+        *       2.  provider.setId(xxx) <-- 这里通常只需要设置Id一个字段，具体见service和mapper的底层实现
+        *       3. bill.setProvider(provider)
+        *   NOTE: 上述逻辑在UserController中也有，建议参考一下UserController与ProviderController的设计与实现，
+        *         它们的逻辑基本一致。
+        *
+        * */
+
     }
 
     public void setProviderId(Long providerId) {
@@ -99,35 +120,4 @@ public class BillDto {
         this.providerName = providerName;
     }
 
-    public Long getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public Long getModifiedBy() {
-        return modifiedBy;
-    }
-
-    public void setModifiedBy(Long modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
-
-    public Date getModificationDate() {
-        return modificationDate;
-    }
-
-    public void setModificationDate(Date modificationDate) {
-        this.modificationDate = modificationDate;
-    }
 }
