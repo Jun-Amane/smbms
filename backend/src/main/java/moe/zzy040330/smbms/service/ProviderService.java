@@ -1,19 +1,18 @@
 /**
- * Package: moe.zzy040330.smbms.service.impl
+ * Package: moe.zzy040330.smbms.service
  * File: ProviderService.java
  * Author: Xijian Sun
  * Date: 05/01/2025
  * Time: 10:55
  * Description: The ProviderService interface defines the business operations specific to the
- *  * Provider entity. It extends the GenericService interface, inheriting basic CRUD
- *  * operations, and it adds provider-specific functionalities such as authentication,
- *  * querying with pagination, and checking for existing provider codes.
+ * Provider entity. It extends the GenericService interface, inheriting basic CRUD
+ * operations, and it adds provider-specific functionalities such as authentication,
+ * querying with pagination, and checking for existing provider codes.
  */
 package moe.zzy040330.smbms.service;
 
 import com.github.pagehelper.PageInfo;
 import moe.zzy040330.smbms.entity.Provider;
-import moe.zzy040330.smbms.service.GenericCrudService;
 
 
 /**
@@ -30,7 +29,7 @@ public interface ProviderService extends GenericCrudService<Provider,Long> {
      * @param pageSize  the number of records per page
      * @return a PageInfo object containing the list of providers that match the query
      */
-    PageInfo<Provider> getProviderList(String name,String code,Integer pageNum,Integer pageSize);
+    PageInfo<Provider> queryProviders(String name, String code, Integer pageNum, Integer pageSize);
 
     /**
      * Deleting provider by specified id

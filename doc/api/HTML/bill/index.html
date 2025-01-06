@@ -249,32 +249,24 @@
   "totalPages" : 3,
   "pageSize" : 15,
   "bills" : [ {
+    "isPaid" : true,
     "code" : "BILL2016_001",
     "totalPrice" : 571802,
+    "providerId" : 1,
+    "id" : 1,
     "productUnit" : "个",
     "productCount" : 1,
-    "creationDate" : "2000-01-23T04:56:07.000+00:00",
     "productName" : "电话微波炉【暂定】",
-    "isPaid" : true,
-    "modificationDate" : "2000-01-23T04:56:07.000+00:00",
-    "createdBy" : 0,
-    "providerId" : 1,
-    "modifiedBy" : 6,
-    "id" : 1,
     "productDescription" : "日用品"
   }, {
+    "isPaid" : true,
     "code" : "BILL2016_001",
     "totalPrice" : 571802,
+    "providerId" : 1,
+    "id" : 1,
     "productUnit" : "个",
     "productCount" : 1,
-    "creationDate" : "2000-01-23T04:56:07.000+00:00",
     "productName" : "电话微波炉【暂定】",
-    "isPaid" : true,
-    "modificationDate" : "2000-01-23T04:56:07.000+00:00",
-    "createdBy" : 0,
-    "providerId" : 1,
-    "modifiedBy" : 6,
-    "id" : 1,
     "productDescription" : "日用品"
   } ]
 }</code></pre>
@@ -365,18 +357,14 @@
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
     <pre class="example"><code>{
+  "isPaid" : true,
   "code" : "BILL2016_001",
   "totalPrice" : 571802,
+  "providerId" : 1,
+  "id" : 1,
   "productUnit" : "个",
   "productCount" : 1,
-  "creationDate" : "2000-01-23T04:56:07.000+00:00",
   "productName" : "电话微波炉【暂定】",
-  "isPaid" : true,
-  "modificationDate" : "2000-01-23T04:56:07.000+00:00",
-  "createdBy" : 0,
-  "providerId" : 1,
-  "modifiedBy" : 6,
-  "id" : 1,
   "productDescription" : "日用品"
 }</code></pre>
 
@@ -522,31 +510,23 @@
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
     <pre class="example"><code>[ {
-  "modificationDate" : "2000-01-23T04:56:07.000+00:00",
   "code" : "JP_MRK001",
   "address" : "藏前桥路交叉路口小巷",
   "phone" : "12345678901",
-  "createdBy" : 1,
   "contact" : "Hououin Kyoma",
   "name" : "未来道具研究所",
   "description" : "长期合作伙伴",
-  "modifiedBy" : 1,
   "id" : 1,
-  "fax" : "0532-12345678",
-  "creationDate" : "2000-01-23T04:56:07.000+00:00"
+  "fax" : "0532-12345678"
 }, {
-  "modificationDate" : "2000-01-23T04:56:07.000+00:00",
   "code" : "JP_MRK001",
   "address" : "藏前桥路交叉路口小巷",
   "phone" : "12345678901",
-  "createdBy" : 1,
   "contact" : "Hououin Kyoma",
   "name" : "未来道具研究所",
   "description" : "长期合作伙伴",
-  "modifiedBy" : 1,
   "id" : 1,
-  "fax" : "0532-12345678",
-  "creationDate" : "2000-01-23T04:56:07.000+00:00"
+  "fax" : "0532-12345678"
 } ]</code></pre>
 
     <h3 class="field-label">Produces</h3>
@@ -599,10 +579,6 @@
           <div class="param-desc"><span class="param-type">example: true</span></div>
 <div class="param">providerId </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> Provider ID </div>
           <div class="param-desc"><span class="param-type">example: 1</span></div>
-<div class="param">createdBy </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> ID of the user who created this bill </div>
-<div class="param">creationDate </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> Date of bill creation format: date-time</div>
-<div class="param">modifiedBy </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> ID of the user who last modified this bill </div>
-<div class="param">modificationDate </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> Date of last modification format: date-time</div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">
@@ -635,12 +611,6 @@
           <div class="param-desc"><span class="param-type">example: 藏前桥路交叉路口小巷</span></div>
 <div class="param">fax </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span> Provider fax number </div>
           <div class="param-desc"><span class="param-type">example: 0532-12345678</span></div>
-<div class="param">createdBy </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> ID of the user who created this provider </div>
-          <div class="param-desc"><span class="param-type">example: 1</span></div>
-<div class="param">creationDate </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> Date of provider creation format: date-time</div>
-<div class="param">modifiedBy </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span> ID of the user who last modified this provider </div>
-          <div class="param-desc"><span class="param-type">example: 1</span></div>
-<div class="param">modificationDate </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span> Date of last modification format: date-time</div>
     </div>  <!-- field-items -->
   </div>
   <div class="model">

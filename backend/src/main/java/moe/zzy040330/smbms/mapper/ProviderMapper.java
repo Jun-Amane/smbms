@@ -1,3 +1,13 @@
+/**
+ * Package: moe.zzy040330.smbms.mapper
+ * File: ProviderMapper.java
+ * Author: Anji Yu
+ * Date: 05/01/2025
+ * Time: 10:49
+ * Description: This interface defines the database operations specific to
+ * the Provider entity. It extends the GenericMapper interface for basic CRUD
+ * operations but no specific operations required.
+ */
 package moe.zzy040330.smbms.mapper;
 
 import moe.zzy040330.smbms.entity.Provider;
@@ -6,16 +16,6 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
-
-
-/**
- * Package: moe.zzy040330.smbms.mapper
- * File: ProviderMapper.java
- * Author: Anji Yu
- * Date: 05/01/2025
- * Time: 10:49
- * Description: TODO: change me
- */
 
 @Mapper
 public interface ProviderMapper extends GenericMapper<Provider,Long>{

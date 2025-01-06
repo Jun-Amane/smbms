@@ -51,8 +51,12 @@ public class ProviderMapperTest {
         testProvider.setAddress("Test Address");
         testProvider.setFax("Test Fax");
         modifiedByUser.setId(1L);
+        testProvider.setModifiedBy(modifiedByUser);
+        testProvider.setModificationDate(new Date());
+        testProvider.setCreatedBy(modifiedByUser);
+        testProvider.setCreationDate(new Date());
 
-        providerMapper.insert(testProvider,modifiedByUser,new Date());
+        providerMapper.insert(testProvider);
         testProviderId = testProvider.getId();
 
         assertNotNull(testProvider.getName());
@@ -86,8 +90,12 @@ public class ProviderMapperTest {
         newProvider.setPhone("0987654321");
         newProvider.setAddress("new Address");
         newProvider.setFax("new Fax");
+        newProvider.setModifiedBy(modifiedByUser);
+        newProvider.setCreationDate(new Date());
+        newProvider.setCreatedBy(modifiedByUser);
+        newProvider.setModificationDate(new Date());
 
-        int rowsAffected = providerMapper.insert(newProvider,modifiedByUser,new Date());
+        int rowsAffected = providerMapper.insert(newProvider);
         assertEquals(1,rowsAffected);
         assertNotNull(newProvider.getId());
     }
@@ -96,8 +104,10 @@ public class ProviderMapperTest {
     public void testUpdate(){
         Provider existingProvider = providerMapper.findById(testProviderId);
         existingProvider.setName("Updated Name");
+        existingProvider.setModifiedBy(modifiedByUser);
+        existingProvider.setModificationDate(new Date());
 
-        int rowsAffected = providerMapper.update(existingProvider,modifiedByUser,new Date());
+        int rowsAffected = providerMapper.update(existingProvider);
         assertEquals(1,rowsAffected);
 
         Provider updatedProvider = providerMapper.findById(testProviderId);

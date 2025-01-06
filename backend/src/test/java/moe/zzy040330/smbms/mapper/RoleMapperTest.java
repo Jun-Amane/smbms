@@ -45,8 +45,12 @@ public class RoleMapperTest {
         testRole.setCode("testCode");
         testRole.setName("Test Role");
         modifiedByUser.setId(1L);
+        testRole.setModifiedBy(modifiedByUser);
+        testRole.setModificationDate(new Date());
+        testRole.setCreatedBy(modifiedByUser);
+        testRole.setCreationDate(new Date());
 
-        roleMapper.insert(testRole, modifiedByUser, new Date());
+        roleMapper.insert(testRole);
         testRoleId = testRole.getId();
 
         assertNotNull(testRole.getName());
@@ -75,8 +79,12 @@ public class RoleMapperTest {
         Role newRole = new Role();
         newRole.setCode("newCode");
         newRole.setName("New Role");
+        newRole.setModifiedBy(modifiedByUser);
+        newRole.setModificationDate(new Date());
+        newRole.setCreatedBy(modifiedByUser);
+        newRole.setCreationDate(new Date());
 
-        int rowsAffected = roleMapper.insert(newRole, modifiedByUser, new Date());
+        int rowsAffected = roleMapper.insert(newRole);
         assertEquals(1, rowsAffected);
         assertNotNull(newRole.getId());
     }
@@ -85,8 +93,12 @@ public class RoleMapperTest {
     public void testUpdate() {
         Role existingRole = roleMapper.findById(testRoleId);
         existingRole.setName("Updated Name");
+        existingRole.setModifiedBy(modifiedByUser);
+        existingRole.setModificationDate(new Date());
+        existingRole.setCreatedBy(modifiedByUser);
+        existingRole.setCreationDate(new Date());
 
-        int rowsAffected = roleMapper.update(existingRole, modifiedByUser, new Date());
+        int rowsAffected = roleMapper.update(existingRole);
         assertEquals(1, rowsAffected);
 
         Role updatedRole = roleMapper.findById(testRoleId);

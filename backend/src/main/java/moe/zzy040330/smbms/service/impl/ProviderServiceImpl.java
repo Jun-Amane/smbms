@@ -11,13 +11,12 @@ package moe.zzy040330.smbms.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import moe.zzy040330.smbms.entity.Provider;
-import moe.zzy040330.smbms.entity.User;
+import moe.zzy040330.smbms.mapper.BillMapper;
 import moe.zzy040330.smbms.mapper.GenericMapper;
 import moe.zzy040330.smbms.mapper.ProviderMapper;
 import moe.zzy040330.smbms.service.ProviderService;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -41,7 +40,7 @@ public class ProviderServiceImpl extends GenericCrudServiceImpl<Provider, Long> 
      * @return a PageInfo object containing the list of providers that match the query
      */
     @Override
-    public PageInfo<Provider> getProviderList(String name, String code, Integer pageNum, Integer pageSize) {
+    public PageInfo<Provider> queryProviders(String name, String code, Integer pageNum, Integer pageSize) {
         // Set up the pagination configuration
         PageHelper.startPage(pageNum, pageSize);
 
@@ -59,12 +58,10 @@ public class ProviderServiceImpl extends GenericCrudServiceImpl<Provider, Long> 
      */
     @Override
     public Boolean deleteProviderById(Long id) {
-        //TODO : function if(billMapper.findBillCountByProviderId)
-        if(true){
-            providerMapper.deleteById(id);
-            return true;
+        if(billMapper.findBillCountByProviderId(id) == 0) {
+            return providerMapper.deleteById(id) > 0;
         }else{
-            return false;
+            throw new IllegalArgumentException("The provider with bills cannot be deleted.");
         }
     }
 }

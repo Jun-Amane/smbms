@@ -55,40 +55,61 @@
     </select>
 
     <!-- insert -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="entity.id">
-        INSERT INTO smbms_user(userCode, userName, userPassword, gender, birthday, phone, address, createdBy,
-        creationDate, userRole)
-        VALUES(#{entity.code}, #{entity.name}, #{entity.password}, #{entity.gender}, #{entity.birthday},
-        #{entity.phone}, #{entity.address}, #{createdBy.id},
-        #{creationDate}, #{entity.role.id})
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO smbms_user(
+        userCode,
+        userName,
+        userPassword,
+        gender,
+        birthday,
+        phone,
+        address,
+        modifyBy,
+        modifyDate,
+        createdBy,
+        creationDate,
+        userRole)
+        VALUES (
+        #{code},
+        #{name},
+        #{password},
+        #{gender},
+        #{birthday},
+        #{phone},
+        #{address},
+        #{modifiedBy.id},
+        #{modificationDate},
+        #{createdBy.id},
+        #{creationDate},
+        #{role.id})
     </insert>
 
     <!-- modify -->
     <update id="update">
         UPDATE smbms_user
         <set>
-            <if test="entity.name != null and entity.name != ''">
-                userName = #{entity.name},
+            <if test="name != null and name != ''">
+                userName = #{name},
             </if>
-            <if test="entity.gender != null">
-                gender = #{entity.gender},
+            <if test="gender != null">
+                gender = #{gender},
             </if>
-            <if test="entity.birthday != null">
-                birthday = #{entity.birthday},
+            <if test="birthday != null">
+                birthday = #{birthday},
             </if>
-            <if test="entity.address != null and entity.address != ''">
-                address = #{entity.address},
+            <if test="address != null and address != ''">
+                address = #{address},
             </if>
-            <if test="entity.phone != null and entity.phone != ''">
-                phone = #{entity.phone},
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
             </if>
-            <if test="entity.role != null and entity.role.id != null">
-                userRole = #{entity.role.id},
+            <if test="role != null and role.id != null">
+                userRole = #{role.id},
             </if>
             modifyBy=#{modifiedBy.id},
             modifyDate=#{modificationDate}
         </set>
-        WHERE id=#{entity.id}
+        WHERE id=#{id}
     </update>
 
     <!-- delete -->

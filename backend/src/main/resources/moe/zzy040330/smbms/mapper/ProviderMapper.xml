@@ -39,36 +39,56 @@
     </select>
 
     <!-- insert -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="entity.id">
-        INSERT INTO smbms_provider(proCode, proName, proDesc, proContact, proPhone,proAddress, proFax,
-        createdBy, creationDate)
-        VALUES(#{entity.code}, #{entity.name}, #{entity.description}, #{entity.contact}, #{entity.phone}, #{entity.address},
-        #{entity.fax}, #{createdBy.id}, #{creationDate})
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO smbms_provider(
+        proCode,
+        proName,
+        proDesc,
+        proContact,
+        proPhone,
+        proAddress,
+        proFax,
+        modifyBy,
+        modifyDate,
+        createdBy,
+        creationDate)
+        VALUES (
+        #{code},
+        #{name},
+        #{description},
+        #{contact},
+        #{phone},
+        #{address},
+        #{fax},
+        #{modifiedBy.id},
+        #{modificationDate},
+        #{createdBy.id},
+        #{creationDate})
     </insert>
 
     <!-- modify -->
     <update id="update">
         UPDATE smbms_provider
         <set>
-            <if test="entity.name != null and entity.name != ''">
-                proName = #{entity.name},
+            <if test="name != null and name != ''">
+                proName = #{name},
             </if>
-            <if test="entity.description != null and entity.description != ''">
-                proDesc = #{entity.description},
+            <if test="description != null and description != ''">
+                proDesc = #{description},
             </if>
-            <if test="entity.contact != null and entity.contact != ''">
-                proContact = #{entity.contact},
+            <if test="contact != null and contact != ''">
+                proContact = #{contact},
             </if>
-            <if test="entity.phone != null and entity.phone != ''">
-                proPhone = #{entity.phone},
+            <if test="phone != null and phone != ''">
+                proPhone = #{phone},
             </if>
-            <if test="entity.fax != null and entity.fax != ''">
-                proFax = #{entity.fax},
+            <if test="fax != null and fax != ''">
+                proFax = #{fax},
             </if>
             modifyBy = #{modifiedBy.id},
             modifyDate = #{modificationDate}
         </set>
-        WHERE id = #{entity.id}
+        WHERE id = #{id}
     </update>
 
     <!-- delete -->
@@ -76,7 +96,7 @@
         DELETE FROM smbms_provider
         WHERE id = #{id}
     </delete>
-    
+
     <!--query -->
     <select id="findAllProvidersByQuery" resultType="Provider" resultMap="ProviderResultMap">
         SELECT p.*

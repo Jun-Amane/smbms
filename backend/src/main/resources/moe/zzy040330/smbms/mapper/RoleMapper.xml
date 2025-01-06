@@ -31,22 +31,35 @@
     </select>
 
     <!-- insert -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="entity.id">
-        INSERT INTO smbms_role(roleCode, roleName, createdBy, creationDate)
-        VALUES(#{entity.code}, #{entity.name}, #{createdBy.id}, #{creationDate})
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO smbms_role(
+        roleCode,
+        roleName,
+        modifyBy,
+        modifyDate,
+        createdBy,
+        creationDate)
+        VALUES (
+        #{code},
+        #{name},
+        #{modifiedBy.id},
+        #{modificationDate},
+        #{createdBy.id},
+        #{creationDate}
+        )
     </insert>
 
     <!-- modify -->
     <update id="update">
         UPDATE smbms_role
         <set>
-            <if test="entity.name != null and entity.name != ''">
-                roleName = #{entity.name},
+            <if test="name != null and name != ''">
+                roleName = #{name},
             </if>
             modifyBy=#{modifiedBy.id},
             modifyDate=#{modificationDate}
         </set>
-        WHERE id=#{entity.id}
+        WHERE id=#{id}
     </update>
 
     <!-- delete -->
