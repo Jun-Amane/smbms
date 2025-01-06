@@ -44,8 +44,8 @@ public class ProviderController {
      */
     @GetMapping("")
     public ResponseEntity<?> apiprovidergetall(
-            @RequestParam("queryName") String queryName,
-            @RequestParam("queryCode") String queryCode,
+            @RequestParam(value = "queryName", required = false) String queryName,
+            @RequestParam(value = "queryCode", required = false) String queryCode,
             @RequestParam("pageIndex") Integer pageIndex,
             @RequestParam("pageSize") Integer pageSize) {
         try {
