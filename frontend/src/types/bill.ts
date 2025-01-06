@@ -6,7 +6,7 @@ export interface Bill {
     productUnit: string;
     productCount: number;
     totalPrice: number;
-    isPaid: number;
+    isPaid: 0 | 1;
     providerId: number;
 }
 
