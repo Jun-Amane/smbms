@@ -125,7 +125,7 @@ public class ProviderServiceTest {
 
     @Test
     public void testFindAllProvidersByQuery() {
-        PageInfo<Provider> pageInfo = providerService.getProviderList("Test", null, 1, 10);
+        PageInfo<Provider> pageInfo = providerService.queryProviders("Test", null, 1, 10);
         assertNotNull(pageInfo);
         assertFalse(pageInfo.getList().isEmpty());
         assertEquals(1, pageInfo.getList().size());

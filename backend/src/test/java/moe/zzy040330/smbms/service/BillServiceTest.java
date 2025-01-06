@@ -4,9 +4,6 @@ import com.github.pagehelper.PageInfo;
 import moe.zzy040330.smbms.entity.Bill;
 import moe.zzy040330.smbms.entity.Provider;
 import moe.zzy040330.smbms.entity.User;
-import moe.zzy040330.smbms.mapper.BillMapper;
-import moe.zzy040330.smbms.mapper.ProviderMapper;
-import moe.zzy040330.smbms.service.impl.BillServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
@@ -16,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -142,7 +138,7 @@ public class BillServiceTest {
 
     @Test
     public void testQuery() {
-        PageInfo<Bill> pageInfo = billService.getBillList("BILL00", null, null,
+        PageInfo<Bill> pageInfo = billService.queryBills("BILL00", null, null,
                 null, null, null, 1, 10);
         assertNotNull(pageInfo);
         assertFalse(pageInfo.getList().isEmpty());

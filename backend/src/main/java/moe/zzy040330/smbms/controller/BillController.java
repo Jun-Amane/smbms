@@ -48,7 +48,7 @@ public class BillController {
                                         @RequestParam(value = "pageIndex") Integer pageIndex,
                                         @RequestParam(value = "pageSize") Integer pageSize) {
         try {
-            var pageInfo = this.billService.getBillList("A","L","Desc","12","LL",1,10,12);
+            var pageInfo = this.billService.queryBills("A","L","Desc","12","LL",1,10,12);
 
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());
@@ -149,7 +149,7 @@ public class BillController {
     @PreAuthorize("hasRole('SMBMS_ADMIN')")
     public ResponseEntity<?> apiBillProviderListGet() {
         try {
-            List<Provider> providerList = (List<Provider>) providerService.getProviderList("L","a",2,12);
+            List<Provider> providerList = (List<Provider>) providerService.queryProviders("L","a",2,12);
             return ResponseEntity.ok(providerList);
         } catch (Exception e) {
             logger.error(e.getMessage());
