@@ -48,7 +48,7 @@ public class BillController {
                                         @RequestParam(value = "pageIndex") Integer pageIndex,
                                         @RequestParam(value = "pageSize") Integer pageSize) {
         try {
-            var pageInfo = this.billService.getBillList(new Bill() , pageIndex, pageSize);
+            var pageInfo = this.billService.getBillList("A","L","Desc","12","LL",1,10,12);
 
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());
@@ -108,7 +108,7 @@ public class BillController {
             }
 
             bill.setId(id);
-            boolean updated = billService.update(new Bill(),new User(),new Date());
+            boolean updated = billService.update(new Bill());
 
             if (updated) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Bill modified successfully");
@@ -131,7 +131,7 @@ public class BillController {
                         .body(new ErrorResponse(400, "Invalid input: required fields are missing"));
             }
 
-            boolean created = billService.insert(new Bill(),new User(),new Date());
+            boolean created = billService.insert(new Bill());
             if (created) {
                 return ResponseEntity.status(HttpStatus.CREATED).body("Bill added successfully");
             } else {
