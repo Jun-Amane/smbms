@@ -131,12 +131,10 @@ public class BillController {
     @PostMapping("")
     public ResponseEntity<?> createBill(@RequestBody BillDto billDto, @RequestHeader("Authorization") String authHeader) {
         try {
-            // TODO: check all variables of DTO if its null, ex ID
             if (billDto == null || billDto.getBillCode() == null || billDto.getProductName() == null ||
                     billDto.getProductDesc() == null || billDto.getProductUnit() == null
                     || billDto.getTotalPrice() == null || billDto.getIsPaid() == null
-                    || billDto.getProviderId() == null || billDto.getProviderName() == null)
-            {
+                    || billDto.getProviderId() == null || billDto.getProviderName() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ErrorResponse(400, "Invalid input: required fields are missing"));
             }

@@ -27,16 +27,14 @@ public class BillDto {
         this.billCode = billCode;
         this.productName = productName;
         this.productDesc = productDesc;
-        this.productUnit=productUnit;
+        this.productUnit = productUnit;
         this.totalPrice = totalPrice;
         this.isPaid = isPaid;
         this.providerId = providerId;
         this.providerName = providerName;
     }
 
-
     // Getters and Setters
-
     public Long getId() {
         return id;
     }
@@ -95,17 +93,6 @@ public class BillDto {
 
     public Long getProviderId() {
         return providerId;
-
-        /* TODO: 这里返回值类型改成Long， 与成员保持一致。
-        *   调用处，若需要从BillDto构建Bill对象，
-        *       1. 新建一个Provider实体： var provider = new Provider()
-        *       2.  provider.setId(xxx) <-- 这里通常只需要设置Id一个字段，具体见service和mapper的底层实现
-        *       3. bill.setProvider(provider)
-        *   NOTE: 上述逻辑在UserController中也有，建议参考一下UserController与ProviderController的设计与实现，
-        *         它们的逻辑基本一致。
-        *
-        * */
-
     }
 
     public void setProviderId(Long providerId) {
