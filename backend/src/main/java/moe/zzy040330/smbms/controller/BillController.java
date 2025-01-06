@@ -48,6 +48,7 @@ public class BillController {
                                       @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
                                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
         try {
+
             PageInfo<Bill> pageInfo = billService.getBillList(code, productName, productDesc, providerCode, providerName, isPaid, pageIndex, pageSize);
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());
