@@ -36,8 +36,8 @@ public class BillServiceImpl extends GenericCrudServiceImpl<Bill, Long> implemen
      * @return a PageInfo object containing the list of bills that match the query
      */
     @Override
-    public PageInfo<Bill> getBillList(String code, String productName, String productDesc, String providerCode,
-                                      String providerName, Integer isPaid, Integer pageNum, Integer pageSize) {
+    public PageInfo<Bill> findBillByQuery(String code, String productName, String productDesc, String providerCode,
+                                          String providerName, Integer isPaid, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<Bill> bills = billMapper.findAllBillsByQuery(code, productName, productDesc,
                 providerCode, providerName, isPaid);

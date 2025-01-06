@@ -13,7 +13,6 @@ package moe.zzy040330.smbms.service;
 
 import com.github.pagehelper.PageInfo;
 import moe.zzy040330.smbms.entity.Provider;
-import moe.zzy040330.smbms.service.GenericCrudService;
 
 
 /**
@@ -30,7 +29,7 @@ public interface ProviderService extends GenericCrudService<Provider,Long> {
      * @param pageSize  the number of records per page
      * @return a PageInfo object containing the list of providers that match the query
      */
-    PageInfo<Provider> getProviderList(String name,String code,Integer pageNum,Integer pageSize);
+    PageInfo<Provider> findProviderByQuery(String name, String code, Integer pageNum, Integer pageSize);
 
     /**
      * Deleting provider by specified id

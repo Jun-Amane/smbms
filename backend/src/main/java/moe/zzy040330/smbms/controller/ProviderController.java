@@ -50,7 +50,7 @@ public class ProviderController {
             @RequestParam("pageSize") Integer pageSize) {
         try {
 
-            var pageInfo = this.providerService.getProviderList(queryName, queryCode, pageIndex, pageSize);
+            var pageInfo = this.providerService.findProviderByQuery(queryName, queryCode, pageIndex, pageSize);
 
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());

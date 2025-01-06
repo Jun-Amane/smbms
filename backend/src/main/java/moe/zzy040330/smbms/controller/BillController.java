@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.yaml.snakeyaml.events.Event;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -49,7 +48,7 @@ public class BillController {
                                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
         try {
 
-            PageInfo<Bill> pageInfo = billService.getBillList(code, productName, productDesc, providerCode, providerName, isPaid, pageIndex, pageSize);
+            PageInfo<Bill> pageInfo = billService.findBillByQuery(code, productName, productDesc, providerCode, providerName, isPaid, pageIndex, pageSize);
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());
             response.put("curPage", pageInfo.getPageNum());
