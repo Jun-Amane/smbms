@@ -96,13 +96,16 @@ public class BillController {
 
             Long userId = jwtService.extractUserId(authHeader);
             User user = new User();
+            user.setId(userId);
 
             Bill updatedBill = new Bill();
             updatedBill.setId(id);
             updatedBill.setProductName(billDto.getProductName());
             updatedBill.setProductDescription(billDto.getProductDesc());
             updatedBill.setTotalPrice(billDto.getTotalPrice());
-            updatedBill.setProvider(billDto.getProviderId());
+            var provider = new Provider();
+            provider.setId(billDto.getId());
+            updatedBill.setProvider(provider);
             updatedBill.setIsPaid(billDto.getIsPaid());
             updatedBill.setModifiedBy(user);
             updatedBill.setModificationDate(new Date());
@@ -131,12 +134,15 @@ public class BillController {
 
             Long userId = jwtService.extractUserId(authHeader);
             User user = new User();
+            user.setId(userId);
 
             Bill newBill = new Bill();
             newBill.setProductName(billDto.getProductName());
             newBill.setProductDescription(billDto.getProductDesc());
             newBill.setTotalPrice(billDto.getTotalPrice());
-            newBill.setProvider(billDto.getProviderId());
+            var provider = new Provider();
+            provider.setId(billDto.getId());
+            newBill.setProvider(provider);
             newBill.setIsPaid(billDto.getIsPaid());
             newBill.setCreatedBy(user);
             newBill.setModifiedBy(user);
