@@ -229,7 +229,8 @@ public class UserController {
                 DateUtils.formatDate(user.getBirthday()),
                 user.getPhone(),
                 user.getAddress(),
-                user.getRole().getId()
+                user.getRole().getId(),
+                user.getAge()
         );
     }
 
