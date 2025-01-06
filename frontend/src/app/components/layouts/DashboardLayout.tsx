@@ -27,6 +27,7 @@ import {
     Group as UserIcon,
     Settings as SettingsIcon,
     Logout as LogoutIcon,
+    MonetizationOn as MonetizationIcon,
 } from '@mui/icons-material';
 
 const drawerWidth = 240;
@@ -106,8 +107,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
     const menuItems = [
         { text: '控制台主页', icon: <DashboardIcon />, path: '/dashboard' },
-        { text: '订单管理', icon: <OrderIcon />, path: '/orders' },
-        { text: '供应商管理', icon: <SupplierIcon />, path: '/suppliers' },
+        { text: '订单管理', icon: < MonetizationIcon/>, path: '/bills' },
+        { text: '供应商管理', icon: <OrderIcon />, path: '/providers' },
         { text: '用户管理', icon: <UserIcon />, path: '/users' },
     ];
 
