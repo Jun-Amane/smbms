@@ -18,11 +18,12 @@ public class UserDto {
     private String phone;
     private String address;
     private Long roleId;
+    private Integer age;
 
     public UserDto() {
     }
 
-    public UserDto(Long id, String code, String name, String password, Integer gender, String birthday, String phone, String address, Long roleId) {
+    public UserDto(Long id, String code, String name, String password, Integer gender, String birthday, String phone, String address, Long roleId, Integer age) {
         this.id = id;
         this.code = code;
         this.name = name;
@@ -32,6 +33,7 @@ public class UserDto {
         this.phone = phone;
         this.address = address;
         this.roleId = roleId;
+        this.age = age;
     }
 
     public Long getId() {
@@ -104,5 +106,13 @@ public class UserDto {
 
     public void setRoleId(Long roleId) {
         this.roleId = roleId;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 }
