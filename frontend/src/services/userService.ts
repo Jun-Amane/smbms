@@ -1,5 +1,6 @@
 import axios from '@/lib/axios';
 import { User, Role, UserQueryParams, UserListResponse } from '@/types/user';
+import {PasswordUpdateRequest} from "@/types";
 
 export const userService = {
     // get user list
@@ -44,7 +45,7 @@ export const userService = {
     },
 
     // change password
-    updatePassword: async (id: number, newPassword: string): Promise<void> => {
-        await axios.patch(`/api/user/${id}/password`, { newPassword });
+    updatePassword: async (id: number, passwordReq: PasswordUpdateRequest): Promise<void> => {
+        await axios.patch(`/api/user/${id}/password`, passwordReq);
     },
 };
