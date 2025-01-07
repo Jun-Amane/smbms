@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Box,
     Paper,
@@ -28,18 +28,24 @@ import {
     Snackbar,
     CircularProgress,
     TablePagination,
+    Tooltip,
+    Chip,
+    Stack,
+    Divider,
 } from '@mui/material';
 import {
     Visibility as ViewIcon,
     Edit as EditIcon,
     Delete as DeleteIcon,
     Add as AddIcon,
+    Search as SearchIcon,
+    Refresh as RefreshIcon,
 } from '@mui/icons-material';
-import {useRouter} from 'next/navigation';
-import {User, Role, UserQueryParams, formatGender} from '@/types/user';
-import {userService} from '@/services/userService';
+import { useRouter } from 'next/navigation';
+import { User, Role, UserQueryParams, formatGender } from '@/types/user';
+import { userService } from '@/services/userService';
 import UserForm from "@/app/components/forms/UserForm";
-import {checkPermission} from '@/utils/auth';
+import { checkPermission } from '@/utils/auth';
 
 type DialogType = 'create' | 'edit' | 'view' | 'delete' | null;
 
@@ -238,65 +244,143 @@ export default function UserManagement() {
         }
     };
 
+    const getStatusColor = (roleId: number) => {
+        const role = roles.find(r => r.id === roleId);
+        switch (role?.name) {
+            case '系统管理员':
+                return 'primary';
+            case '经理':
+                return 'secondary';
+            default:
+                return 'default';
+        }
+    };
+
     return (
-        <Box sx={{p: 3}}>
-            {/* breadcrumbs nav */}
-            <Breadcrumbs sx={{mb: 3}}>
-                <Link color="inherit" href="/dashboard">
-                    首页
-                </Link>
-                <Typography color="text.primary">用户管理</Typography>
-            </Breadcrumbs>
+        <Box>
+            {/* Page Header */}
+            <Box sx={{ mb: 4 }}>
+                <Typography variant="h5" sx={{ mb: 1, fontWeight: 600 }}>
+                    用户管理
+                </Typography>
+                <Breadcrumbs>
+                    <Link color="inherit" href="/dashboard" sx={{
+                        textDecoration: 'none',
+                        '&:hover': { textDecoration: 'underline' }
+                    }}>
+                        首页
+                    </Link>
+                    <Typography color="text.primary">用户管理</Typography>
+                </Breadcrumbs>
+            </Box>
 
-            {/* query form */}
-            <Paper sx={{p: 2, mb: 3}}>
-                <Box sx={{display: 'flex', gap: 2, alignItems: 'flex-end'}}>
-                    <TextField
-                        label="用户名"
-                        variant="outlined"
-                        size="small"
-                        value={queryParams.queryName || ''}
-                        onChange={handleQueryChange('queryName')}
-                    />
+            {/* Query Form */}
+            <Paper
+                elevation={0}
+                sx={{
+                    p: 3,
+                    mb: 3,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 2
+                }}
+            >
+                <Stack spacing={3}>
+                    <Typography variant="subtitle2" color="text.secondary">
+                        筛选条件
+                    </Typography>
+                    <Stack
+                        direction={{ xs: 'column', sm: 'row' }}
+                        spacing={2}
+                        alignItems="flex-end"
+                    >
+                        <TextField
+                            label="用户名"
+                            variant="outlined"
+                            size="small"
+                            value={queryParams.queryName || ''}
+                            onChange={handleQueryChange('queryName')}
+                            sx={{ minWidth: 200 }}
+                        />
 
-                    <FormControl size="small" sx={{minWidth: 120}}>
-                        <InputLabel>用户角色</InputLabel>
-                        <Select
-                            value={queryParams.queryRole || ''}
-                            onChange={handleQueryChange('queryRole')}
-                            label="用户角色"
-                        >
-                            <MenuItem value="">
-                                <em>全部</em>
-                            </MenuItem>
-                            {roles.map((role) => (
-                                <MenuItem key={role.id} value={role.id}>
-                                    {role.name}
+                        <FormControl size="small" sx={{ minWidth: 200 }}>
+                            <InputLabel>用户角色</InputLabel>
+                            <Select
+                                value={queryParams.queryRole || ''}
+                                onChange={handleQueryChange('queryRole')}
+                                label="用户角色"
+                            >
+                                <MenuItem value="">
+                                    <em>全部</em>
                                 </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                                {roles.map((role) => (
+                                    <MenuItem key={role.id} value={role.id}>
+                                        {role.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
 
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            <Button
+                                variant="contained"
+                                startIcon={<SearchIcon />}
+                                onClick={() => fetchUsers()}
+                                disabled={loading}
+                            >
+                                查询
+                            </Button>
+
+                            <Button
+                                variant="outlined"
+                                startIcon={<RefreshIcon />}
+                                onClick={() => {
+                                    setQueryParams({ pageSize: 10, pageIndex: 1 });
+                                }}
+                            >
+                                重置
+                            </Button>
+                        </Box>
+                    </Stack>
+                </Stack>
+            </Paper>
+
+            {/* User List */}
+            <Paper
+                elevation={0}
+                sx={{
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 2,
+                    overflow: 'hidden'
+                }}
+            >
+                <Box sx={{
+                    p: 2,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    borderBottom: '1px solid',
+                    borderColor: 'divider'
+                }}>
+                    <Typography variant="subtitle2" color="text.secondary">
+                        用户列表
+                    </Typography>
                     <Button
                         variant="contained"
-                        onClick={() => fetchUsers()}
-                        disabled={loading}
-                    >
-                        {loading ? <CircularProgress size={24}/> : '查询'}
-                    </Button>
-
-                    <Button
-                        variant="outlined"
-                        startIcon={<AddIcon/>}
+                        startIcon={<AddIcon />}
                         onClick={() => handleOpenDialog('create')}
+                        sx={{
+                            bgcolor: 'primary.main',
+                            '&:hover': {
+                                bgcolor: 'primary.dark',
+                            }
+                        }}
                     >
                         添加用户
                     </Button>
                 </Box>
-            </Paper>
 
-            {/* user list */}
-            <Paper>
                 <TableContainer>
                     <Table>
                         <TableHead>
@@ -307,52 +391,95 @@ export default function UserManagement() {
                                 <TableCell>年龄</TableCell>
                                 <TableCell>电话</TableCell>
                                 <TableCell>用户角色</TableCell>
-                                <TableCell>操作</TableCell>
+                                <TableCell align="center">操作</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {loading ? (
                                 <TableRow>
-                                    <TableCell colSpan={7} align="center">
-                                        <CircularProgress/>
+                                    <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
+                                        <CircularProgress size={40} />
                                     </TableCell>
                                 </TableRow>
                             ) : users.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={7} align="center">
-                                        暂无数据
+                                    <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
+                                        <Typography color="text.secondary">
+                                            暂无数据
+                                        </Typography>
                                     </TableCell>
                                 </TableRow>
                             ) : (
                                 users.map((user) => (
-                                    <TableRow key={user.id}>
+                                    <TableRow key={user.id} hover>
                                         <TableCell>{user.code}</TableCell>
-                                        <TableCell>{user.name}</TableCell>
+                                        <TableCell>
+                                            <Typography fontWeight={500}>
+                                                {user.name}
+                                            </Typography>
+                                        </TableCell>
                                         <TableCell>{formatGender(user.gender)}</TableCell>
                                         <TableCell>{user.age}</TableCell>
                                         <TableCell>{user.phone}</TableCell>
                                         <TableCell>
-                                            {roles.find(role => role.id === user.roleId)?.name}
+                                            <Chip
+                                                label={roles.find(role => role.id === user.roleId)?.name}
+                                                size="small"
+                                                color={getStatusColor(user.roleId)}
+                                            />
                                         </TableCell>
                                         <TableCell>
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => handleOpenDialog('view', user)}
+                                            <Stack
+                                                direction="row"
+                                                spacing={1}
+                                                justifyContent="center"
                                             >
-                                                <ViewIcon/>
-                                            </IconButton>
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => handleOpenDialog('edit', user)}
-                                            >
-                                                <EditIcon/>
-                                            </IconButton>
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => handleDelete(user)}
-                                            >
-                                                <DeleteIcon/>
-                                            </IconButton>
+                                                <Tooltip title="查看详情">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleOpenDialog('view', user)}
+                                                        sx={{
+                                                            color: 'primary.light',
+                                                            '&:hover': {
+                                                                bgcolor: 'primary.lighter',
+                                                                color: 'primary.main'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <ViewIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="编辑用户">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleOpenDialog('edit', user)}
+                                                        sx={{
+                                                            color: 'grey.500',
+                                                            '&:hover': {
+                                                                bgcolor: 'grey.100',
+                                                                color: 'grey.700'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <EditIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="删除用户">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleDelete(user)}
+                                                        sx={{
+                                                            color: 'grey.500',
+                                                            '&:hover': {
+                                                                bgcolor: 'grey.100',
+                                                                color: 'grey.700'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <DeleteIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </Stack>
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -361,11 +488,10 @@ export default function UserManagement() {
                     </Table>
                 </TableContainer>
 
-                {/* pager */}
                 <TablePagination
                     component="div"
                     count={totalItems}
-                    page={(queryParams.pageIndex || 1) - 1} // Convert to 0-based index for MUI
+                    page={(queryParams.pageIndex || 1) - 1}
                     rowsPerPage={queryParams.pageSize || 10}
                     onPageChange={handlePageChange}
                     onRowsPerPageChange={handlePageSizeChange}
@@ -374,18 +500,36 @@ export default function UserManagement() {
                     labelDisplayedRows={({from, to, count}) =>
                         `${from}-${to} 共 ${count} 条`
                     }
+                    sx={{
+                        borderTop: '1px solid',
+                        borderColor: 'divider'
+                    }}
                 />
             </Paper>
 
-            {/* user form dialog */}
+            {/* Dialogs */}
             <Dialog
                 open={dialogType === 'create' || dialogType === 'edit' || dialogType === 'view'}
                 onClose={handleCloseDialog}
                 maxWidth="md"
                 fullWidth
+                PaperProps={{
+                    elevation: 0,
+                    sx: {
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'divider'
+                    }
+                }}
             >
-                <DialogTitle>{getDialogTitle()}</DialogTitle>
-                <DialogContent>
+                <DialogTitle sx={{
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                    pb: 2
+                }}>
+                    {getDialogTitle()}
+                </DialogTitle>
+                <DialogContent sx={{ p: 3 }}>
                     <UserForm
                         ref={userFormRef}
                         user={formValues}
@@ -396,8 +540,17 @@ export default function UserManagement() {
                     />
                 </DialogContent>
                 {dialogType !== 'view' && (
-                    <DialogActions>
-                        <Button onClick={handleCloseDialog}>取消</Button>
+                    <DialogActions sx={{
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                        p: 2
+                    }}>
+                        <Button
+                            onClick={handleCloseDialog}
+                            variant="outlined"
+                        >
+                            取消
+                        </Button>
                         <Button
                             onClick={handleSave}
                             variant="contained"
@@ -409,43 +562,80 @@ export default function UserManagement() {
                 )}
             </Dialog>
 
-            {/* delete-confirmation dialog */}
             <Dialog
                 open={dialogType === 'delete'}
                 onClose={handleCloseDialog}
+                PaperProps={{
+                    elevation: 0,
+                    sx: {
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'divider'
+                    }
+                }}
             >
-                <DialogTitle>{getDialogTitle()}</DialogTitle>
-                <DialogContent>
+                <DialogTitle sx={{ pb: 2 }}>
+                    {getDialogTitle()}
+                </DialogTitle>
+                <DialogContent sx={{ pb: 3 }}>
+                    <Alert
+                        severity="info"
+                        sx={{
+                            mb: 2,
+                            '& .MuiAlert-icon': {
+                                color: 'primary.main'
+                            }
+                        }}
+                    >
+                        此操作将永久删除该用户，是否继续？
+                    </Alert>
                     <Typography>
-                        确定要删除用户 {selectedUser?.name} 吗？
+                        用户名称：{selectedUser?.name}
                     </Typography>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog}>取消</Button>
-                    <Button onClick={confirmDelete} color="error">
-                        删除
+                <DialogActions sx={{ p: 2, pt: 0 }}>
+                    <Button
+                        onClick={handleCloseDialog}
+                        variant="outlined"
+                    >
+                        取消
+                    </Button>
+                    <Button
+                        onClick={confirmDelete}
+                        variant="contained"
+                        color="primary"
+                    >
+                        确认删除
                     </Button>
                 </DialogActions>
             </Dialog>
 
-            {/* error message */}
             <Snackbar
                 open={!!error}
                 autoHideDuration={6000}
                 onClose={() => setError(null)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
-                <Alert severity="error" onClose={() => setError(null)}>
+                <Alert
+                    severity="error"
+                    variant="filled"
+                    onClose={() => setError(null)}
+                >
                     {error}
                 </Alert>
             </Snackbar>
 
-            {/* success message */}
             <Snackbar
                 open={!!successMessage}
                 autoHideDuration={3000}
                 onClose={() => setSuccessMessage(null)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
-                <Alert severity="success" onClose={() => setSuccessMessage(null)}>
+                <Alert
+                    severity="success"
+                    variant="filled"
+                    onClose={() => setSuccessMessage(null)}
+                >
                     {successMessage}
                 </Alert>
             </Snackbar>

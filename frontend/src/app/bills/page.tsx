@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     Box,
     Paper,
@@ -28,18 +28,25 @@ import {
     Snackbar,
     CircularProgress,
     TablePagination,
+    Tooltip,
+    Stack,
+    Chip,
 } from '@mui/material';
 import {
     Visibility as ViewIcon,
     Edit as EditIcon,
     Delete as DeleteIcon,
     Add as AddIcon,
+    Search as SearchIcon,
+    Refresh as RefreshIcon,
+    AttachMoney as MoneyIcon,
+    Store as StoreIcon,
 } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
-import { Bill, BillQueryParams, Provider } from '@/types';
-import { billService } from '@/services/billService';
+import {useRouter} from 'next/navigation';
+import {Bill, BillQueryParams, Provider} from '@/types';
+import {billService} from '@/services/billService';
 import BillForm from "@/app/components/forms/BillForm";
-import { checkPermission } from '@/utils/auth';
+import {checkPermission} from '@/utils/auth';
 
 type DialogType = 'create' | 'edit' | 'view' | 'delete' | null;
 
@@ -229,140 +236,300 @@ export default function BillManagement() {
         }
     };
 
+    const formatPrice = (price: number) => {
+        return new Intl.NumberFormat('zh-CN', {
+            style: 'currency',
+            currency: 'CNY'
+        }).format(price);
+    };
+
+    const getPaymentStatusChip = (isPaid: number) => {
+        return (
+            <Chip
+                label={isPaid === 1 ? '已支付' : '未支付'}
+                size="small"
+                color={isPaid === 1 ? 'success' : 'default'}
+                sx={{
+                    '& .MuiChip-label': {
+                        px: 2
+                    }
+                }}
+            />
+        );
+    };
+
     return (
-        <Box sx={{ p: 3 }}>
-            {/* breadcrumbs nav */}
-            <Breadcrumbs sx={{ mb: 3 }}>
-                <Link color="inherit" href="/dashboard">
-                    首页
-                </Link>
-                <Typography color="text.primary">订单管理</Typography>
-            </Breadcrumbs>
+        <Box>
+            {/* Page Header */}
+            <Box sx={{mb: 4}}>
+                <Typography variant="h5" sx={{mb: 1, fontWeight: 600}}>
+                    订单管理
+                </Typography>
+                <Breadcrumbs>
+                    <Link
+                        color="inherit"
+                        href="/dashboard"
+                        sx={{
+                            textDecoration: 'none',
+                            '&:hover': {textDecoration: 'underline'}
+                        }}
+                    >
+                        首页
+                    </Link>
+                    <Typography color="text.primary">订单管理</Typography>
+                </Breadcrumbs>
+            </Box>
 
-            {/* query form */}
-            <Paper sx={{ p: 2, mb: 3 }}>
-                <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-end' }}>
-                    <TextField
-                        label="订单编码"
-                        variant="outlined"
-                        size="small"
-                        value={queryParams.queryCode || ''}
-                        onChange={handleQueryChange('queryCode')}
-                    />
-                    <TextField
-                        label="产品名称"
-                        variant="outlined"
-                        size="small"
-                        value={queryParams.queryProductName || ''}
-                        onChange={handleQueryChange('queryProductName')}
-                    />
-                    <TextField
-                        label="供应商编码"
-                        variant="outlined"
-                        size="small"
-                        value={queryParams.queryProviderCode || ''}
-                        onChange={handleQueryChange('queryProviderCode')}
-                    />
-                    <TextField
-                        label="供应商名称"
-                        variant="outlined"
-                        size="small"
-                        value={queryParams.queryProviderName || ''}
-                        onChange={handleQueryChange('queryProviderName')}
-                    />
-                    <FormControl size="small" sx={{ minWidth: 120 }}>
-                        <InputLabel>支付状态</InputLabel>
-                        <Select
-                            value={queryParams.queryIsPaid || ''}
-                            onChange={handleQueryChange('queryIsPaid')}
-                            label="支付状态"
-                        >
-                            <MenuItem value="">
-                                <em>全部</em>
-                            </MenuItem>
-                            <MenuItem value={0}>未支付</MenuItem>
-                            <MenuItem value={1}>已支付</MenuItem>
-                        </Select>
-                    </FormControl>
+            {/* Query Form */}
+            <Paper
+                elevation={0}
+                sx={{
+                    p: 3,
+                    mb: 3,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 2
+                }}
+            >
+                <Stack spacing={3}>
+                    <Typography variant="subtitle2" color="text.secondary">
+                        筛选条件
+                    </Typography>
+                    <Stack
+                        direction={{xs: 'column', md: 'row'}}
+                        spacing={2}
+                        alignItems="flex-end"
+                        flexWrap="wrap"
+                        useFlexGap
+                    >
+                        <TextField
+                            label="订单编码"
+                            variant="outlined"
+                            size="small"
+                            value={queryParams.queryCode || ''}
+                            onChange={handleQueryChange('queryCode')}
+                            sx={{minWidth: 200}}
+                        />
+                        <TextField
+                            label="产品名称"
+                            variant="outlined"
+                            size="small"
+                            value={queryParams.queryProductName || ''}
+                            onChange={handleQueryChange('queryProductName')}
+                            sx={{minWidth: 200}}
+                        />
+                        <TextField
+                            label="供应商名称"
+                            variant="outlined"
+                            size="small"
+                            value={queryParams.queryProviderName || ''}
+                            onChange={handleQueryChange('queryProviderName')}
+                            sx={{minWidth: 200}}
+                        />
+                        <FormControl size="small" sx={{minWidth: 200}}>
+                            <InputLabel>支付状态</InputLabel>
+                            <Select
+                                value={queryParams.queryIsPaid || ''}
+                                onChange={handleQueryChange('queryIsPaid')}
+                                label="支付状态"
+                            >
+                                <MenuItem value="">
+                                    <em>全部</em>
+                                </MenuItem>
+                                <MenuItem value={0}>未支付</MenuItem>
+                                <MenuItem value={1}>已支付</MenuItem>
+                            </Select>
+                        </FormControl>
 
+                        <Box sx={{display: 'flex', gap: 1}}>
+                            <Button
+                                variant="contained"
+                                startIcon={<SearchIcon/>}
+                                onClick={() => fetchBills()}
+                                disabled={loading}
+                            >
+                                查询
+                            </Button>
+
+                            <Button
+                                variant="outlined"
+                                startIcon={<RefreshIcon/>}
+                                onClick={() => {
+                                    setQueryParams({pageSize: 10, pageIndex: 1});
+                                }}
+                            >
+                                重置
+                            </Button>
+                        </Box>
+                    </Stack>
+                </Stack>
+            </Paper>
+
+            {/* Bill List */}
+            <Paper
+                elevation={0}
+                sx={{
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 2,
+                    overflow: 'hidden'
+                }}
+            >
+                <Box sx={{
+                    p: 2,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    borderBottom: '1px solid',
+                    borderColor: 'divider'
+                }}>
+                    <Typography variant="subtitle2" color="text.secondary">
+                        订单列表
+                    </Typography>
                     <Button
                         variant="contained"
-                        onClick={() => fetchBills()}
-                        disabled={loading}
-                    >
-                        {loading ? <CircularProgress size={24} /> : '查询'}
-                    </Button>
-
-                    <Button
-                        variant="outlined"
-                        startIcon={<AddIcon />}
+                        startIcon={<AddIcon/>}
                         onClick={() => handleOpenDialog('create')}
+                        sx={{
+                            bgcolor: 'primary.main',
+                            '&:hover': {
+                                bgcolor: 'primary.dark',
+                            }
+                        }}
                     >
                         添加订单
                     </Button>
                 </Box>
-            </Paper>
 
-            {/* bill list */}
-            <Paper>
                 <TableContainer>
                     <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell>订单编码</TableCell>
-                                <TableCell>产品名称</TableCell>
-                                <TableCell>数量</TableCell>
-                                <TableCell>总价</TableCell>
+                                <TableCell>产品信息</TableCell>
+                                <TableCell align="right">金额</TableCell>
                                 <TableCell>供应商</TableCell>
-                                <TableCell>支付状态</TableCell>
-                                <TableCell>操作</TableCell>
+                                <TableCell align="center">支付状态</TableCell>
+                                <TableCell align="center">操作</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {loading ? (
                                 <TableRow>
-                                    <TableCell colSpan={7} align="center">
-                                        <CircularProgress />
+                                    <TableCell colSpan={6} align="center" sx={{py: 8}}>
+                                        <CircularProgress size={40}/>
                                     </TableCell>
                                 </TableRow>
                             ) : bills.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={7} align="center">
-                                        暂无数据
+                                    <TableCell colSpan={6} align="center" sx={{py: 8}}>
+                                        <Typography color="text.secondary">
+                                            暂无数据
+                                        </Typography>
                                     </TableCell>
                                 </TableRow>
                             ) : (
                                 bills.map((bill) => (
-                                    <TableRow key={bill.id}>
-                                        <TableCell>{bill.code}</TableCell>
-                                        <TableCell>{bill.productName}</TableCell>
-                                        <TableCell>{bill.productCount} {bill.productUnit}</TableCell>
-                                        <TableCell>{bill.totalPrice}</TableCell>
+                                    <TableRow key={bill.id} hover>
                                         <TableCell>
-                                            {providers.find(p => p.id === bill.providerId)?.name}
+                                            <Typography fontWeight={500}>
+                                                {bill.code}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {bill.isPaid === 1 ? '已支付' : '未支付'}
+                                            <Stack spacing={1}>
+                                                <Typography fontWeight={500}>
+                                                    {bill.productName}
+                                                </Typography>
+                                                <Typography
+                                                    variant="body2"
+                                                    color="text.secondary"
+                                                >
+                                                    数量: {bill.productCount} {bill.productUnit}
+                                                </Typography>
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <Typography
+                                                fontWeight={500}
+                                                color="primary.main"
+                                                sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'flex-end',
+                                                    gap: 0.5
+                                                }}
+                                            >
+                                                <MoneyIcon fontSize="small"/>
+                                                {formatPrice(bill.totalPrice)}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => handleOpenDialog('view', bill)}
+                                            <Stack direction="row" spacing={1} alignItems="center">
+                                                <StoreIcon
+                                                    fontSize="small"
+                                                    sx={{color: 'primary.light'}}
+                                                />
+                                                <Typography>
+                                                    {providers.find(p => p.id === bill.providerId)?.name}
+                                                </Typography>
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            {getPaymentStatusChip(bill.isPaid)}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Stack
+                                                direction="row"
+                                                spacing={1}
+                                                justifyContent="center"
                                             >
-                                                <ViewIcon />
-                                            </IconButton>
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => handleOpenDialog('edit', bill)}
-                                            >
-                                                <EditIcon />
-                                            </IconButton>
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => handleDelete(bill)}
-                                            >
-                                                <DeleteIcon />
-                                            </IconButton>
+                                                <Tooltip title="查看详情">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleOpenDialog('view', bill)}
+                                                        sx={{
+                                                            color: 'primary.light',
+                                                            '&:hover': {
+                                                                bgcolor: 'primary.lighter',
+                                                                color: 'primary.main'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <ViewIcon fontSize="small"/>
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="编辑订单">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleOpenDialog('edit', bill)}
+                                                        sx={{
+                                                            color: 'grey.500',
+                                                            '&:hover': {
+                                                                bgcolor: 'grey.100',
+                                                                color: 'grey.700'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <EditIcon fontSize="small"/>
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="删除订单">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleDelete(bill)}
+                                                        sx={{
+                                                            color: 'grey.500',
+                                                            '&:hover': {
+                                                                bgcolor: 'grey.100',
+                                                                color: 'grey.700'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <DeleteIcon fontSize="small"/>
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </Stack>
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -371,7 +538,6 @@ export default function BillManagement() {
                     </Table>
                 </TableContainer>
 
-                {/* pagination */}
                 <TablePagination
                     component="div"
                     count={totalItems}
@@ -381,21 +547,39 @@ export default function BillManagement() {
                     onRowsPerPageChange={handlePageSizeChange}
                     rowsPerPageOptions={[5, 10, 20, 50]}
                     labelRowsPerPage="每页行数"
-                    labelDisplayedRows={({ from, to, count }) =>
+                    labelDisplayedRows={({from, to, count}) =>
                         `${from}-${to} 共 ${count} 条`
                     }
+                    sx={{
+                        borderTop: '1px solid',
+                        borderColor: 'divider'
+                    }}
                 />
             </Paper>
 
-            {/* bill form dialog */}
+            {/* Dialogs */}
             <Dialog
                 open={dialogType === 'create' || dialogType === 'edit' || dialogType === 'view'}
                 onClose={handleCloseDialog}
                 maxWidth="md"
                 fullWidth
+                PaperProps={{
+                    elevation: 0,
+                    sx: {
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'divider'
+                    }
+                }}
             >
-                <DialogTitle>{getDialogTitle()}</DialogTitle>
-                <DialogContent>
+                <DialogTitle sx={{
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                    pb: 2
+                }}>
+                    {getDialogTitle()}
+                </DialogTitle>
+                <DialogContent sx={{p: 3}}>
                     <BillForm
                         ref={billFormRef}
                         bill={formValues}
@@ -406,8 +590,17 @@ export default function BillManagement() {
                     />
                 </DialogContent>
                 {dialogType !== 'view' && (
-                    <DialogActions>
-                        <Button onClick={handleCloseDialog}>取消</Button>
+                    <DialogActions sx={{
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                        p: 2
+                    }}>
+                        <Button
+                            onClick={handleCloseDialog}
+                            variant="outlined"
+                        >
+                            取消
+                        </Button>
                         <Button
                             onClick={handleSave}
                             variant="contained"
@@ -419,43 +612,92 @@ export default function BillManagement() {
                 )}
             </Dialog>
 
-            {/* delete confirmation dialog */}
             <Dialog
                 open={dialogType === 'delete'}
                 onClose={handleCloseDialog}
+                PaperProps={{
+                    elevation: 0,
+                    sx: {
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'divider'
+                    }
+                }}
             >
-                <DialogTitle>{getDialogTitle()}</DialogTitle>
-                <DialogContent>
+                <DialogTitle sx={{pb: 2}}>
+                    {getDialogTitle()}
+                </DialogTitle>
+                <DialogContent sx={{pb: 3}}>
+                    <Alert
+                        severity="info"
+                        sx={{
+                            mb: 2,
+                            '& .MuiAlert-icon': {
+                                color: 'primary.main'
+                            }
+                        }}
+                    >
+                        此操作将永久删除该订单，是否继续？
+                    </Alert>
                     <Typography>
-                        确定要删除订单 {selectedBill?.code} 吗？
+                        订单编码：{selectedBill?.code}
+                    </Typography>
+                    <Typography color="text.secondary" sx={{mt: 1}}>
+                        产品：{selectedBill?.productName}
+                    </Typography>
+                    <Typography
+                        sx={{
+                            mt: 1,
+                            color: 'primary.main',
+                            fontWeight: 500
+                        }}
+                    >
+                        总金额：{selectedBill?.totalPrice && formatPrice(selectedBill.totalPrice)}
                     </Typography>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog}>取消</Button>
-                    <Button onClick={confirmDelete} color="error">
-                        删除
+                <DialogActions sx={{p: 2, pt: 0}}>
+                    <Button
+                        onClick={handleCloseDialog}
+                        variant="outlined"
+                    >
+                        取消
+                    </Button>
+                    <Button
+                        onClick={confirmDelete}
+                        variant="contained"
+                        color="primary"
+                    >
+                        确认删除
                     </Button>
                 </DialogActions>
             </Dialog>
 
-            {/* error message */}
             <Snackbar
                 open={!!error}
                 autoHideDuration={6000}
                 onClose={() => setError(null)}
+                anchorOrigin={{vertical: 'top', horizontal: 'right'}}
             >
-                <Alert severity="error" onClose={() => setError(null)}>
+                <Alert
+                    severity="error"
+                    variant="filled"
+                    onClose={() => setError(null)}
+                >
                     {error}
                 </Alert>
             </Snackbar>
 
-            {/* success message */}
             <Snackbar
                 open={!!successMessage}
                 autoHideDuration={3000}
                 onClose={() => setSuccessMessage(null)}
+                anchorOrigin={{vertical: 'top', horizontal: 'right'}}
             >
-                <Alert severity="success" onClose={() => setSuccessMessage(null)}>
+                <Alert
+                    severity="success"
+                    variant="filled"
+                    onClose={() => setSuccessMessage(null)}
+                >
                     {successMessage}
                 </Alert>
             </Snackbar>

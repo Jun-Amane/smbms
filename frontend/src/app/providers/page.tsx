@@ -24,12 +24,20 @@ import {
     Snackbar,
     CircularProgress,
     TablePagination,
+    Tooltip,
+    Stack,
+    Divider,
 } from '@mui/material';
 import {
     Visibility as ViewIcon,
     Edit as EditIcon,
     Delete as DeleteIcon,
     Add as AddIcon,
+    Search as SearchIcon,
+    Refresh as RefreshIcon,
+    LocationOn as LocationIcon,
+    Phone as PhoneIcon,
+    Person as PersonIcon,
 } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { Provider, ProviderQueryParams } from '@/types';
@@ -40,7 +48,6 @@ import { checkPermission } from '@/utils/auth';
 type DialogType = 'create' | 'edit' | 'view' | 'delete' | null;
 
 export default function ProviderManagement() {
-    useRouter();
     const [providers, setProviders] = useState<Provider[]>([]);
     const [queryParams, setQueryParams] = useState<ProviderQueryParams>({
         pageSize: 10,
@@ -212,52 +219,124 @@ export default function ProviderManagement() {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
-            {/* breadcrumbs nav */}
-            <Breadcrumbs sx={{ mb: 3 }}>
-                <Link color="inherit" href="/dashboard">
-                    首页
-                </Link>
-                <Typography color="text.primary">供应商管理</Typography>
-            </Breadcrumbs>
+        <Box>
+            {/* Page Header */}
+            <Box sx={{mb: 4}}>
+                <Typography variant="h5" sx={{mb: 1, fontWeight: 600}}>
+                    供应商管理
+                </Typography>
+                <Breadcrumbs>
+                    <Link
+                        color="inherit"
+                        href="/dashboard"
+                        sx={{
+                            textDecoration: 'none',
+                            '&:hover': {textDecoration: 'underline'}
+                        }}
+                    >
+                        首页
+                    </Link>
+                    <Typography color="text.primary">供应商管理</Typography>
+                </Breadcrumbs>
+            </Box>
 
-            {/* query form */}
-            <Paper sx={{ p: 2, mb: 3 }}>
-                <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-end' }}>
-                    <TextField
-                        label="供应商编码"
-                        variant="outlined"
-                        size="small"
-                        value={queryParams.queryCode || ''}
-                        onChange={handleQueryChange('queryCode')}
-                    />
-                    <TextField
-                        label="供应商名称"
-                        variant="outlined"
-                        size="small"
-                        value={queryParams.queryName || ''}
-                        onChange={handleQueryChange('queryName')}
-                    />
+            {/* Query Form */}
+            <Paper
+                elevation={0}
+                sx={{
+                    p: 3,
+                    mb: 3,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 2
+                }}
+            >
+                <Stack spacing={3}>
+                    <Typography variant="subtitle2" color="text.secondary">
+                        筛选条件
+                    </Typography>
+                    <Stack
+                        direction={{xs: 'column', sm: 'row'}}
+                        spacing={2}
+                        alignItems="flex-end"
+                    >
+                        <TextField
+                            label="供应商编码"
+                            variant="outlined"
+                            size="small"
+                            value={queryParams.queryCode || ''}
+                            onChange={handleQueryChange('queryCode')}
+                            sx={{minWidth: 200}}
+                        />
+                        <TextField
+                            label="供应商名称"
+                            variant="outlined"
+                            size="small"
+                            value={queryParams.queryName || ''}
+                            onChange={handleQueryChange('queryName')}
+                            sx={{minWidth: 200}}
+                        />
+
+                        <Box sx={{display: 'flex', gap: 1}}>
+                            <Button
+                                variant="contained"
+                                startIcon={<SearchIcon/>}
+                                onClick={() => fetchProviders()}
+                                disabled={loading}
+                            >
+                                查询
+                            </Button>
+
+                            <Button
+                                variant="outlined"
+                                startIcon={<RefreshIcon/>}
+                                onClick={() => {
+                                    setQueryParams({pageSize: 10, pageIndex: 1});
+                                }}
+                            >
+                                重置
+                            </Button>
+                        </Box>
+                    </Stack>
+                </Stack>
+            </Paper>
+
+            {/* Provider List */}
+            <Paper
+                elevation={0}
+                sx={{
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 2,
+                    overflow: 'hidden'
+                }}
+            >
+                <Box sx={{
+                    p: 2,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    borderBottom: '1px solid',
+                    borderColor: 'divider'
+                }}>
+                    <Typography variant="subtitle2" color="text.secondary">
+                        供应商列表
+                    </Typography>
                     <Button
                         variant="contained"
-                        onClick={() => fetchProviders()}
-                        disabled={loading}
-                    >
-                        {loading ? <CircularProgress size={24} /> : '查询'}
-                    </Button>
-
-                    <Button
-                        variant="outlined"
-                        startIcon={<AddIcon />}
+                        startIcon={<AddIcon/>}
                         onClick={() => handleOpenDialog('create')}
+                        sx={{
+                            bgcolor: 'primary.main',
+                            '&:hover': {
+                                bgcolor: 'primary.dark',
+                            }
+                        }}
                     >
                         添加供应商
                     </Button>
                 </Box>
-            </Paper>
 
-            {/* provider list */}
-            <Paper>
                 <TableContainer>
                     <Table>
                         <TableHead>
@@ -265,53 +344,133 @@ export default function ProviderManagement() {
                                 <TableCell>供应商编码</TableCell>
                                 <TableCell>供应商名称</TableCell>
                                 <TableCell>联系人</TableCell>
-                                <TableCell>电话</TableCell>
-                                <TableCell>传真</TableCell>
+                                <TableCell>联系方式</TableCell>
                                 <TableCell>地址</TableCell>
-                                <TableCell>操作</TableCell>
+                                <TableCell align="center">操作</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {loading ? (
                                 <TableRow>
-                                    <TableCell colSpan={7} align="center">
-                                        <CircularProgress />
+                                    <TableCell colSpan={7} align="center" sx={{py: 8}}>
+                                        <CircularProgress size={40}/>
                                     </TableCell>
                                 </TableRow>
                             ) : providers.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={7} align="center">
-                                        暂无数据
+                                    <TableCell colSpan={7} align="center" sx={{py: 8}}>
+                                        <Typography color="text.secondary">
+                                            暂无数据
+                                        </Typography>
                                     </TableCell>
                                 </TableRow>
                             ) : (
                                 providers.map((provider) => (
-                                    <TableRow key={provider.id}>
+                                    <TableRow key={provider.id} hover>
                                         <TableCell>{provider.code}</TableCell>
-                                        <TableCell>{provider.name}</TableCell>
-                                        <TableCell>{provider.contact}</TableCell>
-                                        <TableCell>{provider.phone}</TableCell>
-                                        <TableCell>{provider.fax}</TableCell>
-                                        <TableCell>{provider.address}</TableCell>
                                         <TableCell>
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => handleOpenDialog('view', provider)}
+                                            <Typography fontWeight={500}>
+                                                {provider.name}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Stack direction="row" spacing={1} alignItems="center">
+                                                <PersonIcon
+                                                    fontSize="small"
+                                                    sx={{color: 'primary.light'}}
+                                                />
+                                                {provider.contact}
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Stack spacing={1}>
+                                                <Stack direction="row" spacing={1} alignItems="center">
+                                                    <PhoneIcon
+                                                        fontSize="small"
+                                                        sx={{color: 'primary.light'}}
+                                                    />
+                                                    {provider.phone}
+                                                </Stack>
+                                                {provider.fax && (
+                                                    <Typography
+                                                        variant="body2"
+                                                        color="text.secondary"
+                                                    >
+                                                        传真: {provider.fax}
+                                                    </Typography>
+                                                )}
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Stack direction="row" spacing={1} alignItems="center">
+                                                <LocationIcon
+                                                    fontSize="small"
+                                                    sx={{color: 'primary.light'}}
+                                                />
+                                                <Typography
+                                                    sx={{
+                                                        maxWidth: 200,
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap'
+                                                    }}
+                                                >
+                                                    {provider.address}
+                                                </Typography>
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Stack
+                                                direction="row"
+                                                spacing={1}
+                                                justifyContent="center"
                                             >
-                                                <ViewIcon />
-                                            </IconButton>
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => handleOpenDialog('edit', provider)}
-                                            >
-                                                <EditIcon />
-                                            </IconButton>
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => handleDelete(provider)}
-                                            >
-                                                <DeleteIcon />
-                                            </IconButton>
+                                                <Tooltip title="查看详情">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleOpenDialog('view', provider)}
+                                                        sx={{
+                                                            color: 'primary.light',
+                                                            '&:hover': {
+                                                                bgcolor: 'primary.lighter',
+                                                                color: 'primary.main'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <ViewIcon fontSize="small"/>
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="编辑供应商">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleOpenDialog('edit', provider)}
+                                                        sx={{
+                                                            color: 'grey.500',
+                                                            '&:hover': {
+                                                                bgcolor: 'grey.100',
+                                                                color: 'grey.700'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <EditIcon fontSize="small"/>
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="删除供应商">
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => handleDelete(provider)}
+                                                        sx={{
+                                                            color: 'grey.500',
+                                                            '&:hover': {
+                                                                bgcolor: 'grey.100',
+                                                                color: 'grey.700'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <DeleteIcon fontSize="small"/>
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </Stack>
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -320,7 +479,6 @@ export default function ProviderManagement() {
                     </Table>
                 </TableContainer>
 
-                {/* pagination */}
                 <TablePagination
                     component="div"
                     count={totalItems}
@@ -330,21 +488,39 @@ export default function ProviderManagement() {
                     onRowsPerPageChange={handlePageSizeChange}
                     rowsPerPageOptions={[5, 10, 20, 50]}
                     labelRowsPerPage="每页行数"
-                    labelDisplayedRows={({ from, to, count }) =>
+                    labelDisplayedRows={({from, to, count}) =>
                         `${from}-${to} 共 ${count} 条`
                     }
+                    sx={{
+                        borderTop: '1px solid',
+                        borderColor: 'divider'
+                    }}
                 />
             </Paper>
 
-            {/* provider form dialog */}
+            {/* Dialogs */}
             <Dialog
                 open={dialogType === 'create' || dialogType === 'edit' || dialogType === 'view'}
                 onClose={handleCloseDialog}
                 maxWidth="md"
                 fullWidth
+                PaperProps={{
+                    elevation: 0,
+                    sx: {
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'divider'
+                    }
+                }}
             >
-                <DialogTitle>{getDialogTitle()}</DialogTitle>
-                <DialogContent>
+                <DialogTitle sx={{
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                    pb: 2
+                }}>
+                    {getDialogTitle()}
+                </DialogTitle>
+                <DialogContent sx={{p: 3}}>
                     <ProviderForm
                         ref={providerFormRef}
                         provider={formValues}
@@ -354,8 +530,17 @@ export default function ProviderManagement() {
                     />
                 </DialogContent>
                 {dialogType !== 'view' && (
-                    <DialogActions>
-                        <Button onClick={handleCloseDialog}>取消</Button>
+                    <DialogActions sx={{
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                        p: 2
+                    }}>
+                        <Button
+                            onClick={handleCloseDialog}
+                            variant="outlined"
+                        >
+                            取消
+                        </Button>
                         <Button
                             onClick={handleSave}
                             variant="contained"
@@ -367,47 +552,68 @@ export default function ProviderManagement() {
                 )}
             </Dialog>
 
-            {/* delete confirmation dialog */}
             <Dialog
                 open={dialogType === 'delete'}
                 onClose={handleCloseDialog}
+                PaperProps={{
+                    elevation: 0,
+                    sx: {
+                        borderRadius: 2,
+                        border: '1px solid',
+                        borderColor: 'divider'
+                    }
+                }}
             >
-                <DialogTitle>{getDialogTitle()}</DialogTitle>
-                <DialogContent>
+                <DialogTitle sx={{pb: 2}}>
+                    {getDialogTitle()}
+                </DialogTitle>
+                <DialogContent sx={{pb: 3}}>
+                    <Alert
+                        severity="info"
+                        sx={{
+                            mb: 2,
+                            '& .MuiAlert-icon': {
+                                color: 'primary.main'
+                            }
+                        }}
+                    >
+                        此操作将永久删除该供应商，是否继续？
+                    </Alert>
                     <Typography>
-                        确定要删除供应商 {selectedProvider?.name} 吗？
+                        供应商名称：{selectedProvider?.name}
                     </Typography>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog}>取消</Button>
-                    <Button onClick={confirmDelete} color="error">
-                        删除
+                <DialogActions sx={{p: 2, pt: 0}}>
+                    <Button
+                        onClick={handleCloseDialog}
+                        variant="outlined"
+                    >
+                        取消
+                    </Button>
+                    <Button
+                        onClick={confirmDelete}
+                        variant="contained"
+                        color="primary"
+                    >
+                        确认删除
                     </Button>
                 </DialogActions>
             </Dialog>
 
-            {/* error message */}
             <Snackbar
                 open={!!error}
                 autoHideDuration={6000}
                 onClose={() => setError(null)}
+                anchorOrigin={{vertical: 'top', horizontal: 'right'}}
             >
-                <Alert severity="error" onClose={() => setError(null)}>
-                    {error}
-                </Alert>
-            </Snackbar>
-
-            {/* success message */}
-            <Snackbar
-                open={!!successMessage}
-                autoHideDuration={3000}
-                onClose={() => setSuccessMessage(null)}
-            >
-                <Alert severity="success" onClose={() => setSuccessMessage(null)}>
+                <Alert
+                    severity="success"
+                    variant="filled"
+                    onClose={() => setSuccessMessage(null)}
+                >
                     {successMessage}
                 </Alert>
             </Snackbar>
         </Box>
     );
 }
-
