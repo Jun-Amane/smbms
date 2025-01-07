@@ -83,7 +83,7 @@ export default function BillManagement() {
         try {
             setLoading(true);
             const data = await billService.getBills(queryParams);
-            setBills(data.providers);
+            setBills(data.bills);
             setTotalItems(data.totalItems);
         } catch (err) {
             setError('获取订单列表失败');

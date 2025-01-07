@@ -29,6 +29,7 @@ const BillForm = React.forwardRef<{ validateForm: () => boolean }, BillFormProps
         const [values, setValues] = useState<Partial<Bill>>(bill || {});
         const [errors, setErrors] = useState<FormErrors>({});
         const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+        const selectedProvider = providers.find(p => p.id === values.providerId);
 
         useEffect(() => {
             if (bill) {
@@ -108,7 +109,7 @@ const BillForm = React.forwardRef<{ validateForm: () => boolean }, BillFormProps
             if (field === 'code' && !readOnly) {
                 try {
                     const response = await billService.getBills({ queryCode: value });
-                    const exists = response.providers?.length > 0;
+                    const exists = response.bills?.length > 0;
                     const codeError = exists ? '订单编码已存在' : error;
                     setErrors(prev => ({ ...prev, code: codeError }));
                     onCodeCheck?.(exists);
@@ -140,26 +141,35 @@ const BillForm = React.forwardRef<{ validateForm: () => boolean }, BillFormProps
                             required
                         />
                     </Grid>
-                    <Grid item xs={6}>
+                   <Grid item xs={6}>
                         <FormControl fullWidth required error={touched.providerId && !!errors.providerId}>
-                            <Autocomplete
-                                value={providers.find(p => p.id === values.providerId) || null}
-                                onChange={(event, newValue) => {
-                                    handleChange('providerId')({ target: { value: newValue?.id } });
-                                }}
-                                options={providers}
-                                getOptionLabel={(option) => `${option.code} - ${option.name}`}
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label="供应商"
-                                        error={touched.providerId && !!errors.providerId}
-                                        helperText={touched.providerId && errors.providerId}
-                                        required
-                                    />
-                                )}
-                                disabled={readOnly}
-                            />
+                            {readOnly ? (
+                                <TextField
+                                    label="供应商"
+                                    value={selectedProvider ? `${selectedProvider.code} - ${selectedProvider.name}` : ''}
+                                    disabled
+                                    fullWidth
+                                />
+                            ) : (
+                                <Autocomplete
+                                    value={selectedProvider || null}
+                                    onChange={(event, newValue) => {
+                                        handleChange('providerId')({ target: { value: newValue?.id } });
+                                    }}
+                                    options={providers}
+                                    getOptionLabel={(option) => `${option.code} - ${option.name}`}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label="供应商"
+                                            error={touched.providerId && !!errors.providerId}
+                                            helperText={touched.providerId && errors.providerId}
+                                            required
+                                        />
+                                    )}
+                                    disabled={readOnly}
+                                />
+                            )}
                         </FormControl>
                     </Grid>
                     <Grid item xs={6}>

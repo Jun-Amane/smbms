@@ -26,5 +26,5 @@ export interface BillListResponse {
     totalPages: number;
     curPage: number;
     totalItems: number;
-    providers: Bill[];
+    bills: Bill[];
 }
