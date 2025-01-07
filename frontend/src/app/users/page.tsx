@@ -45,7 +45,7 @@ import { useRouter } from 'next/navigation';
 import { User, Role, UserQueryParams, formatGender } from '@/types/user';
 import { userService } from '@/services/userService';
 import UserForm from "@/app/components/forms/UserForm";
-import { checkPermission } from '@/utils/auth';
+import { checkAdminPermission } from '@/utils/auth';
 
 type DialogType = 'create' | 'edit' | 'view' | 'delete' | null;
 
@@ -131,7 +131,7 @@ export default function UserManagement() {
 
     const handleOpenDialog = async (type: DialogType, user?: User) => {
         // auth check
-        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkPermission(type)) {
+        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkAdminPermission(type)) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -182,7 +182,7 @@ export default function UserManagement() {
     };
 
     const handleSave = async () => {
-        if (!checkPermission(dialogType === 'create' ? 'create' : 'edit')) {
+        if (!checkAdminPermission(dialogType === 'create' ? 'create' : 'edit')) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -213,7 +213,7 @@ export default function UserManagement() {
     const confirmDelete = async () => {
         if (!selectedUser) return;
 
-        if (!checkPermission('delete')) {
+        if (!checkAdminPermission('delete')) {
             setError('您没有权限执行此操作');
             return;
         }

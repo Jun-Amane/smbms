@@ -26,7 +26,6 @@ import {
     TablePagination,
     Tooltip,
     Stack,
-    Divider,
 } from '@mui/material';
 import {
     Visibility as ViewIcon,
@@ -39,11 +38,10 @@ import {
     Phone as PhoneIcon,
     Person as PersonIcon,
 } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
 import { Provider, ProviderQueryParams } from '@/types';
 import { providerService } from '@/services/providerService';
 import ProviderForm from "@/app/components/forms/ProviderForm";
-import { checkPermission } from '@/utils/auth';
+import { checkManagerPermission } from '@/utils/auth';
 
 type DialogType = 'create' | 'edit' | 'view' | 'delete' | null;
 
@@ -111,7 +109,7 @@ export default function ProviderManagement() {
     };
 
     const handleOpenDialog = async (type: DialogType, provider?: Provider) => {
-        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkPermission(type)) {
+        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkManagerPermission(type)) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -152,11 +150,11 @@ export default function ProviderManagement() {
     };
 
     const handleDelete = async (provider: Provider) => {
-        handleOpenDialog('delete', provider);
+        await handleOpenDialog('delete', provider);
     };
 
     const handleSave = async () => {
-        if (!checkPermission(dialogType === 'create' ? 'create' : 'edit')) {
+        if (!checkManagerPermission(dialogType === 'create' ? 'create' : 'edit')) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -187,7 +185,7 @@ export default function ProviderManagement() {
     const confirmDelete = async () => {
         if (!selectedProvider) return;
 
-        if (!checkPermission('delete')) {
+        if (!checkManagerPermission('delete')) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -197,8 +195,8 @@ export default function ProviderManagement() {
             setSuccessMessage('删除供应商成功');
             handleCloseDialog();
             fetchProviders();
-        } catch (err) {
-            setError('删除供应商失败');
+        } catch (err: any) {
+            setError(err.response?.data?.message || '删除供应商失败');
             console.error('Error deleting provider:', err);
         }
     };
@@ -604,7 +602,22 @@ export default function ProviderManagement() {
                 open={!!error}
                 autoHideDuration={6000}
                 onClose={() => setError(null)}
-                anchorOrigin={{vertical: 'top', horizontal: 'right'}}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+                <Alert
+                    severity="error"
+                    variant="filled"
+                    onClose={() => setError(null)}
+                >
+                    {error}
+                </Alert>
+            </Snackbar>
+
+            <Snackbar
+                open={!!successMessage}
+                autoHideDuration={3000}
+                onClose={() => setSuccessMessage(null)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
                 <Alert
                     severity="success"
@@ -614,6 +627,7 @@ export default function ProviderManagement() {
                     {successMessage}
                 </Alert>
             </Snackbar>
+
         </Box>
     );
 }

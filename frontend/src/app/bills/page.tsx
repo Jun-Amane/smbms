@@ -46,7 +46,7 @@ import {useRouter} from 'next/navigation';
 import {Bill, BillQueryParams, paymentStatus, Provider} from '@/types';
 import {billService} from '@/services/billService';
 import BillForm from "@/app/components/forms/BillForm";
-import {checkPermission} from '@/utils/auth';
+import {checkManagerPermission} from '@/utils/auth';
 
 type DialogType = 'create' | 'edit' | 'view' | 'delete' | null;
 
@@ -129,7 +129,7 @@ export default function BillManagement() {
     };
 
     const handleOpenDialog = async (type: DialogType, bill?: Bill) => {
-        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkPermission(type)) {
+        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkManagerPermission(type)) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -174,7 +174,7 @@ export default function BillManagement() {
     };
 
     const handleSave = async () => {
-        if (!checkPermission(dialogType === 'create' ? 'create' : 'edit')) {
+        if (!checkManagerPermission(dialogType === 'create' ? 'create' : 'edit')) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -206,7 +206,7 @@ export default function BillManagement() {
     const confirmDelete = async () => {
         if (!selectedBill) return;
 
-        if (!checkPermission('delete')) {
+        if (!checkManagerPermission('delete')) {
             setError('您没有权限执行此操作');
             return;
         }
