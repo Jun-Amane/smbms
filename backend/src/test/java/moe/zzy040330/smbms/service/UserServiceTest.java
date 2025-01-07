@@ -46,7 +46,7 @@ public class UserServiceTest {
         User testUser = new User();
         testUser.setCode("testCode");
         testUser.setName("Test User");
-        testUser.setPassword(passwordEncoder.encode("password"));
+        testUser.setPassword("password");
         testUser.setGender(1);
         testUser.setBirthday(new Date(946684800000L));
         testUser.setPhone("1234567890");
@@ -117,7 +117,7 @@ public class UserServiceTest {
         User newUser = new User();
         newUser.setCode("newCode");
         newUser.setName("New User");
-        newUser.setPassword(passwordEncoder.encode("newpassword"));
+        newUser.setPassword("newpassword");
         newUser.setGender(2);
         newUser.setBirthday(new Date(946684800000L));
         newUser.setPhone("0987654321");
