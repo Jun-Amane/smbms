@@ -141,16 +141,30 @@ public class UserController {
                         .body(new ErrorResponse(400, "Invalid input: newPassword cannot be null or empty"));
             }
 
+            String oldPassword = passwordUpdateRequest.getOldPassword();
+            if (oldPassword == null || oldPassword.isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse(400, "Invalid input: oldPassword cannot be null or empty"));
+            }
+
             var modifiedBy = new User();
             modifiedBy.setId(jwtService.extractUserId(token));
-            boolean success = userService.changePassword(id, newPassword, modifiedBy, new Date());
 
-            if (success) {
-                return ResponseEntity.ok("Password updated successfully");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ErrorResponse(404, "User not found"));
+            try {
+                boolean success = userService.changePassword(id, oldPassword, newPassword, modifiedBy, new Date());
+                if (success) {
+                    return ResponseEntity.ok("Password updated successfully");
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body(new ErrorResponse(404, "User not found"));
+                }
+            } catch (IllegalArgumentException e) {
+                logger.error(e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ErrorResponse(500, "Password not changed: " + e.getMessage()));
             }
+
+
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
