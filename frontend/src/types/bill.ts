@@ -6,8 +6,13 @@ export interface Bill {
     productUnit: string;
     productCount: number;
     totalPrice: number;
-    isPaid: 0 | 1;
+    isPaid: 1 | 2;
     providerId: number;
+}
+
+export enum paymentStatus{
+    PENDING = 1,
+    PAID = 2,
 }
 
 export interface BillQueryParams {

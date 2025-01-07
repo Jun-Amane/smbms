@@ -9,7 +9,7 @@ import {
     MenuItem,
     Autocomplete,
 } from '@mui/material';
-import { Bill, Provider } from '@/types';
+import {Bill, paymentStatus, Provider} from '@/types';
 import { billService } from '@/services/billService';
 
 interface BillFormProps {
@@ -33,7 +33,15 @@ const BillForm = React.forwardRef<{ validateForm: () => boolean }, BillFormProps
 
         useEffect(() => {
             if (bill) {
-                setValues(bill);
+                setValues({
+                    ...bill,
+                    isPaid: bill.isPaid ?? paymentStatus.PENDING
+                });
+            } else {
+                setValues(prevValues => ({
+                    ...prevValues,
+                    isPaid: paymentStatus.PENDING,
+                }))
             }
         }, [bill]);
 
@@ -44,7 +52,7 @@ const BillForm = React.forwardRef<{ validateForm: () => boolean }, BillFormProps
         } = {
             code: (value: string) => {
                 if (!value) return '此字段为必填项';
-                return /^[A-Za-z0-9]{4,20}$/.test(value) ? '' : '订单编码必须是4-20位字母或数字';
+                return /^[A-Z]{4}\d{4}_\d{3}$/.test(value)? '' : '订单编码格式必须为BILL2016_001';
             },
             productName: (value: string) => {
                 return !value ? '此字段为必填项' : '';
@@ -242,8 +250,8 @@ const BillForm = React.forwardRef<{ validateForm: () => boolean }, BillFormProps
                                     onChange={handleChange('isPaid')}
                                     label="支付状态"
                                 >
-                                    <MenuItem value={0}>未支付</MenuItem>
-                                    <MenuItem value={1}>已支付</MenuItem>
+                                    <MenuItem value={paymentStatus.PENDING}>未支付</MenuItem>
+                                    <MenuItem value={paymentStatus.PAID}>已支付</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>

@@ -43,7 +43,7 @@ import {
     Store as StoreIcon,
 } from '@mui/icons-material';
 import {useRouter} from 'next/navigation';
-import {Bill, BillQueryParams, Provider} from '@/types';
+import {Bill, BillQueryParams, paymentStatus, Provider} from '@/types';
 import {billService} from '@/services/billService';
 import BillForm from "@/app/components/forms/BillForm";
 import {checkPermission} from '@/utils/auth';
@@ -188,6 +188,7 @@ export default function BillManagement() {
 
         try {
             if (dialogType === 'create') {
+                console.log(formValues)
                 await billService.createBill(formValues as Omit<Bill, 'id'>);
                 setSuccessMessage('创建订单成功');
             } else if (dialogType === 'edit' && selectedBill) {
@@ -246,9 +247,9 @@ export default function BillManagement() {
     const getPaymentStatusChip = (isPaid: number) => {
         return (
             <Chip
-                label={isPaid === 1 ? '已支付' : '未支付'}
+                label={isPaid === paymentStatus.PAID ? '已支付' : '未支付'}
                 size="small"
-                color={isPaid === 1 ? 'success' : 'default'}
+                color={isPaid === paymentStatus.PAID ? 'success' : 'default'}
                 sx={{
                     '& .MuiChip-label': {
                         px: 2
@@ -336,8 +337,8 @@ export default function BillManagement() {
                                 <MenuItem value="">
                                     <em>全部</em>
                                 </MenuItem>
-                                <MenuItem value={0}>未支付</MenuItem>
-                                <MenuItem value={1}>已支付</MenuItem>
+                                <MenuItem value={paymentStatus.PENDING}>未支付</MenuItem>
+                                <MenuItem value={paymentStatus.PAID}>已支付</MenuItem>
                             </Select>
                         </FormControl>
 
