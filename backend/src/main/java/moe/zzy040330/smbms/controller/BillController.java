@@ -169,8 +169,8 @@ public class BillController {
     @PostMapping("")
     public ResponseEntity<?> createBill(@RequestBody BillDto billDto, @RequestHeader("Authorization") String authHeader) {
         try {
-            if (billDto == null || billDto.getCode() == null || billDto.getProductName() == null ||
-                    billDto.getProductDescription() == null || billDto.getProductUnit() == null
+            if (billDto == null || billDto.getCode() == null || billDto.getProductName() == null
+                    || billDto.getProductUnit() == null
                     || billDto.getTotalPrice() == null || billDto.getProductCount() == null
                     || billDto.getIsPaid() == null
                     || billDto.getProviderId() == null) {

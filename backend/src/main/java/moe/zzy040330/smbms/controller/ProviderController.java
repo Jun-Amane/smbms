@@ -211,9 +211,8 @@ public class ProviderController {
                     providerDto.getName() == null || providerDto.getName().isBlank() ||
                     providerDto.getContact() == null || providerDto.getContact().isBlank() ||
                     providerDto.getPhone() == null || providerDto.getPhone().isBlank() ||
-                    providerDto.getAddress() == null || providerDto.getAddress().isBlank() ||
-                    providerDto.getFax() == null || providerDto.getFax().isBlank() ||
-                    providerDto.getDescription() == null || providerDto.getDescription().isBlank()) {
+                    providerDto.getAddress() == null || providerDto.getAddress().isBlank()
+                   ) {
 
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ErrorResponse(400, "Invalid input: cannot be null or empty"));
