@@ -1,7 +1,6 @@
 package moe.zzy040330.smbms.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * BillDto is a Data Transfer Object (DTO) representing a Bill entity.
@@ -10,31 +9,32 @@ import java.util.Date;
 public class BillDto {
 
     private Long id;
-    private String billCode;           // Bill code
+    private String code;           // Bill code
     private String productName;        // Product name
-    private String productDesc;        // Product description
-    private String productUnit;       // Product unit
+    private String productDescription;        // Product description
+    private String productUnit;
+    private BigDecimal productCount;// Product unit
     private BigDecimal totalPrice;     // Total price of the bill
     private Integer isPaid;            // Payment status: 0 for unpaid, 1 for paid
     private Long providerId;           // ID of the provider
-    private String providerName;       // Name of the provider
+          // Name of the provider
+
 
     public BillDto() {
     }
 
-    public BillDto(Long id, String billCode, String productName, String productDesc, String productUnit, BigDecimal totalPrice, Integer isPaid, Long providerId, String providerName) {
+    public BillDto(Long id, String code, String productName, String productDescription, String productUnit, BigDecimal productCount, BigDecimal totalPrice, Integer isPaid, Long providerId) {
         this.id = id;
-        this.billCode = billCode;
+        this.code = code;
         this.productName = productName;
-        this.productDesc = productDesc;
+        this.productDescription = productDescription;
         this.productUnit = productUnit;
+        this.productCount = productCount;
         this.totalPrice = totalPrice;
         this.isPaid = isPaid;
         this.providerId = providerId;
-        this.providerName = providerName;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -43,12 +43,12 @@ public class BillDto {
         this.id = id;
     }
 
-    public String getBillCode() {
-        return billCode;
+    public String getCode() {
+        return code;
     }
 
-    public void setBillCode(String billCode) {
-        this.billCode = billCode;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getProductName() {
@@ -59,12 +59,12 @@ public class BillDto {
         this.productName = productName;
     }
 
-    public String getProductDesc() {
-        return productDesc;
+    public String getProductDescription() {
+        return productDescription;
     }
 
-    public void setProductDesc(String productDesc) {
-        this.productDesc = productDesc;
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
     }
 
     public String getProductUnit() {
@@ -73,6 +73,14 @@ public class BillDto {
 
     public void setProductUnit(String productUnit) {
         this.productUnit = productUnit;
+    }
+
+    public BigDecimal getProductCount() {
+        return productCount;
+    }
+
+    public void setProductCount(BigDecimal productCount) {
+        this.productCount = productCount;
     }
 
     public BigDecimal getTotalPrice() {
@@ -98,13 +106,4 @@ public class BillDto {
     public void setProviderId(Long providerId) {
         this.providerId = providerId;
     }
-
-    public String getProviderName() {
-        return providerName;
-    }
-
-    public void setProviderName(String providerName) {
-        this.providerName = providerName;
-    }
-
 }
