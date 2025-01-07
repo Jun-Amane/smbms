@@ -7,6 +7,7 @@
  */
 package moe.zzy040330.smbms.service.impl;
 
+import moe.zzy040330.smbms.dto.BillStatsDto;
 import moe.zzy040330.smbms.entity.Bill;
 import moe.zzy040330.smbms.entity.Provider;
 import moe.zzy040330.smbms.mapper.BillMapper;
@@ -14,6 +15,7 @@ import moe.zzy040330.smbms.mapper.GenericMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import moe.zzy040330.smbms.mapper.StatMapper;
 import moe.zzy040330.smbms.service.BillService;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +24,12 @@ import java.util.List;
 @Service
 public class BillServiceImpl extends GenericCrudServiceImpl<Bill, Long> implements BillService {
     private final BillMapper billMapper;//bill mapper, use constructor injection
+    private final StatMapper statMapper;
 
-    public BillServiceImpl(GenericMapper<Bill, Long> genericMapper, BillMapper billMapper) {
+    public BillServiceImpl(GenericMapper<Bill, Long> genericMapper, BillMapper billMapper, StatMapper statMapper) {
         super(genericMapper);
         this.billMapper = billMapper;
+        this.statMapper = statMapper;
     }
 
     /**
@@ -42,5 +46,19 @@ public class BillServiceImpl extends GenericCrudServiceImpl<Bill, Long> implemen
         List<Bill> bills = billMapper.findAllBillsByQuery(code, productName, productDesc,
                 providerCode, providerName, isPaid);
         return new PageInfo<>(bills);
+    }
+
+
+    /**
+     *  statistic info will be shown in Bill page
+     *
+     * @return just the DTO
+     */
+    @Override
+    public BillStatsDto getBillStats() {
+        return new BillStatsDto(
+                statMapper.findPaymentStatus(),
+                statMapper.findProductSale()
+        );
     }
 }

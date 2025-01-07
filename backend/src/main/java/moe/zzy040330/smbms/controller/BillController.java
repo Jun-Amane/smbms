@@ -11,7 +11,6 @@ package moe.zzy040330.smbms.controller;
 import com.github.pagehelper.PageInfo;
 import moe.zzy040330.smbms.dto.BillDto;
 import moe.zzy040330.smbms.dto.ErrorResponse;
-import moe.zzy040330.smbms.dto.ProviderDto;
 import moe.zzy040330.smbms.entity.Bill;
 import moe.zzy040330.smbms.entity.Provider;
 import moe.zzy040330.smbms.entity.User;
@@ -226,6 +225,19 @@ public class BillController {
         try {
             List<Provider> providers = providerService.findAll();
             return ResponseEntity.ok(providers);
+        } catch (Exception e) {
+            logger.error("Error fetching provider list", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(500, "Internal server error"));
+        }
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<?> getBillStats() {
+        try {
+            var dto = billService.getBillStats();
+
+            return ResponseEntity.ok(dto);
         } catch (Exception e) {
             logger.error("Error fetching provider list", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
