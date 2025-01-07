@@ -1,3 +1,11 @@
+/**
+ * Package: moe.zzy040330.smbms.controller
+ * File: BillController.java
+ * Author: Mingxue Li
+ * Date: 06/01/2025
+ * Time: 17:25
+ * Description: RESTful API for bill entity.
+ */
 package moe.zzy040330.smbms.controller;
 
 import com.github.pagehelper.PageInfo;
