@@ -206,7 +206,7 @@ export default function UserManagement() {
             fetchUsers();
         } catch (err) {
             setError(dialogType === 'create' ? '创建用户失败' : '更新用户失败');
-            console.error('Error saving user:', err);
+            console.log('Error saving user:', err);
         }
     };
 
@@ -225,7 +225,7 @@ export default function UserManagement() {
             fetchUsers();
         } catch (err) {
             setError('删除用户失败');
-            console.error('Error deleting user:', err);
+            console.log('Error deleting user:', err);
         }
     };
 

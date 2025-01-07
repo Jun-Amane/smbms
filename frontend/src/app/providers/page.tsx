@@ -178,7 +178,7 @@ export default function ProviderManagement() {
             fetchProviders();
         } catch (err) {
             setError(dialogType === 'create' ? '创建供应商失败' : '更新供应商失败');
-            console.error('Error saving provider:', err);
+            console.log('Error saving provider:', err);
         }
     };
 
@@ -197,7 +197,7 @@ export default function ProviderManagement() {
             fetchProviders();
         } catch (err: any) {
             setError(err.response?.data?.message || '删除供应商失败');
-            console.error('Error deleting provider:', err);
+            console.log('Error deleting provider:', err);
         }
     };
 

@@ -75,7 +75,7 @@ export default function BillManagement() {
             setProviders(data);
         } catch (err) {
             setError('获取供应商列表失败');
-            console.error('Error fetching providers:', err);
+            console.log('Error fetching providers:', err);
         }
     };
 
@@ -199,7 +199,7 @@ export default function BillManagement() {
             fetchBills();
         } catch (err) {
             setError(dialogType === 'create' ? '创建订单失败' : '更新订单失败');
-            console.error('Error saving bill:', err);
+            console.log('Error saving bill:', err);
         }
     };
 
@@ -218,7 +218,7 @@ export default function BillManagement() {
             fetchBills();
         } catch (err) {
             setError('删除订单失败');
-            console.error('Error deleting bill:', err);
+            console.log('Error deleting bill:', err);
         }
     };
 
