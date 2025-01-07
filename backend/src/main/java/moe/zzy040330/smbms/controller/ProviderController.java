@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -71,6 +72,7 @@ public class ProviderController {
     /**
      * Delete provider
      */
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or hasAuthority('SMBMS_MANAGER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> apiproviderdelete(@PathVariable Long id) {
         try {
@@ -138,6 +140,7 @@ public class ProviderController {
     /**
      * Update provider by id
      */
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or hasAuthority('SMBMS_MANAGER')")
     @PutMapping("/{id}")
     public ResponseEntity<?> apiproviderput(
             @PathVariable Long id,
@@ -195,6 +198,7 @@ public class ProviderController {
     /**
      * Add new provider
      */
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or hasAuthority('SMBMS_MANAGER')")
     @PostMapping
     public ResponseEntity<?> apiProviderPost(@RequestBody ProviderDto providerDto,
                                              @RequestHeader("Authorization") String authHeader) {

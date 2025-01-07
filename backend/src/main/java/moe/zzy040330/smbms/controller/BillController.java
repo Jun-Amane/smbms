@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -124,6 +125,7 @@ public class BillController {
         );
     }
 
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or hasAuthority('SMBMS_MANAGER')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateBill(@PathVariable Long id, @RequestBody BillDto billDto, @RequestHeader("Authorization") String authHeader) {
         try {
@@ -163,6 +165,7 @@ public class BillController {
         }
     }
 
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or hasAuthority('SMBMS_MANAGER')")
     @PostMapping("")
     public ResponseEntity<?> createBill(@RequestBody BillDto billDto, @RequestHeader("Authorization") String authHeader) {
         try {
@@ -199,6 +202,7 @@ public class BillController {
         }
     }
 
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or hasAuthority('SMBMS_MANAGER')")
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteBill(@PathVariable Long id) {
         try {
