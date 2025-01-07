@@ -89,8 +89,9 @@ public class UserServiceTest {
 
     @Test
     void testChangePassword() {
+        String oldPassword = "password";
         String newPassword = "newPassword";
-        Boolean success = userService.changePassword(testUserId, newPassword, modifiedByUser, new Date());
+        Boolean success = userService.changePassword(testUserId, oldPassword, newPassword, modifiedByUser, new Date());
         assertTrue(success);
 
         User updatedUser = userService.findById(testUserId);
