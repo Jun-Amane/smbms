@@ -12,6 +12,7 @@
 package moe.zzy040330.smbms.service;
 
 import com.github.pagehelper.PageInfo;
+import moe.zzy040330.smbms.dto.ProviderStatsDto;
 import moe.zzy040330.smbms.entity.Provider;
 
 
@@ -40,4 +41,12 @@ public interface ProviderService extends GenericCrudService<Provider,Long> {
      * @return      successful or not
      */
     Boolean deleteProviderById(Long id);
+
+
+    /**
+     *  statistic info will be shown in Provider page
+     *
+     * @return just the DTO
+     */
+    ProviderStatsDto getProviderStats();
 }

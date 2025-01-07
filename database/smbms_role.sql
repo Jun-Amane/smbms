@@ -2,7 +2,7 @@ create table smbms_role
 (
     id           bigint auto_increment comment '主键ID'
         primary key,
-    roleCode     varchar(15) null comment '角色编码',
+    roleCode     varchar(16) null comment '角色编码',
     roleName     varchar(15) null comment '角色名称',
     createdBy    bigint      null comment '创建者',
     creationDate datetime    null comment '创建时间',

@@ -246,4 +246,17 @@ public class ProviderController {
                     .body(new ErrorResponse(500, "Internal server error: " + e.getMessage()));
         }
     }
+
+    @GetMapping("/stats")
+    public ResponseEntity<?> getProviderStats() {
+        try {
+            var dto = providerService.getProviderStats();
+
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            logger.error("Error fetching provider list", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(500, "Internal server error"));
+        }
+    }
 }

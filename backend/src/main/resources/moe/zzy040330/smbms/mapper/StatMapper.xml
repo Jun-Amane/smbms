@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="moe.zzy040330.smbms.mapper.StatMapper">
+
+    <resultMap id="DashboardStatsDtoResultMap" type="moe.zzy040330.smbms.dto.DashboardStatsDto">
+        <result property="orderCount" column="orderCount"/>
+        <result property="totalOrderAmount" column="totalOrderAmount"/>
+        <result property="providerCount" column="providerCount"/>
+        <result property="userCount" column="userCount"/>
+    </resultMap>
+
+    <resultMap id="QuarterlyStatResultMap" type="moe.zzy040330.smbms.dto.DashboardStatsDto$QuarterlyStat">
+        <result property="quarter" column="quarter"/>
+        <result property="orderCount" column="orderCount"/>
+        <result property="totalAmount" column="totalAmount"/>
+    </resultMap>
+
+    <resultMap id="PaymentStatusResultMap" type="moe.zzy040330.smbms.dto.BillStatsDto$PaymentStatus">
+        <result property="status" column="status"/>
+        <result property="count" column="count"/>
+    </resultMap>
+
+    <resultMap id="ProductSaleResultMap" type="moe.zzy040330.smbms.dto.BillStatsDto$ProductSale">
+        <result property="productName" column="productName"/>
+        <result property="totalSalesAmount" column="totalSalesAmount"/>
+    </resultMap>
+
+    <resultMap id="ProviderOrderContributionResultMap"
+               type="moe.zzy040330.smbms.dto.ProviderStatsDto$ProviderOrderContribution">
+        <result property="providerId" column="providerId"/>
+        <result property="providerName" column="providerName"/>
+        <result property="orderCount" column="orderCount"/>
+    </resultMap>
+
+    <resultMap id="ProviderSaleResultMap" type="moe.zzy040330.smbms.dto.ProviderStatsDto$ProviderSale">
+        <result property="providerId" column="providerId"/>
+        <result property="providerName" column="providerName"/>
+        <result property="totalSalesAmount" column="totalSalesAmount"/>
+    </resultMap>
+
+    <!-- select -->
+    <select id="findDashboardStatsCountData" resultType="moe.zzy040330.smbms.dto.DashboardStatsDto" resultMap="DashboardStatsDtoResultMap">
+
+        SELECT (SELECT COUNT(*) FROM smbms_bill)        AS orderCount,
+        (SELECT SUM(totalPrice) FROM smbms_bill) AS totalOrderAmount,
+        (SELECT COUNT(*) FROM smbms_provider)    AS providerCount,
+        (SELECT COUNT(*) FROM smbms_user)        AS userCount;
+
+    </select>
+
+    <select id="findQuarterlyStat" resultType="moe.zzy040330.smbms.dto.DashboardStatsDto$QuarterlyStat" resultMap="QuarterlyStatResultMap">
+        SELECT CONCAT(YEAR(creationDate), '-Q', QUARTER(creationDate)) AS quarter,
+           COUNT(*)                                             AS orderCount,
+           SUM(totalPrice)                                      AS totalAmount
+        FROM smbms_bill
+        GROUP BY YEAR(creationDate), QUARTER(creationDate)
+        ORDER BY YEAR(creationDate), QUARTER(creationDate);
+    </select>
+
+    <select id="findPaymentStatus" resultType="moe.zzy040330.smbms.dto.BillStatsDto$PaymentStatus" resultMap="PaymentStatusResultMap">
+        SELECT CASE
+        WHEN isPayment = 1 THEN 'unpaid'
+        WHEN isPayment = 2 THEN 'paid'
+        ELSE 'unknown'
+        END  AS status,
+        COUNT(*) AS count
+        FROM smbms_bill
+        GROUP BY isPayment;
+    </select>
+
+    <select id="findProductSale" resultType="moe.zzy040330.smbms.dto.BillStatsDto$ProductSale" resultMap="ProductSaleResultMap">
+        SELECT productName,
+        SUM(totalPrice) AS totalSalesAmount
+        FROM smbms_bill
+        GROUP BY productName
+        ORDER BY totalSalesAmount DESC;
+    </select>
+
+    <select id="findProviderOrderContribution" resultType="moe.zzy040330.smbms.dto.ProviderStatsDto$ProviderOrderContribution" resultMap="ProviderOrderContributionResultMap">
+        SELECT providerId,
+        p.proName AS providerName,
+        COUNT(*)  AS orderCount
+        FROM smbms_bill b
+        JOIN
+        smbms_provider p ON b.providerId = p.id
+        GROUP BY providerId, p.proName;
+    </select>
+
+    <select id="findProviderSale" resultType="moe.zzy040330.smbms.dto.ProviderStatsDto$ProviderSale" resultMap="ProviderSaleResultMap">
+        SELECT providerId,
+        p.proName       AS providerName,
+        SUM(totalPrice) AS totalSalesAmount
+        FROM smbms_bill b
+        JOIN
+        smbms_provider p ON b.providerId = p.id
+        GROUP BY providerId, p.proName;
+    </select>
+
+</mapper>
+

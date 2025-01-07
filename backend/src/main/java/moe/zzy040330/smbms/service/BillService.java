@@ -10,6 +10,7 @@
 package moe.zzy040330.smbms.service;
 
 import com.github.pagehelper.PageInfo;
+import moe.zzy040330.smbms.dto.BillStatsDto;
 import moe.zzy040330.smbms.entity.Bill;
 
 /**
@@ -26,4 +27,11 @@ public interface BillService extends GenericCrudService<Bill, Long> {
      */
     PageInfo<Bill> findBillByQuery(String code, String productName, String productDesc, String providerCode,
                                    String providerName, Integer isPaid, Integer pageNum, Integer pageSize,Integer minQuantity, Integer maxQuantity,Double minPrice,Double maxPrice);
+
+    /**
+     *  statistic info will be shown in Bill page
+     *
+     * @return just the DTO
+     */
+    BillStatsDto getBillStats();
 }
