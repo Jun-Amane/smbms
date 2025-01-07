@@ -199,6 +199,24 @@ public class BillController {
         }
     }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteBill(@PathVariable Long id) {
+        try {
+            Boolean deleted = billService.deleteById(id);
+            if (!deleted) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse(404, "Bill not found"));
+            } else {
+                return ResponseEntity.ok("Delete successful");
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(500, "Internal server error" + e.getMessage()));
+        }
+    }
+
     @GetMapping("/providerlist")
     public ResponseEntity<?> getProviderList() {
         try {
