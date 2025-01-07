@@ -82,13 +82,14 @@ public class BillController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new ErrorResponse(404, "Bill not found"));
             }
-            return ResponseEntity.ok(bill);
+            return ResponseEntity.ok(billObj2BillDto(bill));
         } catch (Exception e) {
             logger.error("Error fetching bill by ID", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error"));
         }
     }
+
     private static Bill billDto2BillObj(BillDto billDto) {
         Bill bill = new Bill();
         bill.setId(billDto.getId());
@@ -99,11 +100,16 @@ public class BillController {
         bill.setProductCount(billDto.getProductCount());
         bill.setTotalPrice(billDto.getTotalPrice());
         bill.setIsPaid(billDto.getIsPaid());
-        bill.setProviderId(billDto.getProviderId());
+
+        var provider = new Provider();
+        provider.setId(billDto.getProviderId());
+        bill.setProvider(provider);
+
         return bill;
     }
+
     //Long id, String billCode, String productName, String productDesc, String productUnit, BigDecimal totalPrice, Integer isPaid, Long providerId, String providerName,BigDecimal productCount
-   // Long id, String code, String productName, String productDescription, String productUnit, String productCount, BigDecimal totalPrice, Integer isPaid, Long providerId
+    // Long id, String code, String productName, String productDescription, String productUnit, String productCount, BigDecimal totalPrice, Integer isPaid, Long providerId
     private static BillDto billObj2BillDto(Bill Bill) {
         return new BillDto(
                 Bill.getId(),
@@ -114,9 +120,10 @@ public class BillController {
                 Bill.getProductCount(),
                 Bill.getTotalPrice(),
                 Bill.getIsPaid(),
-                Bill.getProviderId()
+                Bill.getProvider().getId()
         );
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateBill(@PathVariable Long id, @RequestBody BillDto billDto, @RequestHeader("Authorization") String authHeader) {
         try {
@@ -133,28 +140,15 @@ public class BillController {
 
             String token = authHeader.substring(7);
 
-            Long userId = jwtService.extractUserId(token);
+            Bill updatedBill = billDto2BillObj(billDto);
 
-//update
-            Bill updatedBill = new Bill();
-           // updatedBill.setId(id);
-           // updatedBill.setProductName(billDto.getProductName());
-            //updatedBill.setProductDescription(billDto.getProductDescription());
-            //updatedBill.setTotalPrice(billDto.getTotalPrice());
-            if (billDto.getProviderId() != null) {
-                var provider = new Provider();
-                provider.setId(billDto.getProviderId());
-                updatedBill.setProvider(provider);
-            }
-         //   updatedBill.setIsPaid(billDto.getIsPaid());
             User modifiedBy = new User();
             modifiedBy.setId(jwtService.extractUserId(token));
             updatedBill.setModifiedBy(modifiedBy);
             updatedBill.setCreatedBy(modifiedBy);
             updatedBill.setCreationDate(new Date());
             updatedBill.setModificationDate(new Date());
-//update
-            Bill up;
+
             boolean success = billService.update(updatedBill);
             if (success) {
                 return ResponseEntity.noContent().build();
@@ -174,31 +168,17 @@ public class BillController {
         try {
             if (billDto == null || billDto.getCode() == null || billDto.getProductName() == null ||
                     billDto.getProductDescription() == null || billDto.getProductUnit() == null
-                    || billDto.getTotalPrice() == null || billDto.getIsPaid() == null
-                    || billDto.getProviderId() == null || billDto.getProductName() == null) {
+                    || billDto.getTotalPrice() == null || billDto.getProductCount() == null
+                    || billDto.getIsPaid() == null
+                    || billDto.getProviderId() == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ErrorResponse(400, "Invalid input: required fields are missing"));
             }
 
             String token = authHeader.substring(7);
 
-            Long userId = jwtService.extractUserId(token);
+            Bill newBill = billDto2BillObj(billDto);
 
-
-
-            Bill newBill = new Bill();
-            /*newBill.setProductName(billDto.getProductName());
-            newBill.setProductDescription(billDto.getProductDescription());
-            newBill.setTotalPrice(billDto.getTotalPrice());
-            var provider = new Provider();
-            provider.setId(billDto.getId());
-            newBill.setProvider(provider);
-            newBill.setIsPaid(billDto.getIsPaid());
-            newBill.setCreatedBy(user);
-            newBill.setModifiedBy(user);
-            newBill.setCreationDate(new Date());
-            newBill.setModificationDate(new Date());
-*/
             User modifiedBy = new User();
             modifiedBy.setId(jwtService.extractUserId(token));
             newBill.setModifiedBy(modifiedBy);

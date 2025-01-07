@@ -25,11 +25,12 @@ public class Bill {
     private Date creationDate;// Date and time when the bill was created.
     private User modifiedBy;// User ID of the person who last modified the bill.
     private Date modificationDate;// Date and time when the bill was last updated.
-    private Long providerId;
+
+
     public Bill() {
     }
 
-    public Bill(Long id, String code, String productName, String productDescription, String productUnit, BigDecimal productCount, BigDecimal totalPrice, Integer isPaid, Provider provider, User createdBy, Date creationDate, User modifiedBy, Date modificationDate,Long providerId) {
+    public Bill(Long id, String code, String productName, String productDescription, String productUnit, BigDecimal productCount, BigDecimal totalPrice, Integer isPaid, Provider provider, User createdBy, Date creationDate, User modifiedBy, Date modificationDate) {
         this.id = id;
         this.code = code;
         this.productName = productName;
@@ -43,15 +44,6 @@ public class Bill {
         this.creationDate = creationDate;
         this.modifiedBy = modifiedBy;
         this.modificationDate = modificationDate;
-        this.providerId=providerId;
-    }
-
-    public Long getProviderId() {
-        return providerId;
-    }
-
-    public void setProviderId(Long providerId) {
-        this.providerId = providerId;
     }
 
     public Long getId() {
