@@ -85,6 +85,9 @@
             <if test="fax != null and fax != ''">
                 proFax = #{fax},
             </if>
+            <if test="address != null and address != ''">
+                proAddress = #{address},
+            </if>
             modifyBy = #{modifiedBy.id},
             modifyDate = #{modificationDate}
         </set>

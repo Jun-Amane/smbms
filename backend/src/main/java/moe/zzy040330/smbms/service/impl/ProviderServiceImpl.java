@@ -40,7 +40,7 @@ public class ProviderServiceImpl extends GenericCrudServiceImpl<Provider, Long> 
      * @return a PageInfo object containing the list of providers that match the query
      */
     @Override
-    public PageInfo<Provider> queryProviders(String name, String code, Integer pageNum, Integer pageSize) {
+    public PageInfo<Provider> findProviderByQuery(String name, String code, Integer pageNum, Integer pageSize) {
         // Set up the pagination configuration
         PageHelper.startPage(pageNum, pageSize);
 

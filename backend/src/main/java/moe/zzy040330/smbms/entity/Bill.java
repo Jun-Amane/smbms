@@ -26,6 +26,7 @@ public class Bill {
     private User modifiedBy;// User ID of the person who last modified the bill.
     private Date modificationDate;// Date and time when the bill was last updated.
 
+
     public Bill() {
     }
 

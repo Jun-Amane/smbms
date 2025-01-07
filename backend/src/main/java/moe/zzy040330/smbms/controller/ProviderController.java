@@ -44,13 +44,13 @@ public class ProviderController {
      */
     @GetMapping("")
     public ResponseEntity<?> apiprovidergetall(
-            @RequestParam("queryName") String queryName,
-            @RequestParam("queryCode") String queryCode,
+            @RequestParam(value = "queryName", required = false) String queryName,
+            @RequestParam(value = "queryCode", required = false) String queryCode,
             @RequestParam("pageIndex") Integer pageIndex,
             @RequestParam("pageSize") Integer pageSize) {
         try {
 
-            var pageInfo = this.providerService.queryProviders(queryName, queryCode, pageIndex, pageSize);
+            var pageInfo = this.providerService.findProviderByQuery(queryName, queryCode, pageIndex, pageSize);
 
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());

@@ -29,7 +29,7 @@ public interface ProviderService extends GenericCrudService<Provider,Long> {
      * @param pageSize  the number of records per page
      * @return a PageInfo object containing the list of providers that match the query
      */
-    PageInfo<Provider> queryProviders(String name, String code, Integer pageNum, Integer pageSize);
+    PageInfo<Provider> findProviderByQuery(String name, String code, Integer pageNum, Integer pageSize);
 
     /**
      * Deleting provider by specified id
