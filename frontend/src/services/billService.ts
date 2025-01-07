@@ -1,5 +1,5 @@
 import axios from '@/lib/axios';
-import {Bill, BillQueryParams, BillListResponse} from "@/types/bill";
+import {Bill, BillQueryParams, BillListResponse, BillStatsDto} from "@/types/bill";
 import {Provider} from "@/types/provider";
 
 export const billService = {
@@ -28,6 +28,11 @@ export const billService = {
 
     getListOfProviders: async(): Promise<Provider[]> => {
         const response = await axios.get('/api/bill/providerlist');
+        return response.data;
+    },
+
+    getBillStats: async(): Promise<BillStatsDto> => {
+        const response = await axios.get('/api/bill/stats');
         return response.data;
     }
 

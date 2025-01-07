@@ -23,3 +23,20 @@ export interface ProviderListResponse {
     totalItems: number;
     providers: Provider[];
 }
+
+interface ProviderOrderContribution {
+    providerId: number;
+    providerName: string;
+    orderCount: number;
+}
+
+export interface ProviderSale {
+    providerId: number;
+    providerName: string;
+    totalSalesAmount: number;
+}
+
+export interface ProviderStatsDto {
+    providerOrderContributions: ProviderOrderContribution[];
+    providerSales: ProviderSale[];
+}
