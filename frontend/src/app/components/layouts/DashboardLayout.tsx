@@ -1,6 +1,6 @@
-import React, { ReactNode, useState, useEffect } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-import { usePathname, useRouter } from 'next/navigation';
+import React, {ReactNode, useState, useEffect} from 'react';
+import {styled, useTheme} from '@mui/material/styles';
+import {usePathname, useRouter} from 'next/navigation';
 import {
     Box,
     Drawer,
@@ -24,8 +24,7 @@ import {
     Menu as MenuIcon,
     Dashboard as DashboardIcon,
     ShoppingCart as OrderIcon,
-    People as SupplierIcon,
-    Group as UserIcon,
+    People as PeopleIcon,
     Settings as SettingsIcon,
     Logout as LogoutIcon,
     MonetizationOn as MonetizationIcon,
@@ -34,9 +33,9 @@ import {
 
 const drawerWidth = 256;
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
+const Main = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})<{
     open?: boolean;
-}>(({ theme, open }) => ({
+}>(({theme, open}) => ({
     flexGrow: 1,
     transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.sharp,
@@ -54,7 +53,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     }),
 }));
 
-const DrawerHeader = styled('div')(({ theme }) => ({
+const DrawerHeader = styled('div')(({theme}) => ({
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(0, 1),
@@ -66,7 +65,7 @@ interface DashboardLayoutProps {
     children: ReactNode;
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function DashboardLayout({children}: DashboardLayoutProps) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [open, setOpen] = useState(!isMobile);
@@ -120,25 +119,25 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     };
 
     const menuItems = [
-        { text: '控制台主页', icon: <DashboardIcon />, path: '/dashboard' },
-        { text: '订单管理', icon: <MonetizationIcon />, path: '/bills' },
-        { text: '供应商管理', icon: <SupplierIcon />, path: '/providers' },
-        { text: '用户管理', icon: <UserIcon />, path: '/users' },
+        {text: '控制台主页', icon: <DashboardIcon/>, path: '/dashboard'},
+        {text: '订单管理', icon: <MonetizationIcon/>, path: '/bills'},
+        {text: '供应商管理', icon: <OrderIcon/>, path: '/providers'},
+        {text: '用户管理', icon: <PeopleIcon/>, path: '/users'},
     ];
 
     const drawer = (
         <>
             <DrawerHeader>
-                <Typography variant="h6" sx={{ flexGrow: 1, ml: 2 }}>
+                <Typography variant="h6" sx={{flexGrow: 1, ml: 2}}>
                     SMBMS
                 </Typography>
                 {open && (
                     <IconButton onClick={handleDrawerToggle}>
-                        <ChevronLeftIcon />
+                        <ChevronLeftIcon/>
                     </IconButton>
                 )}
             </DrawerHeader>
-            <Divider />
+            <Divider/>
             <List>
                 {menuItems.map((item) => (
                     <ListItem key={item.text} disablePadding>
@@ -170,7 +169,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                             >
                                 {item.icon}
                             </ListItemIcon>
-                            {open && <ListItemText primary={item.text} />}
+                            {open && <ListItemText primary={item.text}/>}
                         </ListItemButton>
                     </ListItem>
                 ))}
@@ -179,7 +178,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     );
 
     return (
-        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+        <Box sx={{display: 'flex', minHeight: '100vh'}}>
             <AppBar
                 position="fixed"
                 sx={{
@@ -192,9 +191,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         color="inherit"
                         edge="start"
                         onClick={handleDrawerToggle}
-                        sx={{ mr: 2 }}
+                        sx={{mr: 2}}
                     >
-                        <MenuIcon />
+                        <MenuIcon/>
                     </IconButton>
                     <Typography
                         variant="h6"
@@ -209,7 +208,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     >
                         超市订单管理系统
                     </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{display: 'flex', alignItems: 'center', gap: 2}}>
                         <Typography variant="body2">
                             {userName}
                         </Typography>
@@ -240,8 +239,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
                         onClose={handleClose}
-                        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                        transformOrigin={{horizontal: 'right', vertical: 'top'}}
+                        anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
                         PaperProps={{
                             elevation: 0,
                             sx: {
@@ -265,13 +264,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     >
                         <MenuItem onClick={handlePasswordChange}>
                             <ListItemIcon>
-                                <SettingsIcon fontSize="small" />
+                                <SettingsIcon fontSize="small"/>
                             </ListItemIcon>
                             修改密码
                         </MenuItem>
                         <MenuItem onClick={handleLogout}>
                             <ListItemIcon>
-                                <LogoutIcon fontSize="small" />
+                                <LogoutIcon fontSize="small"/>
                             </ListItemIcon>
                             退出登录
                         </MenuItem>
@@ -296,7 +295,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 {drawer}
             </Drawer>
             <Main open={!isMobile && open}>
-                <Toolbar />
+                <Toolbar/>
                 <Box
                     sx={{
                         p: 3,

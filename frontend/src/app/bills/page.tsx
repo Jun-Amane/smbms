@@ -39,7 +39,6 @@ import {
     Add as AddIcon,
     Search as SearchIcon,
     Refresh as RefreshIcon,
-    AttachMoney as MoneyIcon,
     Store as StoreIcon,
 } from '@mui/icons-material';
 import {useRouter} from 'next/navigation';
@@ -461,7 +460,6 @@ export default function BillManagement() {
                                                     gap: 0.5
                                                 }}
                                             >
-                                                <MoneyIcon fontSize="small"/>
                                                 {formatPrice(bill.totalPrice)}
                                             </Typography>
                                         </TableCell>
