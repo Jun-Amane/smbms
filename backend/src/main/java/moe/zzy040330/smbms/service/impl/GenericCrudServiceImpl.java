@@ -29,13 +29,11 @@ public class GenericCrudServiceImpl<T, PK> implements GenericCrudService<T, PK> 
      * Inserts a new entity into the database.
      *
      * @param entity       the entity to be inserted
-     * @param createdBy    the user who is creating the entity
-     * @param creationDate the date when the entity is created
      * @return successful or not
      */
     @Override
-    public Boolean insert(T entity, User createdBy, Date creationDate) {
-        return this.genericMapper.insert(entity, createdBy, creationDate) > 0;
+    public Boolean insert(T entity) {
+        return this.genericMapper.insert(entity) > 0;
     }
 
     /**
@@ -53,13 +51,11 @@ public class GenericCrudServiceImpl<T, PK> implements GenericCrudService<T, PK> 
      * Updates an existing entity in the database.
      *
      * @param entity           the entity to be updated
-     * @param modifiedBy       the user who is modifying the entity
-     * @param modificationDate the date when the entity is modified
      * @return successful or not
      */
     @Override
-    public Boolean update(T entity, User modifiedBy, Date modificationDate) {
-        return this.genericMapper.update(entity, modifiedBy, modificationDate) > 0;
+    public Boolean update(T entity) {
+        return this.genericMapper.update(entity) > 0;
     }
 
     /**

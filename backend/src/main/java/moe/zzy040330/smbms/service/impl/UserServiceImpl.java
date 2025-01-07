@@ -44,6 +44,7 @@ public class UserServiceImpl extends GenericCrudServiceImpl<User, Long> implemen
      * @param userPassword the password associated with the user code
      * @return the User object if authentication is successful; null otherwise
      */
+    @Deprecated
     @Override
     public User login(String userCode, String userPassword) {
         return this.userMapper.findByCodeAndPassword(userCode, userPassword);
@@ -85,28 +86,35 @@ public class UserServiceImpl extends GenericCrudServiceImpl<User, Long> implemen
      * Changes the password for a specific user identified by their ID.
      *
      * @param id          the ID of the user whose password is to be changed
+     * @param oldPassword the old password
      * @param newPassword the new password to be set for the user
      * @param modifiedBy       the user who is modifying the entity
      * @param modificationDate the date when the entity is modified
      * @return true if the password change was successful, false otherwise
      */
     @Override
-    public Boolean changePassword(Long id, String newPassword, User modifiedBy, Date modificationDate) {
-        return this.userMapper.updateUserPassword(id, passwordEncoder.encode(newPassword), modifiedBy, modificationDate) > 0;
+    public Boolean changePassword(Long id, String oldPassword, String newPassword, User modifiedBy, Date modificationDate) {
+
+        var user = userMapper.findById(id);
+
+        if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+            return this.userMapper.updateUserPassword(id, passwordEncoder.encode(newPassword), modifiedBy, modificationDate) > 0;
+        } else {
+            throw new IllegalArgumentException("old password does not match");
+        }
+
     }
 
     /**
      * Inserts a new entity into the database. The password should be encoded.
      *
      * @param entity       the entity to be inserted
-     * @param createdBy    the user who is creating the entity
-     * @param creationDate the date when the entity is created
      * @return successful or not
      */
     @Override
-    public Boolean insert(User entity, User createdBy, Date creationDate) {
+    public Boolean insert(User entity) {
         entity.setPassword(passwordEncoder.encode(entity.getPassword()));
-        return this.userMapper.insert(entity, createdBy, creationDate) > 0;
+        return this.userMapper.insert(entity) > 0;
     }
 
     /**

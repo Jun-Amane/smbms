@@ -9,9 +9,15 @@
 package moe.zzy040330.smbms.dto;
 
 public class PasswordUpdateRequest {
+    private String oldPassword;
     private String newPassword;
 
     public PasswordUpdateRequest() {}
+
+    public PasswordUpdateRequest(String oldPassword, String newPassword) {
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
+    }
 
     public String getNewPassword() {
         return newPassword;
@@ -19,5 +25,13 @@ public class PasswordUpdateRequest {
 
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 }

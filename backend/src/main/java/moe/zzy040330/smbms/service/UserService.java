@@ -57,12 +57,13 @@ public interface UserService extends GenericCrudService<User, Long> {
      * Changes the password for a specific user identified by their ID.
      *
      * @param id          the ID of the user whose password is to be changed
+     * @param oldPassword the old password
      * @param newPassword the new password to be set for the user
      * @param modifiedBy       the user who is modifying the entity
      * @param modificationDate the date when the entity is modified
      * @return true if the password change was successful, false otherwise
      */
-    Boolean changePassword(Long id, String newPassword, User modifiedBy, Date modificationDate);
+    Boolean changePassword(Long id, String oldPassword, String newPassword, User modifiedBy, Date modificationDate);
 
     /**
      * @return the list of all roles.

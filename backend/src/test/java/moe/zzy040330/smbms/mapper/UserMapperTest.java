@@ -56,7 +56,12 @@ public class UserMapperTest {
         testUser.setAddress("Test Address");
         modifiedByUser.setId(1L);
 
-        userMapper.insert(testUser, modifiedByUser, new Date());
+        testUser.setModifiedBy(modifiedByUser);
+        testUser.setModificationDate(new Date());
+        testUser.setCreatedBy(modifiedByUser);
+        testUser.setModificationDate(new Date());
+
+        userMapper.insert(testUser);
         testUserId = testUser.getId();
 
         assertNotNull(testUser.getName());
@@ -90,8 +95,12 @@ public class UserMapperTest {
         newUser.setBirthday(new Date(946684800000L));
         newUser.setPhone("0987654321");
         newUser.setAddress("New Address");
+        newUser.setModifiedBy(modifiedByUser);
+        newUser.setModificationDate(new Date());
+        newUser.setCreatedBy(modifiedByUser);
+        newUser.setCreationDate(new Date());
 
-        int rowsAffected = userMapper.insert(newUser, modifiedByUser, new Date());
+        int rowsAffected = userMapper.insert(newUser);
         assertEquals(1, rowsAffected);
         assertNotNull(newUser.getId());
     }
@@ -100,8 +109,10 @@ public class UserMapperTest {
     public void testUpdate() {
         User existingUser = userMapper.findById(testUserId);
         existingUser.setName("Updated Name");
+        existingUser.setModifiedBy(modifiedByUser);
+        existingUser.setModificationDate(new Date());
 
-        int rowsAffected = userMapper.update(existingUser, modifiedByUser, new Date());
+        int rowsAffected = userMapper.update(existingUser);
         assertEquals(1, rowsAffected);
 
         User updatedUser = userMapper.findById(testUserId);

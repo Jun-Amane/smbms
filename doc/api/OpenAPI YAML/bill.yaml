@@ -18,30 +18,51 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: queryProductName
+        - name: queryCode
           in: query
-          description: Product Name
+          description: Bill code
           required: false
           explode: true
           schema:
             type: string
-        - name: queryProviderId
+        - name: queryProductName
           in: query
-          description: Provider Id
+          description: Product name
           required: false
           explode: true
           schema:
-            type: integer
+            type: string
+        - name: queryProductDesc
+          in: query
+          description: Product description
+          required: false
+          explode: true
+          schema:
+            type: string
+        - name: queryProviderName
+          in: query
+          description: Provider Name
+          required: false
+          explode: true
+          schema:
+            type: string
+        - name: queryProviderCode
+          in: query
+          description: Provider code
+          required: false
+          explode: true
+          schema:
+            type: string
         - name: queryIsPaid
           in: query
           description: Is Paid or not
           required: false
           explode: true
           schema:
-            type: string
+            type: integer
             enum:
-              - true
-              - false
+              - 0
+              - 1
         - name: pageIndex
           in: query
           description: Page Index
@@ -252,13 +273,10 @@ components:
         - productName
         - productDescription
         - productCount
+        - productUnit
         - totalPrice
         - isPaid
         - providerId
-        - createdBy
-        - creationDate
-        - modifiedBy
-        - modificationDate
       properties:
         id:
           type: integer
@@ -298,20 +316,6 @@ components:
           type: integer
           description: Provider ID
           example: 1
-        createdBy:
-          type: integer
-          description: ID of the user who created this bill
-        creationDate:
-          type: string
-          format: date-time
-          description: Date of bill creation
-        modifiedBy:
-          type: integer
-          description: ID of the user who last modified this bill
-        modificationDate:
-          type: string
-          format: date-time
-          description: Date of last modification
 
     Provider:
       type: object
@@ -324,10 +328,6 @@ components:
         - phone
         - address
         - fax
-        - createdBy
-        - creationDate
-        - modifiedBy
-        - modificationDate
       properties:
         id:
           type: integer
@@ -361,22 +361,6 @@ components:
           type: string
           description: Provider fax number
           example: 0532-12345678
-        createdBy:
-          type: integer
-          description: ID of the user who created this provider
-          example: 1
-        creationDate:
-          type: string
-          format: date-time
-          description: Date of provider creation
-        modifiedBy:
-          type: integer
-          description: ID of the user who last modified this provider
-          example: 1
-        modificationDate:
-          type: string
-          format: date-time
-          description: Date of last modification
 
     ErrorResponse:
       type: object

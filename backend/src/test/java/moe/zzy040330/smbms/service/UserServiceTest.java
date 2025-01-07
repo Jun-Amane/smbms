@@ -46,14 +46,18 @@ public class UserServiceTest {
         User testUser = new User();
         testUser.setCode("testCode");
         testUser.setName("Test User");
-        testUser.setPassword(passwordEncoder.encode("password"));
+        testUser.setPassword("password");
         testUser.setGender(1);
         testUser.setBirthday(new Date(946684800000L));
         testUser.setPhone("1234567890");
         testUser.setAddress("Test Address");
         modifiedByUser.setId(1L);
+        testUser.setModifiedBy(modifiedByUser);
+        testUser.setModificationDate(new Date());
+        testUser.setCreatedBy(modifiedByUser);
+        testUser.setCreationDate(new Date());
 
-        userService.insert(testUser, modifiedByUser, new Date());
+        userService.insert(testUser);
         testUserId = testUser.getId();
 
         assertNotNull(testUser.getName());
@@ -85,8 +89,9 @@ public class UserServiceTest {
 
     @Test
     void testChangePassword() {
+        String oldPassword = "password";
         String newPassword = "newPassword";
-        Boolean success = userService.changePassword(testUserId, newPassword, modifiedByUser, new Date());
+        Boolean success = userService.changePassword(testUserId, oldPassword, newPassword, modifiedByUser, new Date());
         assertTrue(success);
 
         User updatedUser = userService.findById(testUserId);
@@ -112,13 +117,17 @@ public class UserServiceTest {
         User newUser = new User();
         newUser.setCode("newCode");
         newUser.setName("New User");
-        newUser.setPassword(passwordEncoder.encode("newpassword"));
+        newUser.setPassword("newpassword");
         newUser.setGender(2);
         newUser.setBirthday(new Date(946684800000L));
         newUser.setPhone("0987654321");
         newUser.setAddress("New Address");
+        newUser.setModifiedBy(modifiedByUser);
+        newUser.setModificationDate(new Date());
+        newUser.setCreatedBy(modifiedByUser);
+        newUser.setCreationDate(new Date());
 
-        var result = userService.insert(newUser, modifiedByUser, new Date());
+        var result = userService.insert(newUser);
         assertEquals(true, result);
         assertNotNull(newUser.getId());
     }
@@ -127,8 +136,10 @@ public class UserServiceTest {
     public void testUpdate() {
         User existingUser = userService.findById(testUserId);
         existingUser.setName("Updated Name");
+        existingUser.setModifiedBy(modifiedByUser);
+        existingUser.setModificationDate(new Date());
 
-        var result = userService.update(existingUser, modifiedByUser, new Date());
+        var result = userService.update(existingUser);
         assertEquals(true,result);
 
         User updatedUser = userService.findById(testUserId);
