@@ -142,7 +142,7 @@ public class BillServiceTest {
 
     @Test
     public void testQuery() {
-        PageInfo<Bill> pageInfo = billService.getBillList("BILL00", null, null,
+        PageInfo<Bill> pageInfo = billService.findBillByQuery("BILL00", null, null,
                 null, null, null, 1, 10);
         assertNotNull(pageInfo);
         assertFalse(pageInfo.getList().isEmpty());
