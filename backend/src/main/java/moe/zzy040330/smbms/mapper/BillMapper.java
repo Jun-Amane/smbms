@@ -40,6 +40,14 @@ public interface BillMapper extends GenericMapper<Bill, Long> {
                                    @Param("productDesc") String productDesc,
                                    @Param("providerCode") String providerCode,
                                    @Param("providerName") String providerName,
-                                   @Param("isPaid") Integer isPaid
+                                   @Param("isPaid") Integer isPaid,
+
+                                   @Param("minQuantity") Integer minQuantity,
+                                   @Param("maxQuantity") Integer maxQuantity,
+                                   @Param("minPrice") Double minPrice,
+                                   @Param("maxPrice") Double maxPrice
+
+
+
     );
 }

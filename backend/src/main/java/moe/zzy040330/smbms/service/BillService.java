@@ -25,5 +25,5 @@ public interface BillService extends GenericCrudService<Bill, Long> {
      * @return a PageInfo object containing the list of bills that match the query
      */
     PageInfo<Bill> findBillByQuery(String code, String productName, String productDesc, String providerCode,
-                                   String providerName, Integer isPaid, Integer pageNum, Integer pageSize);
+                                   String providerName, Integer isPaid, Integer pageNum, Integer pageSize,Integer minQuantity, Integer maxQuantity,Double minPrice,Double maxPrice);
 }
