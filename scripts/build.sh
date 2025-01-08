@@ -3,19 +3,19 @@
 # Get the directory of the script
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 
-# Define frontend and backend source paths
+# Define the paths for frontend and backend source code
 FRONTEND_DIR="$SCRIPT_DIR/../frontend"
 BACKEND_DIR="$SCRIPT_DIR/../backend"
 BUILD_DIR="$SCRIPT_DIR/../build"
 JAR_NAME="app.jar"
 
-# Check and clean the build directory
+# Check and clean up the build directory
 if [ -d "$BUILD_DIR" ]; then
   echo "Cleaning up existing build directory..."
   rm -rf "$BUILD_DIR"
 fi
 
-# Recreate clean build directories
+# Recreate a clean build directory
 mkdir -p "$BUILD_DIR/frontend"
 mkdir -p "$BUILD_DIR/backend"
 
@@ -29,12 +29,9 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# Copy the Next.js build output to the build directory
-cp -R .next "$BUILD_DIR/frontend"
-
-# Start the Next.js application (run in background)
+# Start the Next.js application (running in the background)
 echo "Starting Next.js application..."
-npm run start --prefix "$BUILD_DIR/frontend" &
+npm run start &
 FRONTEND_PID=$!
 echo "Next.js running with PID $FRONTEND_PID"
 
@@ -52,7 +49,7 @@ fi
 # Copy the packaged JAR file to the build directory
 cp target/*.jar "$BUILD_DIR/backend/$JAR_NAME"
 
-# Run the Spring Boot application (run in background)
+# Run the Spring Boot application (running in the background)
 echo "Starting Spring Boot application..."
 java -jar "$BUILD_DIR/backend/$JAR_NAME" &
 BACKEND_PID=$!
@@ -60,17 +57,17 @@ echo "Spring Boot running with PID $BACKEND_PID"
 
 echo "Deployment completed!"
 
-# Add cleanup tasks upon script exit
+# Add cleanup tasks when the script exits
 cleanup() {
     echo "Cleaning up..."
     kill $FRONTEND_PID
     kill $BACKEND_PID
 }
 
-# Bind INT and TERM signals to ensure cleanup function is called on script exit
+# Bind INT and TERM signals to ensure the cleanup function is called when the script exits
 trap cleanup INT TERM
 
-# Wait for child processes to exit
+# Wait for the subprocesses to exit
 wait $FRONTEND_PID $BACKEND_PID
 
 
