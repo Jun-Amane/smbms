@@ -5,34 +5,34 @@ import {Provider} from "@/types/provider";
 export const billService = {
 
     getBills: async (params:BillQueryParams): Promise<BillListResponse> => {
-        const response = await axios.get('/api/bill', {params});
+        const response = await axios.get('/bill', {params});
         return response.data;
     },
 
     createBill: async (bill: Omit<Bill, 'id'>): Promise<void> => {
-        await axios.post('/api/bill', bill);
+        await axios.post('/bill', bill);
     },
 
     getBillById: async (id: number): Promise<Bill> => {
-        const response = await axios.get(`/api/bill/${id}`);
+        const response = await axios.get(`/bill/${id}`);
         return response.data;
     },
 
     updateBill: async (id: number, bill: Partial<Bill>): Promise<void> => {
-        await axios.put(`/api/bill/${id}`, bill);
+        await axios.put(`/bill/${id}`, bill);
     },
 
     deleteBill: async(id: number): Promise<void> => {
-        await axios.delete(`/api/bill/${id}`);
+        await axios.delete(`/bill/${id}`);
     },
 
     getListOfProviders: async(): Promise<Provider[]> => {
-        const response = await axios.get('/api/bill/providerlist');
+        const response = await axios.get('/bill/providerlist');
         return response.data;
     },
 
     getBillStats: async(): Promise<BillStatsDto> => {
-        const response = await axios.get('/api/bill/stats');
+        const response = await axios.get('/bill/stats');
         return response.data;
     }
 

@@ -5,40 +5,40 @@ import {PasswordUpdateRequest} from "@/types";
 export const userService = {
     // get user list
     getUsers: async (params: UserQueryParams): Promise<UserListResponse> => {
-        const response = await axios.get('/api/user', { params });
+        const response = await axios.get('/user', { params });
         return response.data;
     },
 
     // get rolelist
     getRoles: async (): Promise<Role[]> => {
-        const response = await axios.get('/api/user/rolelist');
+        const response = await axios.get('/user/rolelist');
         return response.data;
     },
 
     // get user by id
     getUser: async (id: number): Promise<User> => {
-        const response = await axios.get(`/api/user/${id}`);
+        const response = await axios.get(`/user/${id}`);
         return response.data;
     },
 
     // create user
     createUser: async (user: Omit<User, 'id'>): Promise<void> => {
-        await axios.post('/api/user', user);
+        await axios.post('/user', user);
     },
 
     // update user
     updateUser: async (id: number, user: Partial<User>): Promise<void> => {
-        await axios.put(`/api/user/${id}`, user);
+        await axios.put(`/user/${id}`, user);
     },
 
     // delete user
     deleteUser: async (id: number): Promise<void> => {
-        await axios.delete(`/api/user/${id}`);
+        await axios.delete(`/user/${id}`);
     },
 
     // check if user-code exists
     checkCodeExists: async (code: string): Promise<{ result: string }> => {
-        const response = await axios.get('/api/user/codeexists', {
+        const response = await axios.get('/user/codeexists', {
             params: { code }
         });
         return response.data;
@@ -46,6 +46,6 @@ export const userService = {
 
     // change password
     updatePassword: async (id: number, passwordReq: PasswordUpdateRequest): Promise<void> => {
-        await axios.patch(`/api/user/${id}/password`, passwordReq);
+        await axios.patch(`/user/${id}/password`, passwordReq);
     },
 };
