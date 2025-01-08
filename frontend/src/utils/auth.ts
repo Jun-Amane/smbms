@@ -13,7 +13,6 @@ export const isManager = (): boolean => {
     return userRoleCode === MANAGER_ROLE;
 };
 
-
 export const checkAdminPermission = (action: 'create' | 'edit' | 'delete'): boolean => {
     return isAdmin();
 };
@@ -21,3 +20,5 @@ export const checkAdminPermission = (action: 'create' | 'edit' | 'delete'): bool
 export const checkManagerPermission = (action: 'create' | 'edit' | 'delete'): boolean => {
     return isAdmin() || isManager();
 };
+
+export const getCurrentId = () => localStorage.getItem('userId');

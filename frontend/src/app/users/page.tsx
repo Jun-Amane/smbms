@@ -45,7 +45,7 @@ import { useRouter } from 'next/navigation';
 import { User, Role, UserQueryParams, formatGender } from '@/types/user';
 import { userService } from '@/services/userService';
 import UserForm from "@/app/components/forms/UserForm";
-import { checkAdminPermission } from '@/utils/auth';
+import {checkAdminPermission, getCurrentId} from '@/utils/auth';
 
 type DialogType = 'create' | 'edit' | 'view' | 'delete' | null;
 
@@ -215,6 +215,11 @@ export default function UserManagement() {
 
         if (!checkAdminPermission('delete')) {
             setError('您没有权限执行此操作');
+            return;
+        }
+
+        if (selectedUser?.id.toString() === getCurrentId()) {
+            setError('不能删除自己');
             return;
         }
 
