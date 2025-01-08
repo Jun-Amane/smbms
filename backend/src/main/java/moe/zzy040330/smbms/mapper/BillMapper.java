@@ -45,8 +45,9 @@ public interface BillMapper extends GenericMapper<Bill, Long> {
                                    @Param("minQuantity") Integer minQuantity,
                                    @Param("maxQuantity") Integer maxQuantity,
                                    @Param("minPrice") Double minPrice,
-                                   @Param("maxPrice") Double maxPrice
-
+                                   @Param("maxPrice") Double maxPrice,
+                                   @Param("orderBy") String orderBy,
+                                   @Param("orderDirection") String orderDirection
 
 
     );

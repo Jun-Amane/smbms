@@ -42,10 +42,11 @@ public class BillServiceImpl extends GenericCrudServiceImpl<Bill, Long> implemen
     @Override
     public PageInfo<Bill> findBillByQuery(String code, String productName, String productDesc, String providerCode,
                                           String providerName, Integer isPaid, Integer pageNum, Integer pageSize,
-                                          Integer minQuantity, Integer maxQuantity,Double minPrice,Double maxPrice) {
+                                          Integer minQuantity, Integer maxQuantity,Double minPrice,Double maxPrice,
+                                          String orderBy, String orderDirection) {
         PageHelper.startPage(pageNum, pageSize);
         List<Bill> bills = billMapper.findAllBillsByQuery(code, productName, productDesc,
-                providerCode, providerName, isPaid,minQuantity,maxQuantity,minPrice,maxPrice);
+                providerCode, providerName, isPaid,minQuantity,maxQuantity,minPrice,maxPrice,orderBy,orderDirection);
         return new PageInfo<>(bills);
     }
 

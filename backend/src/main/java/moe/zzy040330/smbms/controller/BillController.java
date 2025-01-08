@@ -58,13 +58,16 @@ public class BillController {
                                       @RequestParam(value = "maxQuantity", required = false) Integer maxQuantity,
                                       @RequestParam(value = "minPrice", required = false) Double minPrice,
                                       @RequestParam(value = "maxPrice", required = false) Double maxPrice,
+                                      @RequestParam(value = "orderBy", required = false) String orderBy,
+                                      @RequestParam(value = "orderDirection", required = false) String orderDirection,
                                       @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
                                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
 
     ) {
         try {
 
-            PageInfo<Bill> pageInfo = billService.findBillByQuery(code, productName, productDesc, providerCode, providerName, isPaid, pageIndex, pageSize, minQuantity, maxQuantity, minPrice, maxPrice);
+            PageInfo<Bill> pageInfo = billService.findBillByQuery(code, productName, productDesc, providerCode, providerName, isPaid, pageIndex, pageSize,
+                    minQuantity, maxQuantity, minPrice, maxPrice, orderBy, orderDirection);
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());
             response.put("curPage", pageInfo.getPageNum());

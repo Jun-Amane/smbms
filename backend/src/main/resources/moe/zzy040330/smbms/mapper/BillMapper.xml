@@ -190,6 +190,11 @@
             <if test="maxPrice != null and maxPrice!=''">
                 AND b.totalPrice &lt;= #{maxPrice}
             </if>
+            <!-- 通过id查询 -->
+            <if test="id != null">
+                AND b.id = #{id}
+            </if>
+
 
 
             <if test="providerCode != null and providerCode != ''">
@@ -205,7 +210,37 @@
             </if>
 
         </where>
-        ORDER BY b.id
+
+        <!-- 动态排序 -->
+        <choose>
+            <when test="orderBy == 'id'">
+                <if test="orderDirection == 'asc'">
+                    ORDER BY b.id ASC
+                </if>
+                <if test="orderDirection == 'desc'">
+                    ORDER BY b.id DESC
+                </if>
+            </when>
+            <when test="orderBy == 'productCount'">
+                <if test="orderDirection == 'asc'">
+                    ORDER BY b.productCount ASC
+                </if>
+                <if test="orderDirection == 'desc'">
+                    ORDER BY b.productCount DESC
+                </if>
+            </when>
+            <when test="orderBy == 'totalPrice'">
+                <if test="orderDirection == 'asc'">
+                    ORDER BY b.totalPrice ASC
+                </if>
+                <if test="orderDirection == 'desc'">
+                    ORDER BY b.totalPrice DESC
+                </if>
+            </when>
+            <otherwise>
+                ORDER BY b.id ASC
+            </otherwise>
+        </choose>
     </select>
 
     <!-- delete -->
