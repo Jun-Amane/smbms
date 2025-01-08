@@ -10,10 +10,12 @@ package moe.zzy040330.smbms.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import moe.zzy040330.smbms.dto.ProviderStatsDto;
 import moe.zzy040330.smbms.entity.Provider;
 import moe.zzy040330.smbms.mapper.BillMapper;
 import moe.zzy040330.smbms.mapper.GenericMapper;
 import moe.zzy040330.smbms.mapper.ProviderMapper;
+import moe.zzy040330.smbms.mapper.StatMapper;
 import moe.zzy040330.smbms.service.ProviderService;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +25,13 @@ import java.util.List;
 public class ProviderServiceImpl extends GenericCrudServiceImpl<Provider, Long> implements ProviderService {
     private final ProviderMapper providerMapper;
     private final BillMapper billMapper;
+    private final StatMapper statMapper;
 
-    public ProviderServiceImpl(GenericMapper<Provider,Long> genericMapper, ProviderMapper providerMapper, BillMapper billMapper) {
+    public ProviderServiceImpl(GenericMapper<Provider,Long> genericMapper, ProviderMapper providerMapper, BillMapper billMapper, StatMapper statMapper) {
         super(genericMapper);
         this.providerMapper = providerMapper;
         this.billMapper = billMapper;
+        this.statMapper = statMapper;
     }
 
     /**
@@ -63,5 +67,18 @@ public class ProviderServiceImpl extends GenericCrudServiceImpl<Provider, Long> 
         }else{
             throw new IllegalArgumentException("The provider with bills cannot be deleted.");
         }
+    }
+
+    /**
+     * statistic info will be shown in Bill page
+     *
+     * @return just the DTO
+     */
+    @Override
+    public ProviderStatsDto getProviderStats() {
+        return new ProviderStatsDto(
+                this.statMapper.findProviderOrderContribution(),
+                this.statMapper.findProviderSale()
+        );
     }
 }

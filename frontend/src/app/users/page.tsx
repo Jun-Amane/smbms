@@ -45,7 +45,7 @@ import { useRouter } from 'next/navigation';
 import { User, Role, UserQueryParams, formatGender } from '@/types/user';
 import { userService } from '@/services/userService';
 import UserForm from "@/app/components/forms/UserForm";
-import { checkPermission } from '@/utils/auth';
+import { checkAdminPermission } from '@/utils/auth';
 
 type DialogType = 'create' | 'edit' | 'view' | 'delete' | null;
 
@@ -131,7 +131,7 @@ export default function UserManagement() {
 
     const handleOpenDialog = async (type: DialogType, user?: User) => {
         // auth check
-        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkPermission(type)) {
+        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkAdminPermission(type)) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -182,7 +182,7 @@ export default function UserManagement() {
     };
 
     const handleSave = async () => {
-        if (!checkPermission(dialogType === 'create' ? 'create' : 'edit')) {
+        if (!checkAdminPermission(dialogType === 'create' ? 'create' : 'edit')) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -206,14 +206,14 @@ export default function UserManagement() {
             fetchUsers();
         } catch (err) {
             setError(dialogType === 'create' ? '创建用户失败' : '更新用户失败');
-            console.error('Error saving user:', err);
+            console.log('Error saving user:', err);
         }
     };
 
     const confirmDelete = async () => {
         if (!selectedUser) return;
 
-        if (!checkPermission('delete')) {
+        if (!checkAdminPermission('delete')) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -225,7 +225,7 @@ export default function UserManagement() {
             fetchUsers();
         } catch (err) {
             setError('删除用户失败');
-            console.error('Error deleting user:', err);
+            console.log('Error deleting user:', err);
         }
     };
 

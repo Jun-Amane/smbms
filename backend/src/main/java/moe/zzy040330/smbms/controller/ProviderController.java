@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -71,6 +72,7 @@ public class ProviderController {
     /**
      * Delete provider
      */
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or hasAuthority('SMBMS_MANAGER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> apiproviderdelete(@PathVariable Long id) {
         try {
@@ -138,6 +140,7 @@ public class ProviderController {
     /**
      * Update provider by id
      */
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or hasAuthority('SMBMS_MANAGER')")
     @PutMapping("/{id}")
     public ResponseEntity<?> apiproviderput(
             @PathVariable Long id,
@@ -195,6 +198,7 @@ public class ProviderController {
     /**
      * Add new provider
      */
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or hasAuthority('SMBMS_MANAGER')")
     @PostMapping
     public ResponseEntity<?> apiProviderPost(@RequestBody ProviderDto providerDto,
                                              @RequestHeader("Authorization") String authHeader) {
@@ -207,9 +211,8 @@ public class ProviderController {
                     providerDto.getName() == null || providerDto.getName().isBlank() ||
                     providerDto.getContact() == null || providerDto.getContact().isBlank() ||
                     providerDto.getPhone() == null || providerDto.getPhone().isBlank() ||
-                    providerDto.getAddress() == null || providerDto.getAddress().isBlank() ||
-                    providerDto.getFax() == null || providerDto.getFax().isBlank() ||
-                    providerDto.getDescription() == null || providerDto.getDescription().isBlank()) {
+                    providerDto.getAddress() == null || providerDto.getAddress().isBlank()
+                   ) {
 
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ErrorResponse(400, "Invalid input: cannot be null or empty"));
@@ -241,6 +244,19 @@ public class ProviderController {
             logger.error("Error occurred while adding provider", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse(500, "Internal server error: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<?> getProviderStats() {
+        try {
+            var dto = providerService.getProviderStats();
+
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            logger.error("Error fetching provider list", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(500, "Internal server error"));
         }
     }
 }

@@ -135,7 +135,7 @@ public class BillMapperTest {
 
     @Test
     public void testFindByQuery() {
-        List<Bill> result = billMapper.findAllBillsByQuery("BILL00", null, null, null, null, null);
+        List<Bill> result = billMapper.findAllBillsByQuery("BILL00", null, null, null, null, null,2,1000,500.0,10000.0);
         assertFalse(result.isEmpty());
     }
 

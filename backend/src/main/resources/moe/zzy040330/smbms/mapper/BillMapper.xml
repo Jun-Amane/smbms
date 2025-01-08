@@ -176,6 +176,21 @@
             <!--            <if test="totalPrice != null and totalPrice  != ''">-->
             <!--                AND p.proCode LIKE CONCAT('%', #{code}, '%')-->
             <!--            </if>-->
+            <!--通过数量上下限查询-->
+            <if test="minQuantity != null and minQuantity!=''">
+                AND b.productCount &gt;= #{minQuantity}
+            </if>
+            <if test="maxQuantity != null and maxQuantity!=''">
+                AND b.productCount &lt;= #{maxQuantity}
+            </if>
+            <!-- 通过价格上下限查询 -->
+            <if test="minPrice != null and minPrice!=''">
+                AND b.totalPrice &gt;= #{minPrice}
+            </if>
+            <if test="maxPrice != null and maxPrice!=''">
+                AND b.totalPrice &lt;= #{maxPrice}
+            </if>
+
 
             <if test="providerCode != null and providerCode != ''">
                 AND p.proCode LIKE CONCAT('%', #{providerCode}, '%')

@@ -39,14 +39,13 @@ import {
     Add as AddIcon,
     Search as SearchIcon,
     Refresh as RefreshIcon,
-    AttachMoney as MoneyIcon,
     Store as StoreIcon,
 } from '@mui/icons-material';
 import {useRouter} from 'next/navigation';
 import {Bill, BillQueryParams, paymentStatus, Provider} from '@/types';
 import {billService} from '@/services/billService';
 import BillForm from "@/app/components/forms/BillForm";
-import {checkPermission} from '@/utils/auth';
+import {checkManagerPermission} from '@/utils/auth';
 
 type DialogType = 'create' | 'edit' | 'view' | 'delete' | null;
 
@@ -75,7 +74,7 @@ export default function BillManagement() {
             setProviders(data);
         } catch (err) {
             setError('获取供应商列表失败');
-            console.error('Error fetching providers:', err);
+            console.log('Error fetching providers:', err);
         }
     };
 
@@ -129,7 +128,7 @@ export default function BillManagement() {
     };
 
     const handleOpenDialog = async (type: DialogType, bill?: Bill) => {
-        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkPermission(type)) {
+        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkManagerPermission(type)) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -174,7 +173,7 @@ export default function BillManagement() {
     };
 
     const handleSave = async () => {
-        if (!checkPermission(dialogType === 'create' ? 'create' : 'edit')) {
+        if (!checkManagerPermission(dialogType === 'create' ? 'create' : 'edit')) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -199,14 +198,14 @@ export default function BillManagement() {
             fetchBills();
         } catch (err) {
             setError(dialogType === 'create' ? '创建订单失败' : '更新订单失败');
-            console.error('Error saving bill:', err);
+            console.log('Error saving bill:', err);
         }
     };
 
     const confirmDelete = async () => {
         if (!selectedBill) return;
 
-        if (!checkPermission('delete')) {
+        if (!checkManagerPermission('delete')) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -218,7 +217,7 @@ export default function BillManagement() {
             fetchBills();
         } catch (err) {
             setError('删除订单失败');
-            console.error('Error deleting bill:', err);
+            console.log('Error deleting bill:', err);
         }
     };
 
@@ -461,7 +460,6 @@ export default function BillManagement() {
                                                     gap: 0.5
                                                 }}
                                             >
-                                                <MoneyIcon fontSize="small"/>
                                                 {formatPrice(bill.totalPrice)}
                                             </Typography>
                                         </TableCell>

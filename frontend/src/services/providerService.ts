@@ -1,5 +1,5 @@
 import axios from '@/lib/axios';
-import {Provider, ProviderQueryParams, ProviderListResponse} from "@/types";
+import {Provider, ProviderQueryParams, ProviderListResponse, ProviderStatsDto} from "@/types";
 
 export const providerService = {
 
@@ -24,5 +24,10 @@ export const providerService = {
     deleteProvider: async (id: number): Promise<void> => {
         await axios.delete(`/api/provider/${id}`);
     },
+
+    getProviderStats: async(): Promise<ProviderStatsDto> => {
+        const response = await axios.get(`/api/provider/stats`);
+        return response.data;
+    }
 
 };

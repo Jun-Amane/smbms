@@ -33,3 +33,18 @@ export interface BillListResponse {
     totalItems: number;
     bills: Bill[];
 }
+
+export interface PaymentStatus {
+    status: 'unpaid' | 'paid'; // Assuming only two statuses
+    count: number;
+}
+
+export interface ProductSale {
+    productName: string;
+    totalSalesAmount: number;
+}
+
+export interface BillStatsDto {
+    paymentStatus: PaymentStatus[];
+    productSales: ProductSale[];
+}

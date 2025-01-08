@@ -31,3 +31,10 @@ INSERT INTO smbmsDB.smbms_provider (id, proCode, proName, proDesc, proContact, p
 INSERT INTO smbmsDB.smbms_provider (id, proCode, proName, proDesc, proContact, proPhone, proAddress, proFax, createdBy, creationDate, modifyDate, modifyBy) VALUES (13, 'SD_GYS001', '山东豪克华光联合发展有限公司', '长期合作伙伴，主营产品：洗衣皂、洗衣粉、洗衣液、洗洁精、消杀类、香皂等', '吴洪转', '13245468787', '山东济阳济北工业区仁和街21号', '0531-53362445', 1, '2015-01-28 10:52:07', null, null);
 INSERT INTO smbmsDB.smbms_provider (id, proCode, proName, proDesc, proContact, proPhone, proAddress, proFax, createdBy, creationDate, modifyDate, modifyBy) VALUES (14, 'JS_GYS003', '无锡喜源坤商行', '长期合作伙伴，主营产品：日化品批销', '周一清', '18567674532', '江苏无锡盛岸西路', '0510-32274422', 1, '2016-04-23 11:11:11', null, null);
 INSERT INTO smbmsDB.smbms_provider (id, proCode, proName, proDesc, proContact, proPhone, proAddress, proFax, createdBy, creationDate, modifyDate, modifyBy) VALUES (15, 'ZJ_GYS002', '乐摆日用品厂', '长期合作伙伴，主营产品：各种中、高档塑料杯，塑料乐扣水杯（密封杯）、保鲜杯（保鲜盒）、广告杯、礼品杯', '王世杰', '13212331567', '浙江省金华市义乌市义东路', '0579-34452321', 1, '2016-08-22 10:01:30', null, null);
+
+INSERT INTO smbmsDB.smbms_provider (id, proCode, proName, proDesc, proContact, proPhone, proAddress, proFax, createdBy, creationDate, modifyDate, modifyBy) VALUES 
+(16, 'SH_GYS001', '上海润和食品有限公司', '初次合作伙伴，主营产品：罐头食品和速冻食品', '李亚楠', '13912345678', '上海市静安区南京西路', '021-55567890', 1, '2017-02-01 09:00:00', null, null),
+(17, 'CQ_GYS001', '重庆特产有限公司', '长期合作伙伴，主营产品：重庆火锅底料、麻辣拌料', '杨浩', '13711112222', '重庆市渝中区解放碑', '023-87654321', 1, '2015-05-12 13:45:00', null, null),
+(18, 'HN_GYS001', '海南水果贸易公司', '长期合作伙伴，主营产品：进口热带水果', '赵敏', '13622223333', '海南省三亚市河东路', '0898-98765432', 1, '2018-07-23 11:30:00', null, null),
+(19, 'SC_GYS001', '四川辣椒加工厂', '初次合作伙伴，主营产品：辣椒酱、香辣酱、泡椒', '刘芸', '13833334444', '四川省成都市锦江区草堂路', '028-76543210', 1, '2019-11-15 16:20:00', null, null),
+(20, 'HLJ_GYS001', '黑龙江乳品有限公司', '长期合作伙伴，主营产品：奶粉、液体乳制品', '张伟', '13944445555', '黑龙江省哈尔滨市南岗区', '0451-65432109', 1, '2020-03-19 14:00:00', null, null);

@@ -11,7 +11,6 @@ package moe.zzy040330.smbms.controller;
 import com.github.pagehelper.PageInfo;
 import moe.zzy040330.smbms.dto.BillDto;
 import moe.zzy040330.smbms.dto.ErrorResponse;
-import moe.zzy040330.smbms.dto.ProviderDto;
 import moe.zzy040330.smbms.entity.Bill;
 import moe.zzy040330.smbms.entity.Provider;
 import moe.zzy040330.smbms.entity.User;
@@ -23,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -54,11 +54,18 @@ public class BillController {
                                       @RequestParam(value = "queryProviderCode", required = false) String providerCode,
                                       @RequestParam(value = "queryProviderName", required = false) String providerName,
                                       @RequestParam(value = "queryIsPaid", required = false) Integer isPaid,
+                                      @RequestParam(value = "minQuantity",required = false) Integer minQuantity,
+                                      @RequestParam(value = "maxQuantity",required = false) Integer maxQuantity,
+                                      @RequestParam(value = "minPrice",required = false) Double minPrice,
+                                      @RequestParam(value = "maxQuantity",required = false) Double maxPrice,
                                       @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
-                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize) {
+                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
+
+                                      )
+    {
         try {
 
-            PageInfo<Bill> pageInfo = billService.findBillByQuery(code, productName, productDesc, providerCode, providerName, isPaid, pageIndex, pageSize);
+            PageInfo<Bill> pageInfo = billService.findBillByQuery(code, productName, productDesc, providerCode, providerName, isPaid, pageIndex, pageSize,minQuantity,maxQuantity,minPrice,maxPrice);
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());
             response.put("curPage", pageInfo.getPageNum());
@@ -124,6 +131,7 @@ public class BillController {
         );
     }
 
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or hasAuthority('SMBMS_MANAGER')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateBill(@PathVariable Long id, @RequestBody BillDto billDto, @RequestHeader("Authorization") String authHeader) {
         try {
@@ -163,11 +171,12 @@ public class BillController {
         }
     }
 
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or hasAuthority('SMBMS_MANAGER')")
     @PostMapping("")
     public ResponseEntity<?> createBill(@RequestBody BillDto billDto, @RequestHeader("Authorization") String authHeader) {
         try {
-            if (billDto == null || billDto.getCode() == null || billDto.getProductName() == null ||
-                    billDto.getProductDescription() == null || billDto.getProductUnit() == null
+            if (billDto == null || billDto.getCode() == null || billDto.getProductName() == null
+                    || billDto.getProductUnit() == null
                     || billDto.getTotalPrice() == null || billDto.getProductCount() == null
                     || billDto.getIsPaid() == null
                     || billDto.getProviderId() == null) {
@@ -199,11 +208,43 @@ public class BillController {
         }
     }
 
+    @PreAuthorize("hasAuthority('SMBMS_ADMIN') or hasAuthority('SMBMS_MANAGER')")
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteBill(@PathVariable Long id) {
+        try {
+            Boolean deleted = billService.deleteById(id);
+            if (!deleted) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse(404, "Bill not found"));
+            } else {
+                return ResponseEntity.ok("Delete successful");
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(500, "Internal server error" + e.getMessage()));
+        }
+    }
+
     @GetMapping("/providerlist")
     public ResponseEntity<?> getProviderList() {
         try {
             List<Provider> providers = providerService.findAll();
             return ResponseEntity.ok(providers);
+        } catch (Exception e) {
+            logger.error("Error fetching provider list", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(500, "Internal server error"));
+        }
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<?> getBillStats() {
+        try {
+            var dto = billService.getBillStats();
+
+            return ResponseEntity.ok(dto);
         } catch (Exception e) {
             logger.error("Error fetching provider list", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
