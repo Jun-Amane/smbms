@@ -30,7 +30,7 @@ if ($LASTEXITCODE -ne 0) {
 
 # Start the Next.js application (running in the background)
 Write-Host "Starting Next.js application..."
-Start-Process "npm" -ArgumentList 'run', 'start' -NoNewWindow -PassThru | Out-Null
+Start-Process "npm.cmd" -ArgumentList 'run', 'start' -NoNewWindow -PassThru | Out-Null
 
 # Store process ID
 $FRONTEND_PROCESS = Get-Process -Name node -ErrorAction SilentlyContinue
