@@ -78,6 +78,7 @@ export default function PasswordPage() {
       setTimeout(() => {
         router.push('/dashboard');
       }, 3000);
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.response?.data?.message || '修改密码失败，请重试');
     } finally {

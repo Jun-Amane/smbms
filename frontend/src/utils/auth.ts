@@ -13,11 +13,11 @@ export const isManager = (): boolean => {
     return userRoleCode === MANAGER_ROLE;
 };
 
-export const checkAdminPermission = (action: 'create' | 'edit' | 'delete'): boolean => {
+export const checkAdminPermission = (): boolean => {
     return isAdmin();
 };
 
-export const checkManagerPermission = (action: 'create' | 'edit' | 'delete'): boolean => {
+export const checkManagerPermission = (): boolean => {
     return isAdmin() || isManager();
 };
 

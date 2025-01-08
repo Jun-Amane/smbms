@@ -45,6 +45,7 @@ const BillForm = React.forwardRef<{ validateForm: () => boolean }, BillFormProps
             }
         }, [bill]);
 
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         type FieldValidator = (value: any) => string;
 
         const validators: {
@@ -73,6 +74,7 @@ const BillForm = React.forwardRef<{ validateForm: () => boolean }, BillFormProps
             }
         };
 
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         const validateField = (field: keyof Bill, value: any): string => {
             const validator = validators[field];
             if (validator) {
@@ -100,6 +102,7 @@ const BillForm = React.forwardRef<{ validateForm: () => boolean }, BillFormProps
         };
 
         const handleChange = (field: keyof Bill) => async (
+            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
             event: React.ChangeEvent<HTMLInputElement> | { target: { value: any } }
         ) => {
             const value = event.target.value;

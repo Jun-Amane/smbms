@@ -110,6 +110,7 @@ export default function BillManagement() {
     );
 
     const handleQueryChange = (field: keyof BillQueryParams) => (
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         event: React.ChangeEvent<HTMLInputElement> | { target: { value: any } }
     ) => {
         setQueryParams({
@@ -140,7 +141,7 @@ export default function BillManagement() {
     };
 
     const handleOpenDialog = async (type: DialogType, bill?: Bill) => {
-        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkManagerPermission(type)) {
+        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkManagerPermission()) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -185,7 +186,7 @@ export default function BillManagement() {
     };
 
     const handleSave = async () => {
-        if (!checkManagerPermission(dialogType === 'create' ? 'create' : 'edit')) {
+        if (!checkManagerPermission()) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -217,7 +218,7 @@ export default function BillManagement() {
     const confirmDelete = async () => {
         if (!selectedBill) return;
 
-        if (!checkManagerPermission('delete')) {
+        if (!checkManagerPermission()) {
             setError('您没有权限执行此操作');
             return;
         }
