@@ -22,6 +22,10 @@ export interface BillQueryParams {
     queryProviderCode?: string;
     queryProviderName?: string;
     queryIsPaid?: number;
+    minQuantity?: number;
+    maxQuantity?: number;
+    minPrice?: number;
+    maxPrice?: number;
     pageSize?: number;
     pageIndex?: number;
 }
