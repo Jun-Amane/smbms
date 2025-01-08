@@ -31,7 +31,6 @@ import {
     Tooltip,
     Chip,
     Stack,
-    Divider,
 } from '@mui/material';
 import {
     Visibility as ViewIcon,
@@ -131,7 +130,7 @@ export default function UserManagement() {
 
     const handleOpenDialog = async (type: DialogType, user?: User) => {
         // auth check
-        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkAdminPermission(type)) {
+        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkAdminPermission()) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -182,7 +181,7 @@ export default function UserManagement() {
     };
 
     const handleSave = async () => {
-        if (!checkAdminPermission(dialogType === 'create' ? 'create' : 'edit')) {
+        if (!checkAdminPermission()) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -213,7 +212,7 @@ export default function UserManagement() {
     const confirmDelete = async () => {
         if (!selectedUser) return;
 
-        if (!checkAdminPermission('delete')) {
+        if (!checkAdminPermission()) {
             setError('您没有权限执行此操作');
             return;
         }

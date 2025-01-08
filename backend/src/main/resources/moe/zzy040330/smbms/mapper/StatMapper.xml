@@ -51,12 +51,15 @@
     </select>
 
     <select id="findQuarterlyStat" resultType="moe.zzy040330.smbms.dto.DashboardStatsDto$QuarterlyStat" resultMap="QuarterlyStatResultMap">
+        SELECT quarter, COUNT(*) AS orderCount, SUM(totalPrice) AS totalAmount
+        FROM (
         SELECT CONCAT(YEAR(creationDate), '-Q', QUARTER(creationDate)) AS quarter,
-           COUNT(*)                                             AS orderCount,
-           SUM(totalPrice)                                      AS totalAmount
+        totalPrice
         FROM smbms_bill
-        GROUP BY YEAR(creationDate), QUARTER(creationDate)
-        ORDER BY YEAR(creationDate), QUARTER(creationDate);
+        ) AS subquery
+        GROUP BY quarter
+        ORDER BY quarter;
+
     </select>
 
     <select id="findPaymentStatus" resultType="moe.zzy040330.smbms.dto.BillStatsDto$PaymentStatus" resultMap="PaymentStatusResultMap">

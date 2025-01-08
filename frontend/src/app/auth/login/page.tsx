@@ -46,6 +46,7 @@ export default function LoginPage() {
             localStorage.setItem('userRoleCode', userRoleCode );
 
             router.push('/dashboard');
+            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         } catch (err: any) {
             console.error(err);
             setError(err.response?.data?.message || '登录失败，请检查用户名和密码');

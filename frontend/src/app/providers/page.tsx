@@ -109,7 +109,7 @@ export default function ProviderManagement() {
     };
 
     const handleOpenDialog = async (type: DialogType, provider?: Provider) => {
-        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkManagerPermission(type)) {
+        if ((type === 'create' || type === 'edit' || type === 'delete') && !checkManagerPermission()) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -154,7 +154,7 @@ export default function ProviderManagement() {
     };
 
     const handleSave = async () => {
-        if (!checkManagerPermission(dialogType === 'create' ? 'create' : 'edit')) {
+        if (!checkManagerPermission()) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -185,7 +185,7 @@ export default function ProviderManagement() {
     const confirmDelete = async () => {
         if (!selectedProvider) return;
 
-        if (!checkManagerPermission('delete')) {
+        if (!checkManagerPermission()) {
             setError('您没有权限执行此操作');
             return;
         }
@@ -195,6 +195,7 @@ export default function ProviderManagement() {
             setSuccessMessage('删除供应商成功');
             handleCloseDialog();
             fetchProviders();
+            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         } catch (err: any) {
             setError(err.response?.data?.message || '删除供应商失败');
             console.log('Error deleting provider:', err);
