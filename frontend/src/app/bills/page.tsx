@@ -332,18 +332,18 @@ export default function BillManagement() {
                 case 'queryProviderName':
                     delete newParams.queryProviderName;
                     break;
-                case 'queryIdPaid':
+                case 'queryIsPaid':
                     delete newParams.queryIsPaid;
                     break;
                 case 'queryCount':
                     delete newParams.maxQuantity;
                     delete newParams.minQuantity;
-                    setCountRange([1000, 50000]);
+                    setCountRange([10, 5000]);
                     break;
                 case 'queryPrice':
                     delete newParams.minPrice;
                     delete newParams.maxPrice;
-                    setPriceRange([10, 5000]);
+                    setPriceRange([1000, 50000]);
                     break;
             }
             debouncedFetch(newParams);
