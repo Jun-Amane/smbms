@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
     Box,
     Paper,
@@ -30,7 +30,7 @@ import {
     TablePagination,
     Tooltip,
     Stack,
-    Chip,
+    Chip, Slider, debounce, Divider,
 } from '@mui/material';
 import {
     Visibility as ViewIcon,
@@ -65,6 +65,9 @@ export default function BillManagement() {
     const [formValues, setFormValues] = useState<Partial<Bill>>({});
     const [formValid, setFormValid] = useState(true);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [priceRange, setPriceRange] = useState<number[]>([1000, 50000]);
+    const [countRange, setCountRange] = useState<number[]>([10, 5000]);
+    const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
     const billFormRef = useRef<{ validateForm: () => boolean }>(null);
 
@@ -78,10 +81,10 @@ export default function BillManagement() {
         }
     };
 
-    const fetchBills = async () => {
+    const fetchBills = async (params: BillQueryParams) => {
         try {
             setLoading(true);
-            const data = await billService.getBills(queryParams);
+            const data = await billService.getBills(params);
             setBills(data.bills);
             setTotalItems(data.totalItems);
         } catch (err) {
@@ -97,17 +100,26 @@ export default function BillManagement() {
     }, []);
 
     useEffect(() => {
-        fetchBills();
+        fetchBills(queryParams);
     }, [queryParams]);
 
+
+    const debouncedFetch = useCallback(
+        debounce((params: BillQueryParams) => fetchBills(params), 500),
+        []
+    );
+
     const handleQueryChange = (field: keyof BillQueryParams) => (
-        event: React.ChangeEvent<HTMLInputElement> | { target: { value: unknown } }
+        event: React.ChangeEvent<HTMLInputElement> | { target: { value: any } }
     ) => {
         setQueryParams({
             ...queryParams,
             [field]: event.target.value,
             pageIndex: 1,
         });
+
+        updateActiveFilters(field, event.target.value);
+        return queryParams;
     };
 
     const handlePageChange = (event: unknown, newPage: number) => {
@@ -195,7 +207,7 @@ export default function BillManagement() {
                 setSuccessMessage('更新订单成功');
             }
             handleCloseDialog();
-            fetchBills();
+            fetchBills(queryParams);
         } catch (err) {
             setError(dialogType === 'create' ? '创建订单失败' : '更新订单失败');
             console.log('Error saving bill:', err);
@@ -214,7 +226,7 @@ export default function BillManagement() {
             await billService.deleteBill(selectedBill.id);
             setSuccessMessage('删除订单成功');
             handleCloseDialog();
-            fetchBills();
+            fetchBills(queryParams);
         } catch (err) {
             setError('删除订单失败');
             console.log('Error deleting bill:', err);
@@ -234,6 +246,41 @@ export default function BillManagement() {
             default:
                 return '';
         }
+    };
+
+
+    const handlePriceRangeChange = (event: Event, newValue: number | number[]) => {
+        setPriceRange(newValue as number[]);
+    };
+
+    const handlePriceRangeChangeCommitted = () => {
+        setQueryParams(prev => {
+            const newParams = {
+                ...prev,
+                minPrice: priceRange[0],
+                maxPrice: priceRange[1]
+            };
+            debouncedFetch(newParams);
+            return newParams;
+        });
+        updateActiveFilters('queryPrice', `${priceRange[0]}-${priceRange[1]}`);
+    };
+
+    const handleCountRangeChange = (event: Event, newValue: number | number[]) => {
+        setCountRange(newValue as number[]);
+    };
+
+    const handleCountRangeChangeCommitted = () => {
+        setQueryParams(prev => {
+            const newParams = {
+                ...prev,
+                minQuantity: countRange[0],
+                maxQuantity: countRange[1]
+            };
+            debouncedFetch(newParams);
+            return newParams;
+        });
+        updateActiveFilters('queryCount', `${countRange[0]}-${countRange[1]}`);
     };
 
     const formatPrice = (price: number) => {
@@ -257,6 +304,58 @@ export default function BillManagement() {
             />
         );
     };
+
+    const updateActiveFilters = (field: string, value: string) => {
+        setActiveFilters(prev => {
+            const newFilters = prev.filter(f => !f.startsWith(`${field}:`));
+            if (value && value !== '') {
+                return [...newFilters, `${field}:${value}`];
+            }
+            return newFilters;
+        });
+    };
+
+    const removeFilter = (filter: string) => {
+        const [field] = filter.split(':');
+        setActiveFilters(prev => prev.filter(f => f !== filter));
+
+        setQueryParams(prev => {
+            const newParams = { ...prev };
+            switch (field) {
+                case 'queryCode':
+                    delete newParams.queryCode;
+                    break;
+                case 'queryProductName':
+                    delete newParams.queryProductName;
+                    break;
+                case 'queryProviderName':
+                    delete newParams.queryProviderName;
+                    break;
+                case 'queryIdPaid':
+                    delete newParams.queryIsPaid;
+                    break;
+                case 'queryCount':
+                    delete newParams.maxQuantity;
+                    delete newParams.minQuantity;
+                    setCountRange([1000, 50000]);
+                    break;
+                case 'queryPrice':
+                    delete newParams.minPrice;
+                    delete newParams.maxPrice;
+                    setPriceRange([10, 5000]);
+                    break;
+            }
+            debouncedFetch(newParams);
+            return newParams;
+        });
+    };
+
+    const handleResetQuery = () => {
+        setActiveFilters([]);
+        setPriceRange([1000, 50000]);
+        setCountRange([10, 5000]);
+        setQueryParams({pageSize: 10, pageIndex: 1});
+    }
 
     return (
         <Box>
@@ -345,7 +444,7 @@ export default function BillManagement() {
                             <Button
                                 variant="contained"
                                 startIcon={<SearchIcon/>}
-                                onClick={() => fetchBills()}
+                                onClick={() => fetchBills(queryParams)}
                                 disabled={loading}
                             >
                                 查询
@@ -355,14 +454,75 @@ export default function BillManagement() {
                                 variant="outlined"
                                 startIcon={<RefreshIcon/>}
                                 onClick={() => {
-                                    setQueryParams({pageSize: 10, pageIndex: 1});
+                                    // setQueryParams({pageSize: 10, pageIndex: 1});
+                                    handleResetQuery()
                                 }}
                             >
                                 重置
                             </Button>
                         </Box>
                     </Stack>
+
+                    <Stack>
+                        <Box sx={{px: 2}}>
+                            <Typography gutterBottom>商品价格区间</Typography>
+                            <Slider
+                                value={priceRange}
+                                onChange={handlePriceRangeChange}
+                                onChangeCommitted={handlePriceRangeChangeCommitted}
+                                valueLabelDisplay="auto"
+                                min={1000}
+                                max={50000}
+                                sx={{mb: 2}}
+                            />
+                            <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 2}}>
+                                <Typography variant="body2" color="text.secondary">
+                                    ¥{priceRange[0]}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    ¥{priceRange[1]}
+                                </Typography>
+                            </Box>
+
+                            <Typography gutterBottom>产品总量区间</Typography>
+                            <Slider
+                                value={countRange}
+                                onChange={handleCountRangeChange}
+                                onChangeCommitted={handleCountRangeChangeCommitted}
+                                valueLabelDisplay="auto"
+                                min={10}
+                                max={5000}
+                            />
+                            <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+                                <Typography variant="body2" color="text.secondary">
+                                    {countRange[0]}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    {countRange[1]}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Stack>
                 </Stack>
+                {activeFilters.length > 0 && (
+                    <Box sx={{ mt: 2 }}>
+                        <Divider sx={{ my: 1 }} />
+                        <Typography variant="subtitle2" gutterBottom>
+                            当前筛选条件：
+                        </Typography>
+                        <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
+                            {activeFilters.map((filter) => (
+                                <Chip
+                                    key={filter}
+                                    label={filter}
+                                    onDelete={() => removeFilter(filter)}
+                                    color="primary"
+                                    variant="outlined"
+                                />
+                            ))}
+                        </Stack>
+                    </Box>
+                )}
             </Paper>
 
             {/* Bill List */}

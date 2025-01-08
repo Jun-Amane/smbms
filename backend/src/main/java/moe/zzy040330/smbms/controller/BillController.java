@@ -54,18 +54,17 @@ public class BillController {
                                       @RequestParam(value = "queryProviderCode", required = false) String providerCode,
                                       @RequestParam(value = "queryProviderName", required = false) String providerName,
                                       @RequestParam(value = "queryIsPaid", required = false) Integer isPaid,
-                                      @RequestParam(value = "minQuantity",required = false) Integer minQuantity,
-                                      @RequestParam(value = "maxQuantity",required = false) Integer maxQuantity,
-                                      @RequestParam(value = "minPrice",required = false) Double minPrice,
-                                      @RequestParam(value = "maxQuantity",required = false) Double maxPrice,
+                                      @RequestParam(value = "minQuantity", required = false) Integer minQuantity,
+                                      @RequestParam(value = "maxQuantity", required = false) Integer maxQuantity,
+                                      @RequestParam(value = "minPrice", required = false) Double minPrice,
+                                      @RequestParam(value = "maxPrice", required = false) Double maxPrice,
                                       @RequestParam(value = "pageIndex", defaultValue = "1") Integer pageIndex,
                                       @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize
 
-                                      )
-    {
+    ) {
         try {
 
-            PageInfo<Bill> pageInfo = billService.findBillByQuery(code, productName, productDesc, providerCode, providerName, isPaid, pageIndex, pageSize,minQuantity,maxQuantity,minPrice,maxPrice);
+            PageInfo<Bill> pageInfo = billService.findBillByQuery(code, productName, productDesc, providerCode, providerName, isPaid, pageIndex, pageSize, minQuantity, maxQuantity, minPrice, maxPrice);
             Map<String, Object> response = new HashMap<>();
             response.put("totalItems", pageInfo.getTotal());
             response.put("curPage", pageInfo.getPageNum());
